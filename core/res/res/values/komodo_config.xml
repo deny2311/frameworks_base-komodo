@@ -41,4 +41,8 @@
     <!-- Whether device has fingerprint on power button -->
     <bool name="config_powerButtonFingerprint">false</bool>
 
+    <!-- Button backlight -->
+    <dimen name="config_buttonBrightnessSettingDefaultFloat">1.0</dimen>
+    <bool name="config_deviceHasVariableButtonBrightness">false</bool>
+
 </resources>
