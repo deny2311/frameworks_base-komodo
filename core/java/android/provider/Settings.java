@@ -4494,6 +4494,12 @@ public final class Settings {
         private static final Validator STOCK_STATUSBAR_IN_HIDE_VALIDATOR =
                 BOOLEAN_VALIDATOR;
 
+	/**
+         * Enable/Disable screenshot sound
+         * @hide
+         */
+        public static final String SCREENSHOT_SOUND = "screenshot_sound";
+
         /**
          * I am the lolrus.
          * <p>
