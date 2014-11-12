@@ -5118,6 +5118,15 @@ public final class Settings {
         public static final String SHOW_VOLTE_ICON = "volte_icon";
 
         /**
+         * Enable/Disable screenshot sound
+         * @hide
+         */
+        public static final String SCREENSHOT_SOUND = "screenshot_sound";
+        /** @hide */
+        private static final Validator SCREENSHOT_SOUND_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
@@ -5221,6 +5230,7 @@ public final class Settings {
             VOLUME_BUTTON_MUSIC_CONTROL,
             QS_BLUR,
             QS_BLUR_ALPHA,
+            SCREENSHOT_SOUND,
             // Komodo panels end
         };
 
@@ -5387,6 +5397,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(QS_BLUR_ALPHA);
             PRIVATE_SETTINGS.add(BRIGHTNESS_SLIDER_QS_UNEXPANDED);
             PRIVATE_SETTINGS.add(POCKET_JUDGE);
+            PRIVATE_SETTINGS.add(SCREENSHOT_SOUND);
             // Komodo panels end
         }
 
@@ -5532,6 +5543,7 @@ public final class Settings {
             VALIDATORS.put(QS_BLUR_ALPHA, QS_BLUR_ALPHA_VALIDATOR);
             VALIDATORS.put(BRIGHTNESS_SLIDER_QS_UNEXPANDED, BRIGHTNESS_SLIDER_QS_UNEXPANDED_VALIDATOR);
             VALIDATORS.put(POCKET_JUDGE, POCKET_JUDGE_VALIDATOR);
+            VALIDATORS.put(SCREENSHOT_SOUND, SCREENSHOT_SOUND_VALIDATOR);
             // Komodo panels end
         }
 
