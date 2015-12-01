@@ -5644,6 +5644,11 @@ public final class Settings {
          */
         public static final String VOLUME_BUTTON_MUSIC_CONTROL = "volume_button_music_control";
 
+        /** Volume rocker wake
+         * @hide
+         */
+        public static final String VOLUME_ROCKER_WAKE = "volume_rocker_wake";
+
         /**
          * @hide
          * Whether the phone vibrates on call connect
@@ -5787,6 +5792,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(KEY_CAMERA_DOUBLE_TAP_ACTION);
             PRIVATE_SETTINGS.add(FORCE_SHOW_NAVBAR);
             PRIVATE_SETTINGS.add(BACK_GESTURE_HAPTIC);
+            PRIVATE_SETTINGS.add(VOLUME_ROCKER_WAKE);
             PRIVATE_SETTINGS.add(VIBRATE_ON_CONNECT);
             PRIVATE_SETTINGS.add(VIBRATE_ON_CALLWAITING);
             PRIVATE_SETTINGS.add(VIBRATE_ON_DISCONNECT);
