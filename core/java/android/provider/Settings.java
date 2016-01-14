@@ -4639,6 +4639,17 @@ public final class Settings {
 
 
         /**
+         * whether to enable or disable vibration on succesful fingerprint auth
+         *
+         * @hide
+         */
+        public static final String FINGERPRINT_SUCCESS_VIB = "fingerprint_success_vib";
+
+        /** @hide */
+        private static final Validator FINGERPRINT_SUCCESS_VIB_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
+        /**
          * IMPORTANT: If you add a new public settings you also have to add it to
          * PUBLIC_SETTINGS below. If the new setting is hidden you have to add
          * it to PRIVATE_SETTINGS below. Also add a validator that can validate
@@ -5363,6 +5374,7 @@ public final class Settings {
             NOTIFICATION_HEADERS,
             FOOTER_TEXT_SHOW,
             FOOTER_TEXT_STRING,
+            FINGERPRINT_SUCCESS_VIB,
             // komodo
         };
 
@@ -5534,6 +5546,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(GESTURE_PILL_TOGGLE);
             PRIVATE_SETTINGS.add(FOOTER_TEXT_SHOW);
             PRIVATE_SETTINGS.add(FOOTER_TEXT_STRING);
+            PRIVATE_SETTINGS.add(FINGERPRINT_SUCCESS_VIB);
             // komodo
         }
 
@@ -5685,7 +5698,8 @@ public final class Settings {
             VALIDATORS.put(NOTIFICATION_HEADERS, NOTIFICATION_HEADERS_VALIDATOR);
             VALIDATORS.put(FOOTER_TEXT_SHOW, FOOTER_TEXT_SHOW_VALIDATOR);
             VALIDATORS.put(FOOTER_TEXT_STRING, FOOTER_TEXT_STRING_VALIDATOR);
-            // komodo
+            VALIDATORS.put(FINGERPRINT_SUCCESS_VIB, FINGERPRINT_SUCCESS_VIB_VALIDATOR);
+            // komodo 
         }
 
         /**
