@@ -118,4 +118,5 @@ interface IStatusBarService
      * AOSiP
      */
     void toggleCameraFlash();
+    void restartUI();
 }
