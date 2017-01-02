@@ -851,9 +851,9 @@ public class NavigationBar implements View.OnAttachStateChangeListener,
             mNavigationBarView.getHomeButton().getCurrentView().setHapticFeedbackEnabled(false);
             mNavigationBarView.getHomeButton().setOnLongClickListener(null);
         } else {
-            mNavigationBarView.getHomeButton().getCurrentView().setLongClickable(true);
+            //mNavigationBarView.getHomeButton().getCurrentView().setLongClickable(true);
             mNavigationBarView.getHomeButton().getCurrentView().setHapticFeedbackEnabled(true);
-            mNavigationBarView.getHomeButton().setOnLongClickListener(this::onHomeLongClick);
+            //mNavigationBarView.getHomeButton().setOnLongClickListener(this::onHomeLongClick);
         }
     }
 
@@ -1127,14 +1127,10 @@ public class NavigationBar implements View.OnAttachStateChangeListener,
             backButton.setOnLongClickListener(recentsVisible
                     ? this::onLongPressBackRecents
                     : this::onLongPressBackHome);
-            recentsButton.setOnLongClickListener(this::onLongPressBackRecents);
-        } else {
-            backButton.setOnLongClickListener(null);
-            recentsButton.setOnLongClickListener(null);
         }
         // Note, this needs to be set after even if we're setting the listener to null
-        backButton.setLongClickable(pinningActive);
-        recentsButton.setLongClickable(pinningActive);
+        backButton.setLongClickable(false);
+        recentsButton.setLongClickable(false);
     }
 
     private void notifyNavigationBarScreenOn() {
@@ -1145,11 +1141,8 @@ public class NavigationBar implements View.OnAttachStateChangeListener,
         mNavigationBarView.reorient();
 
         ButtonDispatcher recentsButton = mNavigationBarView.getRecentsButton();
-        recentsButton.setOnClickListener(this::onRecentsClick);
-        recentsButton.setOnTouchListener(this::onRecentsTouch);
-
         ButtonDispatcher homeButton = mNavigationBarView.getHomeButton();
-        homeButton.setOnTouchListener(this::onHomeTouch);
+        homeButton.setLongClickable(false);
 
         reconfigureHomeLongClick();
 
