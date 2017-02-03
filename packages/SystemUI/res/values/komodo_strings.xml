@@ -96,4 +96,8 @@
 
     <!-- Alerting notification header label -->
     <string name="notification_section_header_alerting">Alerting notifications</string>
+
+    <!-- Running service button -->
+    <string name="accessibility_quick_settings_running_services">Open Running Services screen.</string>
+
 </resources>
