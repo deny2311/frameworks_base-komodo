@@ -84,4 +84,7 @@
     <!-- Statusbar Tuner -->
     <string name="statusbar_items_title">Statusbar Icons</string>
 
+    <!-- Name of the ims status bar icon. -->
+    <string name="status_bar_ims">VoLTE/VoWiFi</string>
+
 </resources>
