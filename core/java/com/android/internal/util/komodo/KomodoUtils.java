@@ -72,6 +72,17 @@ public class KomodoUtils {
         }
     }
 
+    public static void toggleCameraFlash() {
+        IStatusBarService service = getStatusBarService();
+        if (service != null) {
+            try {
+                service.toggleCameraFlash();
+            } catch (RemoteException e) {
+                // do nothing.
+            }
+        }
+    }
+
     // Check to see if a package is installed
     public static boolean isPackageInstalled(Context context, String pkg, boolean ignoreState) {
         if (pkg != null) {
