@@ -233,4 +233,7 @@ oneway interface IStatusBar
      */
     void showInDisplayFingerprintView();
     void hideInDisplayFingerprintView();
+     * Konodo additions
+     */
+    void toggleCameraFlash();
 }

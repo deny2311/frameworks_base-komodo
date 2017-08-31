@@ -154,6 +154,10 @@ interface IStatusBarService
      */
     void showInDisplayFingerprintView();
     void hideInDisplayFingerprintView();
+
+    /**
+     * Komodo additions
+     */
     void toggleCameraFlash();
     void toggleCameraFlashState(boolean enable);
     void toggleRecentApps();
