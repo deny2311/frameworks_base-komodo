@@ -692,6 +692,11 @@ public class StatusBar extends SystemUI implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_SHOW_BATTERY_PERCENT),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.HEADS_UP_STOPLIST_VALUES), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.HEADS_UP_BLACKLIST_VALUES), false, this);
+
         }
 
         @Override
@@ -772,6 +777,9 @@ public class StatusBar extends SystemUI implements DemoMode,
             handleCutout(null);
 	    setQsRowsColumns();
             setQsBatteryPercentMode();
+            setHeadsUpStoplist();
+            setHeadsUpBlacklist();
+
         }
     }
 
@@ -4193,6 +4201,16 @@ public class StatusBar extends SystemUI implements DemoMode,
         setBlackStatusBar(immerseMode);
         setCutoutOverlay(hideCutoutMode);
         setStatusBarStockOverlay(hideCutoutMode && statusBarStock);
+    }
+
+    private void setHeadsUpStoplist() {
+        if (mPresenter != null)
+            mPresenter.setHeadsUpStoplist();
+    }
+
+    private void setHeadsUpBlacklist() {
+        if (mPresenter != null)
+            mPresenter.setHeadsUpBlacklist();
     }
 
     public int getWakefulnessState() {
