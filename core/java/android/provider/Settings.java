@@ -5369,6 +5369,25 @@ public final class Settings {
         public static final String BATTERY_BAR_USE_GRADIENT_COLOR = "battery_bar_use_gradient_color";
 
         /**
+         * 0 = off
+	 * 1 = left
+	 * 2 = right
+         */
+        public static final String STATUS_BAR_LOGO = "status_bar_logo";
+
+        /**
+	 ** Statusbar logo Style
+	 ** @hide
+	 **/
+	 public static final String STATUS_BAR_LOGO_STYLE = "status_bar_logo_style";
+
+	/**
+	 ** Statusbar logo Color
+	 ** @hide
+         **/
+	public static final String STATUS_BAR_LOGO_COLOR = "status_bar_logo_color";
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
@@ -5642,7 +5661,8 @@ public final class Settings {
             PRIVATE_SETTINGS.add(STATUSBAR_CLOCK_DATE_DISPLAY);
             PRIVATE_SETTINGS.add(STATUSBAR_CLOCK_DATE_STYLE);
             PRIVATE_SETTINGS.add(STATUSBAR_CLOCK_DATE_FORMAT);
-	}
+            PRIVATE_SETTINGS.add(STATUS_BAR_LOGO);
+        }
 
         /**
          * These are all public system settings
