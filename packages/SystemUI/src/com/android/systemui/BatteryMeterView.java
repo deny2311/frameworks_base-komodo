@@ -389,7 +389,12 @@ public class BatteryMeterView extends LinearLayout implements
     }
 
     private void setPercentTextAtCurrentLevel() {
-        mBatteryPercentView.setText(
+        // Use the high voltage symbol ⚡ (u26A1 unicode) but prevent the system
+        // to load its emoji colored variant with the uFE0E flag
+        String bolt = "\u26A1\uFE0E";
+        CharSequence mChargeIndicator = mCharging && (mBatteryStyle == BATTERY_STYLE_HIDDEN)
+                ? (bolt + " ") : "";
+        mBatteryPercentView.setText(mChargeIndicator +
                 NumberFormat.getPercentInstance().format(mLevel / 100f));
         setContentDescription(
                 getContext().getString(mCharging ? R.string.accessibility_battery_level_charging
@@ -416,6 +421,24 @@ public class BatteryMeterView extends LinearLayout implements
                                 LayoutParams.WRAP_CONTENT,
                                 LayoutParams.MATCH_PARENT));
             }
+            if (mBatteryStyle == BATTERY_STYLE_HIDDEN) {
+                mBatteryPercentView.setPaddingRelative(0, 0, 0, 0);
+            } else {
+                Resources res = getContext().getResources();
+                mBatteryPercentView.setPaddingRelative(
+                        res.getDimensionPixelSize(R.dimen.battery_level_padding_start), 0, 0, 0);
+            }
+        } else {
+            removeBatteryPercentView();
+        }
+        updatePercentText();
+    }
+
+    public void updateVisibility() {
+        if (mBatteryStyle == BATTERY_STYLE_HIDDEN) {
+            mBatteryIconView.setVisibility(View.GONE);
+            mBatteryIconView.setImageDrawable(null);
+            //setVisibility(View.GONE);
         } else {
             if (showing) {
                 removeView(mBatteryPercentView);
