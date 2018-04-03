@@ -4548,6 +4548,12 @@ public final class Settings {
                 BOOLEAN_VALIDATOR;
 
         /**
+         * Bottom brightness slider
+         * @hide
+         */
+        public static final String QS_BOTTOM_BRIGHTNESS = "qs_bottom_brightness";
+
+        /**
          * Network traffic inactivity threshold (default is 1 kBs)
          * @hide
          */
