@@ -20,7 +20,6 @@
 
     <!-- Screenrecord UI -->
     <dimen name="screenrecord_dot_size">48dp</dimen>
-    <!-- Dismiss all button -->
 
     <!-- Dismiss all button -->
     <dimen name="dismiss_all_button_elevation">10dp</dimen>
@@ -30,4 +29,6 @@
     <dimen name="dismiss_all_button_width">55dp</dimen>
     <dimen name="dismiss_all_fab_src_size">24dp</dimen>
 
+    <!-- Sets a custom extra padding for the QS icons and statusbar date -->
+    <dimen name="qs_items_padding">8dp</dimen>
 </resources>
