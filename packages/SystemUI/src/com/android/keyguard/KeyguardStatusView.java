@@ -85,7 +85,6 @@ public class KeyguardStatusView extends GridLayout implements
         public void onTimeChanged() {
             refreshTime();
             refreshLockFont();
-            refreshLockDateFont();
         }
 
         @Override
@@ -251,7 +250,6 @@ public class KeyguardStatusView extends GridLayout implements
             mClockView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                     getResources().getDimensionPixelSize(R.dimen.widget_big_font_size));
             refreshLockFont();
-            refreshLockDateFont();
         }
         if (mOwnerInfo != null) {
             mOwnerInfo.setTextSize(TypedValue.COMPLEX_UNIT_PX,
