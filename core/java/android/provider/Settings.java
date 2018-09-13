@@ -4776,7 +4776,13 @@ public final class Settings {
 
         private static final Validator NOTIFICATION_HEADERS_VALIDATOR = BOOLEAN_VALIDATOR;
 
-         /**
+        /**
+	 ** Whether to use partial screenshot when using volume keys
+	 ** @hide
+	 **/
+        public static final String SCREENSHOT_TYPE = "screenshot_type";
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
