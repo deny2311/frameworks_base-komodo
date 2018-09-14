@@ -1003,6 +1003,19 @@ public class Build {
     public static final String FINGERPRINT = deriveFingerprint();
 
     /**
+     * Custom fingerprint
+     * @hide
+     */
+    public static final String PROP_KOMODO_FINGERPRINT = "org.komodo.fingerprint";
+
+    /**
+     * Custom fingerprint
+     * @hide
+     */
+    public static final String KOMODO_FINGERPRINT = SystemProperties.get(PROP_KOMODO_FINGERPRINT,
+            deriveFingerprint());
+
+    /**
      * Some devices split the fingerprint components between multiple
      * partitions, so we might derive the fingerprint at runtime.
      */
