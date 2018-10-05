@@ -26,7 +26,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.ParcelUuid;
 import android.os.SystemClock;
-import android.os.SystemProperties;
 import android.text.TextUtils;
 import android.util.EventLog;
 import android.util.Log;
@@ -710,7 +709,7 @@ public class CachedBluetoothDevice implements Comparable<CachedBluetoothDevice> 
             Log.w(TAG, "mIsBondingInitiatedLocally" + mIsBondingInitiatedLocally);
             if (mDevice.isBluetoothDock()) {
                 onBondingDockConnect();
-            } else if (SystemProperties.getBoolean("persist.vendor.btstack.connect.peer_earbud", false)) {
+            } else if (mIsTwsConnectEnabled) {
                 Log.d(TAG, "Initiating connection to" + mDevice);
                 if (mDevice.isBondingInitiatedLocally() || mDevice.isTwsPlusDevice()) {
                     connect(false);
