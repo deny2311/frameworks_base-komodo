@@ -8,5 +8,8 @@
     <color name="edge_light_red">#ffea4234</color>
     <color name="edge_light_yellow">#fffbbc06</color>
 
+    <!-- QS date color-->
+    <color name="qs_date_color">#FF4C4C4C</color>
+
 </resources>
 

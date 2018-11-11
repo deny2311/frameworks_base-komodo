@@ -18,9 +18,9 @@
     xmlns:systemui="http://schemas.android.com/apk/res-auto"
     android:id="@+id/quick_qs_status_icons"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/qs_header_tooltip_height"
-    android:paddingStart="@dimen/status_bar_padding_start"
-    android:paddingEnd="@dimen/status_bar_padding_end"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/qs_header_top_padding"
+    android:paddingBottom="@dimen/qs_header_bottom_padding"
     android:layout_below="@id/quick_status_bar_system_icons"
     android:clipChildren="false"
     android:clipToPadding="false"
@@ -35,7 +35,8 @@
         android:layout_gravity="start|center_vertical"
         android:gravity="center_vertical"
         android:singleLine="true"
-        android:textAppearance="@style/TextAppearance.QS.Status"
+        android:textAppearance="@style/TextAppearance.StatusBar.Clock"
+        android:textColor="@color/qs_date_color"
         systemui:datePattern="@string/abbrev_wday_month_day_no_year_alarm" />
 
     <com.android.systemui.statusbar.phone.StatusIconContainer
@@ -49,7 +50,6 @@
         android:id="@+id/batteryRemainingIcon"
         android:layout_height="match_parent"
         android:layout_width="wrap_content"
-        systemui:textAppearance="@style/TextAppearance.QS.Status"
-        android:paddingEnd="2dp" />
+        systemui:textAppearance="@style/TextAppearance.StatusBar.Clock" />
 
 </LinearLayout>
