@@ -92,10 +92,10 @@ import javax.inject.Named;
 public class QSPanel extends LinearLayout implements Tunable, Callback, BrightnessMirrorListener,
         Dumpable {
 
-    private static final String QS_SHOW_AUTO_BRIGHTNESS = "qs_show_auto_brightness";
+    public static final String QS_SHOW_AUTO_BRIGHTNESS = "qs_show_auto_brightness";
     public static final String QS_SHOW_BRIGHTNESS_SLIDER = "qs_show_brightness_slider";
     public static final String QS_SHOW_HEADER = "qs_show_header";
-    public static final String QS_BRIGHTNESS_POSITION_BOTTOM = "qs_brightness_position_bottom";
+    public static final String QS_SHOW_BRIGHTNESS_BUTTONS = "qs_show_brightness_buttons";
 
     private static final String TAG = "QSPanel";
 
@@ -130,6 +130,8 @@ public class QSPanel extends LinearLayout implements Tunable, Callback, Brightne
     private BrightnessMirrorController mBrightnessMirrorController;
     private View mDivider;
 
+    private ImageView mMinBrightness;
+    private ImageView mMaxBrightness;
     private int mBrightnessSlider = 1;
 
     private final Vibrator mVibrator;
@@ -166,7 +168,7 @@ public class QSPanel extends LinearLayout implements Tunable, Callback, Brightne
         mQsTileRevealController = new QSTileRevealController(mContext, this,
                 (PagedTileLayout) mTileLayout);
 
-        ImageView mMinBrightness = mBrightnessView.findViewById(R.id.brightness_left);
+        mMinBrightness = mBrightnessView.findViewById(R.id.brightness_left);
         mMinBrightness.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -189,7 +191,7 @@ public class QSPanel extends LinearLayout implements Tunable, Callback, Brightne
             }
         });
 
-        ImageView mMaxBrightness = mBrightnessView.findViewById(R.id.brightness_right);
+        mMaxBrightness = mBrightnessView.findViewById(R.id.brightness_right);
         mMaxBrightness.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -293,6 +295,7 @@ public class QSPanel extends LinearLayout implements Tunable, Callback, Brightne
         final TunerService tunerService = Dependency.get(TunerService.class);
         tunerService.addTunable(this, QS_SHOW_AUTO_BRIGHTNESS);
         tunerService.addTunable(this, QS_SHOW_BRIGHTNESS_SLIDER);
+        tunerService.addTunable(this, QS_SHOW_BRIGHTNESS_BUTTONS);
 
         mSettingObserver.observe();
         mSettingObserver.update();
@@ -335,6 +338,9 @@ public class QSPanel extends LinearLayout implements Tunable, Callback, Brightne
             mBrightnessSlider = TunerService.parseInteger(newValue, 1);
             mBrightnessView.setVisibility(mBrightnessSlider != 0 ? VISIBLE : GONE);
             restartQSPanel();
+        } else if (QS_SHOW_BRIGHTNESS_BUTTONS.equals(key)) {
+            updateViewVisibilityForTuningValue(mMinBrightness, newValue);
+            updateViewVisibilityForTuningValue(mMaxBrightness, newValue);
         }
     }
 
