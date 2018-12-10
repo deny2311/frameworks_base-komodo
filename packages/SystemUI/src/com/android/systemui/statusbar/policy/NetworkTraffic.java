@@ -79,6 +79,8 @@ public class NetworkTraffic extends TextView implements StatusIconDisplayable {
     private boolean indicatorUp = false;
     private boolean indicatorDown = false;
 
+    private boolean mScreenOn = true;
+
     private Handler mTrafficHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -263,10 +265,15 @@ public class NetworkTraffic extends TextView implements StatusIconDisplayable {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (action != null && action.equals(ConnectivityManager.CONNECTIVITY_ACTION)
-                    || action.equals(Intent.ACTION_SCREEN_ON)) {
+            if (action == null) return;
+
+            if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION) && mScreenOn) {
                 updateSettings();
-            } else if (action != null && action.equals(Intent.ACTION_SCREEN_OFF)) {
+            } else if (action.equals(Intent.ACTION_SCREEN_ON)) {
+                mScreenOn = true;
+                updateSettings();
+            } else if (action.equals(Intent.ACTION_SCREEN_OFF)) {
+                mScreenOn = false;
                 clearHandlerCallbacks();
             }
         }
