@@ -210,32 +210,4 @@ public class KomodoUtils {
         float px = 24 * (metrics.densityDpi / 160f);
         return result > Math.round(px);
     }
-
-    // Check if device is connected to the internet
-    public static boolean isConnected(Context context) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (cm == null) return false;
-
-        NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-        return wifi.isConnected() || mobile.isConnected();
-    }
-
-    // Returns today's passed time in Millisecond
-    public static long getTodayMillis() {
-        final long passedMillis;
-        Time time = new Time();
-        time.set(System.currentTimeMillis());
-        passedMillis = ((time.hour * 60 * 60) + (time.minute * 60) + time.second) * 1000;
-        return passedMillis;
-    }
-
-    // Check if device is connected to Wi-Fi
-    public static boolean isWiFiConnected(Context context) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (cm == null) return false;
-
-        NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        return wifi.isConnected();
-    }
 }
