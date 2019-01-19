@@ -101,4 +101,8 @@
     <java-symbol type="string" name="config_SmartChargingSysfsNode" />
     <java-symbol type="string" name="config_SmartChargingSupspendValue" />
     <java-symbol type="string" name="config_SmartChargingResumeValue" />
+
+    <!-- Toast animation -->
+    <java-symbol type="style" name="Animation.Toast.Material" />
+
 </resources>
