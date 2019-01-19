@@ -61,4 +61,7 @@
     <!-- Smart charging battery percentage -->
     <java-symbol type="integer" name="config_smartChargingBatteryLevel" />
 
+    <!-- Toast animation -->
+    <java-symbol type="style" name="Animation.Toast.Material" />
+
 </resources>
