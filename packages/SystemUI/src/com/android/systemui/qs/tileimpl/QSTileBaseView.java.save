@@ -75,11 +75,15 @@ public class QSTileBaseView extends com.android.systemui.plugins.qs.QSTileView {
     private float mStrokeWidthActive;
     private float mStrokeWidthInactive;
 
+<<<<<<< HEAD
+    private final ImageView mBg;
     private int mColorActive;
     private int mColorActiveAlpha;
     private final int mColorInactive;
+=======
     private final ImageView backgroundView;
     private final ImageView foregroundView;
+>>>>>>> 7cdee5c5efd (Bring gradient effect to QS tiles)
     private final int mColorDisabled;
     private int mState;
     private final ShapeDrawable backgroundDrawable;
@@ -92,7 +96,7 @@ public class QSTileBaseView extends com.android.systemui.plugins.qs.QSTileView {
 
     public QSTileBaseView(Context context, QSIconView icon, boolean collapsedView) {
         super(context);
-
+        
         // Default to Quick Tile padding, and QSTileView will specify its own padding.
         int padding = context.getResources().getDimensionPixelSize(R.dimen.qs_quick_tile_padding);
         mIconFrame = new FrameLayout(context);
@@ -158,6 +162,7 @@ public class QSTileBaseView extends com.android.systemui.plugins.qs.QSTileView {
         setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
         setBackground(mTileBackground);
 
+<<<<<<< HEAD
         mColorActive = Utils.getColorAttrDefaultColor(context, android.R.attr.colorAccent);
         mColorActiveAlpha = adjustAlpha(mColorActive, 0.2f);
         boolean setQsUseNewTint = Settings.System.getIntForUser(context.getContentResolver(),
@@ -169,6 +174,8 @@ public class QSTileBaseView extends com.android.systemui.plugins.qs.QSTileView {
                 Utils.getColorAttrDefaultColor(context, android.R.attr.textColorTertiary));
         mColorInactive = Utils.getColorAttrDefaultColor(context, android.R.attr.textColorSecondary);
 
+=======
+>>>>>>> 7cdee5c5efd (Bring gradient effect to QS tiles)
         setPadding(0, 0, 0, 0);
         setClipChildren(false);
         setClipToPadding(false);
