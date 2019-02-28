@@ -2017,6 +2017,15 @@ public class StatusBar extends SystemUI implements
         }
     }
 
+    @Override
+    public void toggleSettingsPanel() {
+        if (mPanelExpanded) {
+            mShadeController.animateCollapsePanels();
+        } else {
+            animateExpandSettingsPanel(null);
+        }
+    }
+
     void makeExpandedVisible(boolean force) {
         if (SPEW) Log.d(TAG, "Make expanded visible: expanded visible=" + mExpandedVisible);
         if (!force && (mExpandedVisible || !mCommandQueue.panelsEnabled())) {
