@@ -69,6 +69,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.om.IOverlayManager;
 import android.content.pm.IPackageManager;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -620,6 +621,7 @@ public class StatusBar extends SystemUI implements DemoMode,
             (SysuiStatusBarStateController) Dependency.get(StatusBarStateController.class);
 
     private boolean mUnexpandedQSBrightnessSlider;
+    private boolean mDisplayCutoutHidden;
 
     private final KeyguardUpdateMonitorCallback mUpdateCallback =
             new KeyguardUpdateMonitorCallback() {
@@ -1772,12 +1774,22 @@ public class StatusBar extends SystemUI implements DemoMode,
                         Settings.System.BRIGHTNESS_SLIDER_QS_UNEXPANDED, 0, UserHandle.USER_CURRENT) == 1;
         if (mUnexpandedQSBrightnessSlider != UnexpandedQSBrightnessSlider){
             mUnexpandedQSBrightnessSlider = UnexpandedQSBrightnessSlider;
+       }
+    }
+
+    private void updateCutoutOverlay() {
+        boolean displayCutoutHidden = Settings.System.getIntForUser(mContext.getContentResolver(),
+                        Settings.System.DISPLAY_CUTOUT_HIDDEN, 0, UserHandle.USER_CURRENT) == 1;
+        if (mDisplayCutoutHidden != displayCutoutHidden){
+            mDisplayCutoutHidden = displayCutoutHidden;
             mUiOffloadThread.submit(() -> {
                 final IOverlayManager mOverlayManager = IOverlayManager.Stub.asInterface(
                                 ServiceManager.getService(Context.OVERLAY_SERVICE));
                 try {
                     mOverlayManager.setEnabled("com.komodo.overlay.brightnessslider",
                                 mUnexpandedQSBrightnessSlider, mLockscreenUserManager.getCurrentUserId());
+                    mOverlayManager.setEnabled("org.pixelexperience.overlay.hidecutout",
+                                mDisplayCutoutHidden, mLockscreenUserManager.getCurrentUserId());
                 } catch (RemoteException ignored) {
                 }
             });
@@ -4558,16 +4570,20 @@ public class StatusBar extends SystemUI implements DemoMode,
 
         void observe() {
             ContentResolver resolver = mContext.getContentResolver();
-
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.DISPLAY_CUTOUT_HIDDEN),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
-
+            if (uri.equals(Settings.System.getUriFor(Settings.System.DISPLAY_CUTOUT_HIDDEN))) {
+                updateCutoutOverlay();
+            }
         }
 
         public void update() {
-
+            updateCutoutOverlay();
         }
     }
 

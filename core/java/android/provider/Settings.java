@@ -5404,6 +5404,16 @@ public final class Settings {
         };
 
         /**
+         * Display cutout
+         * @hide
+         */
+        public static final String DISPLAY_CUTOUT_HIDDEN = "display_cutout_hidden";
+
+        /** @hide */
+        private static final Validator DISPLAY_CUTOUT_HIDDEN_VALIDATOR = new
+                SettingsValidators.InclusiveIntegerRangeValidator(0, 1);
+
+        /**
          * These are all public system settings
          *
          * @hide
@@ -5560,6 +5570,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(FOOTER_TEXT_SHOW);
             PRIVATE_SETTINGS.add(FOOTER_TEXT_STRING);
             PRIVATE_SETTINGS.add(FINGERPRINT_SUCCESS_VIB);
+            PRIVATE_SETTINGS.add(DISPLAY_CUTOUT_HIDDEN);
             // komodo
         }
 
@@ -5712,7 +5723,8 @@ public final class Settings {
             VALIDATORS.put(FOOTER_TEXT_SHOW, FOOTER_TEXT_SHOW_VALIDATOR);
             VALIDATORS.put(FOOTER_TEXT_STRING, FOOTER_TEXT_STRING_VALIDATOR);
             VALIDATORS.put(FINGERPRINT_SUCCESS_VIB, FINGERPRINT_SUCCESS_VIB_VALIDATOR);
-            // komodo 
+            VALIDATORS.put(DISPLAY_CUTOUT_HIDDEN, DISPLAY_CUTOUT_HIDDEN_VALIDATOR);
+            // Komodo
         }
 
         /**
