@@ -58,4 +58,7 @@
   <java-symbol type="anim" name="custom_app_out" />
   <java-symbol type="integer" name="config_deviceHardwareKeys" />
 
+    <!-- Smart charging battery percentage -->
+    <java-symbol type="integer" name="config_smartChargingBatteryLevel" />
+
 </resources>
