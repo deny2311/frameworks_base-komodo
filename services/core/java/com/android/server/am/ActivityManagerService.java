@@ -403,6 +403,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiFunction;
 
+import com.android.internal.util.komodo.cutout.CutoutFullscreenController;
+
 public class ActivityManagerService extends IActivityManager.Stub
         implements Watchdog.Monitor, BatteryStatsImpl.BatteryCallback {
 
@@ -1594,6 +1596,8 @@ public class ActivityManagerService extends IActivityManager.Stub
 
     final SwipeToScreenshotObserver mSwipeToScreenshotObserver;
     private boolean mIsSwipeToScrenshotEnabled;
+
+    private CutoutFullscreenController mCutoutFullscreenController;
 
     /**
      * Used to notify activity lifecycle events.
@@ -7640,6 +7644,9 @@ public class ActivityManagerService extends IActivityManager.Stub
 
         // Gaming mode provider
         mGamingModeController = new GamingModeController(mContext);
+
+        // Force full screen for devices with cutout
+        mCutoutFullscreenController = new CutoutFullscreenController(mContext);
     }
 
     void startPersistentApps(int matchFlags) {
@@ -19185,6 +19192,13 @@ public class ActivityManagerService extends IActivityManager.Stub
     public boolean isSwipeToScreenshotGestureActive() {
         synchronized (this) {
             return mIsSwipeToScrenshotEnabled && SystemProperties.getBoolean("sys.android.screenshot", false);
+        }
+    }
+
+    @Override
+    public boolean shouldForceCutoutFullscreen(String packageName) {
+        synchronized (this) {
+            return mCutoutFullscreenController.shouldForceCutoutFullscreen(packageName);
         }
     }
 }
