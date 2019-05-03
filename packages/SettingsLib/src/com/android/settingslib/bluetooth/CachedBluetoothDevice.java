@@ -154,22 +154,6 @@ public class CachedBluetoothDevice implements Comparable<CachedBluetoothDevice> 
       return peerDevice;
     }
 
-    /* Gets Device for seondary TWS device
-     * @param mDevice Primary TWS device  to get secondary
-     * @return Description of the device
-     */
-
-    private BluetoothDevice getTwsPeerDevice() {
-      BluetoothAdapter bluetoothAdapter;
-      BluetoothDevice peerDevice = null;
-      if (mDevice.isTwsPlusDevice()) {
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        String peerAddress = mDevice.getTwsPlusPeerAddress();
-        peerDevice = bluetoothAdapter.getRemoteDevice(peerAddress);
-      }
-      return peerDevice;
-    }
-
     /**
      * Describes the current device and profile for logging.
      *
