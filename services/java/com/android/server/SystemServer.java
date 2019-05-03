@@ -1833,14 +1833,12 @@ public final class SystemServer {
             traceEnd();
 
             // LiveDisplay
-            if (!mOnlyCore){
-                traceBeginAndSlog("StartLineageHardwareService");
-                mSystemServiceManager.startService(LineageHardwareService.class);
-                traceEnd();
-                traceBeginAndSlog("StartLiveDisplayService");
-                mSystemServiceManager.startService(LiveDisplayService.class);
-                traceEnd();
-            }
+            traceBeginAndSlog("StartLineageHardwareService");
+            mSystemServiceManager.startService(LineageHardwareService.class);
+            traceEnd();
+            traceBeginAndSlog("StartLiveDisplayService");
+            mSystemServiceManager.startService(LiveDisplayService.class);
+            traceEnd();
         }
 
         if (!isWatch) {
