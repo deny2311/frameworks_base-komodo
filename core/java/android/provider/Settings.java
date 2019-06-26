@@ -4734,7 +4734,6 @@ public final class Settings {
 
         private static final Validator OMNI_STATUS_BAR_FILE_HEADER_IMAGE_VALIDATOR =
                 ANY_STRING_VALIDATOR;
-
         /**
          * @hide
          */
@@ -4744,6 +4743,16 @@ public final class Settings {
          * @hide
          */
         public static final String SMART_CHARGING_LEVEL = "smart_charging_level";
+
+        /**
+         * @hide
+         */
+        public static final String SMART_CHARGING_RESET_STATS = "smart_charging_reset_stats";
+
+        /**
+         * @hide
+         */
+        public static final String SMART_CHARGING_RESUME_LEVEL = "smart_charging_resume_level";
 
         /**
          * Whether to enable Ambient edge light
@@ -4976,11 +4985,6 @@ public final class Settings {
         /** @hide */
         private static final Validator VOLUME_BUTTON_MUSIC_CONTROL_VALIDATOR =
                 BOOLEAN_VALIDATOR;
-
-        /**
-         * @hide
-         */
-        public static final String SMART_CHARGING_RESUME_LEVEL = "smart_charging_resume_level";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
