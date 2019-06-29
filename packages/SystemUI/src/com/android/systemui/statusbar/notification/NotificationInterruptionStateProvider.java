@@ -75,6 +75,8 @@ public class NotificationInterruptionStateProvider {
     protected boolean mUseHeadsUp = false;
     private boolean mDisableNotificationAlerts;
 
+    private boolean mSkipHeadsUp;
+
     @Inject
     public NotificationInterruptionStateProvider(Context context, NotificationFilter filter,
             StatusBarStateController stateController, BatteryController batteryController) {
@@ -353,6 +355,28 @@ public class NotificationInterruptionStateProvider {
             return false;
         }
         return true;
+    }
+
+    public void setGamingPeekMode(boolean skipHeadsUp) {
+        mSkipHeadsUp = skipHeadsUp;
+    }
+
+    public boolean shouldSkipHeadsUp(StatusBarNotification sbn) {
+        boolean isImportantHeadsUp = false;
+        String notificationPackageName = sbn.getPackageName();
+        isImportantHeadsUp = notificationPackageName.equals(getDefaultDialerPackage(mTm))
+                || notificationPackageName.equals(getDefaultSmsPackage(mContext))
+                || notificationPackageName.contains("clock");
+        return !mStatusBarStateController.isDozing() && mLessBoringHeadsUp && mSkipHeadsUp && !isImportantHeadsUp;
+    }
+
+    private static String getDefaultSmsPackage(Context ctx) {
+        return Sms.getDefaultSmsPackage(ctx);
+        // for reference, there's also a new RoleManager api with getDefaultSmsPackage(context, userid) 
+    }
+
+    private static String getDefaultDialerPackage(TelecomManager tm) {
+        return tm != null ? tm.getDefaultDialerPackage() : "";
     }
 
     /**
