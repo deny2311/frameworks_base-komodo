@@ -95,6 +95,9 @@
     <java-symbol type="string" name="gaming_mode_enabled_toast" />
     <java-symbol type="string" name="gaming_mode_disabled_toast" />
 
-    <!-- Smart charging battery percentage -->
+    <!-- Smart charging -->
     <java-symbol type="integer" name="config_smartChargingBatteryLevel" />
+    <java-symbol type="string" name="config_SmartChargingSysfsNode" />
+    <java-symbol type="string" name="config_SmartChargingSupspendValue" />
+    <java-symbol type="string" name="config_SmartChargingResumeValue" />
 </resources>
