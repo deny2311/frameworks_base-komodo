@@ -755,15 +755,11 @@ public class StatusBar extends SystemUI implements DemoMode,
 
         createAndAddWindows(result);
 
-        if (mWallpaperSupported) {
-            // Make sure we always have the most current wallpaper info.
-            IntentFilter wallpaperChangedFilter = new IntentFilter(Intent.ACTION_WALLPAPER_CHANGED);
-            mContext.registerReceiverAsUser(mWallpaperChangedReceiver, UserHandle.ALL,
-                    wallpaperChangedFilter, null /* broadcastPermission */, null /* scheduler */);
-            mWallpaperChangedReceiver.onReceive(mContext, null);
-        } else if (DEBUG) {
-            Log.v(TAG, "start(): no wallpaper service ");
-        }
+        // Make sure we always have the most current wallpaper info.
+        IntentFilter wallpaperChangedFilter = new IntentFilter(Intent.ACTION_WALLPAPER_CHANGED);
+        mContext.registerReceiverAsUser(mWallpaperChangedReceiver, UserHandle.ALL,
+                wallpaperChangedFilter, null /* broadcastPermission */, null /* scheduler */);
+        mWallpaperChangedReceiver.onReceive(mContext, null);
 
         // Set up the initial notification state. This needs to happen before CommandQueue.disable()
         setUpPresenter();
@@ -4022,6 +4018,9 @@ public class StatusBar extends SystemUI implements DemoMode,
                     Settings.System.HEADS_UP_STOPLIST_VALUES), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.HEADS_UP_BLACKLIST_VALUES), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.DOUBLE_TAP_SLEEP_GESTURE),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -4058,6 +4057,13 @@ public class StatusBar extends SystemUI implements DemoMode,
     private void setHeadsUpBlacklist() {
         if (mPresenter != null)
             mPresenter.setHeadsUpBlacklist();
+            setStatusDoubleTapToSleep();
+    }
+
+    private void setStatusDoubleTapToSleep() {
+        if (mStatusBarWindow != null) {
+            mStatusBarWindow.updateSettings();
+        }
     }
 
     public int getWakefulnessState() {

@@ -5284,6 +5284,16 @@ public final class Settings {
         public static final String LOCKSCREEN_BATTERY_INFO = "lockscreen_battery_info";
 
         /**
+         *  Enable statusbar double tap gesture on to put device to sleep
+         * @hide
+         */
+        public static final String DOUBLE_TAP_SLEEP_GESTURE = "double_tap_sleep_gesture";
+
+        /** @hide */
+        private static final Validator DOUBLE_TAP_SLEEP_GESTURE_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
+        /**
          * Whether or not to vibrate when a touchscreen gesture is detected
          * @hide
          */
@@ -5400,6 +5410,7 @@ public final class Settings {
             FOOTER_TEXT_SHOW,
             FOOTER_TEXT_STRING,
             FINGERPRINT_SUCCESS_VIB,
+            DOUBLE_TAP_SLEEP_GESTURE,
             // komodo
         };
 
@@ -5583,7 +5594,8 @@ public final class Settings {
             PRIVATE_SETTINGS.add(FOOTER_TEXT_STRING);
             PRIVATE_SETTINGS.add(FINGERPRINT_SUCCESS_VIB);
             PRIVATE_SETTINGS.add(DISPLAY_CUTOUT_HIDDEN);
-            // komodo
+            PRIVATE_SETTINGS.add(DOUBLE_TAP_SLEEP_GESTURE);
+            // kOmodO
         }
 
         /**
@@ -5736,7 +5748,8 @@ public final class Settings {
             VALIDATORS.put(FOOTER_TEXT_STRING, FOOTER_TEXT_STRING_VALIDATOR);
             VALIDATORS.put(FINGERPRINT_SUCCESS_VIB, FINGERPRINT_SUCCESS_VIB_VALIDATOR);
             VALIDATORS.put(DISPLAY_CUTOUT_HIDDEN, DISPLAY_CUTOUT_HIDDEN_VALIDATOR);
-            // Komodo
+            VALIDATORS.put(DOUBLE_TAP_SLEEP_GESTURE, DOUBLE_TAP_SLEEP_GESTURE_VALIDATOR);
+            // komodo
         }
 
         /**
