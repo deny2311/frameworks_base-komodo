@@ -301,6 +301,13 @@ public class RecordingService extends Service {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            setTapsVisible(mShowTaps);
+
+            // Set up media recorder
+            mMediaRecorder = new MediaRecorder();
+            if (mUseAudio) {
+                mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            }
 
             // Check if the device allows to use h265 for lighter recordings
             boolean useH265 = getResources().getBoolean(R.bool.config_useNewScreenRecEncoder);
