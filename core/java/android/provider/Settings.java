@@ -5215,6 +5215,7 @@ public final class Settings {
          */
         public static final String ADAPTIVE_PLAYBACK_ENABLED = "adaptive_playback_enabled";
 
+<<<<<<< HEAD
         /**
          * Adaptive playback's timeout in ms
          * @hide
@@ -5228,6 +5229,15 @@ public final class Settings {
         public static final String NOTIFICATION_HEADERS = "notification_headers";
 
         private static final Validator NOTIFICATION_HEADERS_VALIDATOR = BOOLEAN_VALIDATOR;
+
+        /**
+         * Whether footer text shows the build type
+         * @hide
+         */
+        public static final String FOOTER_TEXT_SHOW = "footer_text_show";
+         /** @hide */
+        private static final Validator FOOTER_TEXT_SHOW_VALIDATOR =
+                BOOLEAN_VALIDATOR;
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
@@ -5337,7 +5347,8 @@ public final class Settings {
             HEADS_UP_BLACKLIST_VALUES,
             GESTURE_PILL_TOGGLE,
             NOTIFICATION_HEADERS,
-            // komodo panel end
+            FOOTER_TEXT_SHOW
+            // komodo
         };
 
         /**
@@ -5494,6 +5505,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(QS_TILE_TITLE_VISIBILITY);
             PRIVATE_SETTINGS.add(QS_LAYOUT_ROWS);
             PRIVATE_SETTINGS.add(QS_QUICKBAR_COLUMNS);
+<<<<<<< HEAD
             PRIVATE_SETTINGS.add(SCREEN_OFF_ANIMATION);
             PRIVATE_SETTINGS.add(VOLUME_ROCKER_WAKE);
             PRIVATE_SETTINGS.add(VOLUME_BUTTON_MUSIC_CONTROL);
@@ -5506,7 +5518,8 @@ public final class Settings {
             PRIVATE_SETTINGS.add(HEADS_UP_STOPLIST_VALUES);
             PRIVATE_SETTINGS.add(HEADS_UP_BLACKLIST_VALUES);
             PRIVATE_SETTINGS.add(GESTURE_PILL_TOGGLE);
-            // Komodo panel end
+            PRIVATE_SETTINGS.add(FOOTER_TEXT_SHOW);
+            // komodo
         }
 
         /**
@@ -5642,6 +5655,7 @@ public final class Settings {
             VALIDATORS.put(QS_TILE_TITLE_VISIBILITY, QS_TILE_TITLE_VISIBILITY_VALIDATOR);
             VALIDATORS.put(QS_LAYOUT_ROWS, QS_LAYOUT_ROWS_VALIDATOR);
             VALIDATORS.put(QS_QUICKBAR_COLUMNS, QS_QUICKBAR_COLUMNS_VALIDATOR);
+<<<<<<< HEAD
             VALIDATORS.put(SCREEN_OFF_ANIMATION, SCREEN_OFF_ANIMATION_VALIDATOR);
             VALIDATORS.put(VOLUME_ROCKER_WAKE, VOLUME_ROCKER_WAKE_VALIDATOR);
             VALIDATORS.put(VOLUME_BUTTON_MUSIC_CONTROL, VOLUME_BUTTON_MUSIC_CONTROL_VALIDATOR);
@@ -5655,7 +5669,8 @@ public final class Settings {
             VALIDATORS.put(HEADS_UP_BLACKLIST_VALUES, HEADS_UP_BLACKLIST_VALUES_VALIDATOR);
             VALIDATORS.put(GESTURE_PILL_TOGGLE, GESTURE_PILL_TOGGLE_VALIDATOR);
             VALIDATORS.put(NOTIFICATION_HEADERS, NOTIFICATION_HEADERS_VALIDATOR);
-            // komodo panel end
+            VALIDATORS.put(FOOTER_TEXT_SHOW, FOOTER_TEXT_SHOW_VALIDATOR);
+            // komodo
         }
 
         /**
