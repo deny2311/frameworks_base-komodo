@@ -85,6 +85,7 @@ public class KeyguardStatusView extends GridLayout implements
         public void onTimeChanged() {
             refreshTime();
             refreshLockFont();
+            refreshLockDateFont();
         }
 
         @Override
@@ -250,6 +251,7 @@ public class KeyguardStatusView extends GridLayout implements
             mClockView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                     getResources().getDimensionPixelSize(R.dimen.widget_big_font_size));
             refreshLockFont();
+            refreshLockDateFont();
         }
         if (mOwnerInfo != null) {
             mOwnerInfo.setTextSize(TypedValue.COMPLEX_UNIT_PX,
@@ -294,96 +296,56 @@ public class KeyguardStatusView extends GridLayout implements
     }
 
     private void refreshLockDateFont() {
-        mKeyguardSlice.setTextDateFont(getDateFont(getLockDateFont()));
-        mClockView.setTextDateFont(getDateFont(getLockDateFont()));
+        setLockDateFont(mKeyguardSlice, getLockClockFont());
     }
 
-    private Typeface getDateFont(int userSelection) {
-        Typeface tf;
-        switch (userSelection) {
-            case 0:
-            default:
-                return Typeface.create(mContext.getResources().getString(R.string.clock_sysfont_headline), Typeface.NORMAL);
-            case 1:
-                return Typeface.create(mContext.getResources().getString(R.string.clock_sysfont_body), Typeface.NORMAL);
-            case 2:
-                return Typeface.create("sans-serif", Typeface.BOLD);
-            case 3:
-                return Typeface.create("sans-serif", Typeface.NORMAL);
-            case 4:
-                return Typeface.create("sans-serif", Typeface.ITALIC);
-            case 5:
-                return Typeface.create("sans-serif", Typeface.BOLD_ITALIC);
-            case 6:
-                return Typeface.create("sans-serif-light", Typeface.NORMAL);
-            case 7:
-                return Typeface.create("sans-serif-thin", Typeface.NORMAL);
-            case 8:
-                return Typeface.create("sans-serif-condensed", Typeface.NORMAL);
-            case 9:
-                return Typeface.create("sans-serif-condensed", Typeface.ITALIC);
-            case 10:
-                return Typeface.create("sans-serif-condensed", Typeface.BOLD);
-            case 11:
-                return Typeface.create("sans-serif-condensed", Typeface.BOLD_ITALIC);
-            case 12:
-                return Typeface.create("sans-serif-medium", Typeface.NORMAL);
-            case 13:
-                return Typeface.create("sans-serif-medium", Typeface.ITALIC);
-            case 14:
-                return Typeface.create("abelreg", Typeface.NORMAL);
-            case 15:
-                return Typeface.create("adamcg-pro", Typeface.NORMAL);
-            case 16:
-                return Typeface.create("adventpro", Typeface.NORMAL);
-            case 17:
-                return Typeface.create("alien-league", Typeface.NORMAL);
-            case 18:
-                return Typeface.create("archivonar", Typeface.NORMAL);
-            case 19:
-                return Typeface.create("autourone", Typeface.NORMAL);
-            case 20:
-                return Typeface.create("badscript", Typeface.NORMAL);
-            case 21:
-                return Typeface.create("bignoodle-regular", Typeface.NORMAL);
-            case 22:
-                return Typeface.create("biko", Typeface.NORMAL);
-            case 23:
-                return Typeface.create("cherryswash", Typeface.NORMAL);
-            case 24:
-                return Typeface.create("ginora-sans", Typeface.NORMAL);
-            case 25:
-                return Typeface.create("googlesans-sys", Typeface.NORMAL);
-            case 26:
-                return Typeface.create("ibmplex-mono", Typeface.NORMAL);
-            case 27:
-                return Typeface.create("inkferno", Typeface.NORMAL);
-            case 28:
-                return Typeface.create("instruction", Typeface.NORMAL);
-            case 29:
-                return Typeface.create("jack-lane", Typeface.NORMAL);
-            case 30:
-                return Typeface.create("kellyslab", Typeface.NORMAL);
-            case 31:
-                return Typeface.create("monad", Typeface.NORMAL);
-            case 32:
-                return Typeface.create("noir", Typeface.NORMAL);
-            case 33:
-                return Typeface.create("outrun-future", Typeface.NORMAL);
-            case 34:
-                return Typeface.create("pompiere", Typeface.NORMAL);
-            case 35:
-                return Typeface.create("reemkufi", Typeface.NORMAL);
-            case 36:
-                return Typeface.create("riviera", Typeface.NORMAL);
-            case 37:
-                return Typeface.create("the-outbox", Typeface.NORMAL);
-            case 38:
-                return Typeface.create("themeable-date", Typeface.NORMAL);
-            case 39:
-                return Typeface.create("vibur", Typeface.NORMAL);
-            case 40:
-                return Typeface.create("voltaire", Typeface.NORMAL);
+    private void setLockDateFont(KeyguardSliceView view, int fontStyle) {
+        if (view != null) {
+            switch (fontstyle) {
+                case 0:
+                default:
+                    view.setViewsTypeface(Typeface.create(mContext.getResources().getString(R.string.clock_sysfont_headline), Typeface.NORMAL));
+                    break;
+                case 1:
+                    view.setViewsTypeface(Typeface.create(mContext.getResources().getString(R.string.clock_sysfont_body), Typeface.NORMAL));
+                    break;
+                case 2:
+                    view.setViewsTypeface(Typeface.create("sans-serif", Typeface.BOLD));
+                    break;
+                case 3:
+                    view.setViewsTypeface(Typeface.create("sans-serif", Typeface.NORMAL));
+                    break;
+                case 4:
+                    view.setViewsTypeface(Typeface.create("sans-serif", Typeface.ITALIC));
+                    break;
+                case 5:
+                    view.setViewsTypeface(Typeface.create("sans-serif", Typeface.BOLD_ITALIC));
+                    break;
+                case 6:
+                    view.setViewsTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
+                    break;
+                case 7:
+                    view.setViewsTypeface(Typeface.create("sans-serif-thin", Typeface.NORMAL));
+                    break;
+                case 8:
+                    view.setViewsTypeface(Typeface.create("sans-serif-condensed", Typeface.NORMAL));
+                    break;
+                case 9:
+                    view.setViewsTypeface(Typeface.create("sans-serif-condensed", Typeface.ITALIC));
+                    break;
+                case 10:
+                    view.setViewsTypeface(Typeface.create("sans-serif-condensed", Typeface.BOLD));
+                    break;
+                case 11:
+                    view.setViewsTypeface(Typeface.create("sans-serif-condensed", Typeface.BOLD_ITALIC));
+                    break;
+                case 12:
+                    view.setViewsTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+                    break;
+                case 13:
+                    view.setViewsTypeface(Typeface.create("sans-serif-medium", Typeface.ITALIC));
+                    break;
+            }
         }
     }
 
