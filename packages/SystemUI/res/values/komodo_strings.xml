@@ -15,4 +15,7 @@
      limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <!-- Screenrecord UI -->
+    <string name="screenrecord_stopdot_label">Show stop dot</string>
 </resources>

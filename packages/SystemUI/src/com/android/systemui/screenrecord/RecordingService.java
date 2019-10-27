@@ -88,7 +88,6 @@ public class RecordingService extends Service {
     private static final String EXTRA_AUDIO_SOURCE = "extra_audioSource";
     private static final String EXTRA_SHOW_TAPS = "extra_showTaps";
     private static final String EXTRA_SHOW_DOT = "extra_showDot";
-    private static final String EXTRA_VIDEO_BITRATE = "extra_videoBitrate";
     private static final int REQUEST_CODE = 2;
 
     private static final String ACTION_START = "com.android.systemui.screenrecord.START";
@@ -136,8 +135,6 @@ public class RecordingService extends Service {
     private boolean mShowDot;
     private boolean mIsDotAtRight;
     private boolean mDotShowing;
-    private int mVideoBitrateOpt;
-    private int mAudioSourceOpt;
     private FrameLayout mFrameLayout;
     private LayoutInflater mInflater;
     private WindowManager mWindowManager;
@@ -155,15 +152,14 @@ public class RecordingService extends Service {
      * @param showTaps   True to make touches visible while recording
      */
     public static Intent getStartIntent(Context context, int resultCode, Intent data,
-            int audioSourceOpt, boolean showTaps, boolean showDot, int vidBitrateOpt) {
+            boolean useAudio, boolean showTaps, boolean showDot) {
         return new Intent(context, RecordingService.class)
                 .setAction(ACTION_START)
                 .putExtra(EXTRA_RESULT_CODE, resultCode)
                 .putExtra(EXTRA_DATA, data)
-                .putExtra(EXTRA_AUDIO_SOURCE, audioSourceOpt)
+                .putExtra(EXTRA_USE_AUDIO, useAudio)
                 .putExtra(EXTRA_SHOW_TAPS, showTaps)
-                .putExtra(EXTRA_SHOW_DOT, showDot)
-                .putExtra(EXTRA_VIDEO_BITRATE, vidBitrateOpt);
+                .putExtra(EXTRA_SHOW_DOT, showDot);
     }
 
     @Override
@@ -183,8 +179,6 @@ public class RecordingService extends Service {
                 mAudioSourceOpt = intent.getIntExtra(EXTRA_AUDIO_SOURCE, 0 /* disabled*/);
                 mShowTaps = intent.getBooleanExtra(EXTRA_SHOW_TAPS, false);
                 mShowDot = intent.getBooleanExtra(EXTRA_SHOW_DOT, false);
-                mVideoBitrateOpt = intent.getIntExtra(EXTRA_VIDEO_BITRATE, 2);
-
                 Intent data = intent.getParcelableExtra(EXTRA_DATA);
                 if (data != null) {
                     mMediaProjection = mMediaProjectionManager.getMediaProjection(resultCode, data);
@@ -302,6 +296,9 @@ public class RecordingService extends Service {
                 e.printStackTrace();
             }
             setTapsVisible(mShowTaps);
+            if (mShowDot) {
+                showDot();
+            }
 
             // Set up media recorder
             mMediaRecorder = new MediaRecorder();
@@ -496,40 +493,25 @@ public class RecordingService extends Service {
                 .getString(isPaused ? R.string.screenrecord_resume_label
                         : R.string.screenrecord_pause_label);
         Intent pauseIntent = isPaused ? getResumeIntent(this) : getPauseIntent(this);
-        if (mAudioSourceOpt != 1) {
-            mRecordingNotificationBuilder.setActions(
-                    new Notification.Action.Builder(
-                            Icon.createWithResource(this, R.drawable.ic_screenrecord_recording),
-                            getResources().getString(R.string.screenrecord_stop_label),
-                            getStopPendingIntent())
-                            .build(),
-                    new Notification.Action.Builder(
-                            Icon.createWithResource(this, R.drawable.ic_screenrecord_recording), pauseString,
-                            PendingIntent.getService(this, REQUEST_CODE, pauseIntent,
-                                    PendingIntent.FLAG_UPDATE_CURRENT))
-                            .build(),
-                    new Notification.Action.Builder(
-                            Icon.createWithResource(this, R.drawable.ic_screenrecord_recording),
-                            getResources().getString(R.string.screenrecord_cancel_label),
-                            PendingIntent
-                                    .getService(this, REQUEST_CODE, getCancelIntent(this),
-                                            PendingIntent.FLAG_UPDATE_CURRENT))
-                            .build());
-        } else {
-            mRecordingNotificationBuilder.setActions(
-                    new Notification.Action.Builder(
-                            Icon.createWithResource(this, R.drawable.ic_screenrecord_recording),
-                            getResources().getString(R.string.screenrecord_stop_label),
-                            getStopPendingIntent())
-                            .build(),
-                    new Notification.Action.Builder(
-                            Icon.createWithResource(this, R.drawable.ic_screenrecord_recording),
-                            getResources().getString(R.string.screenrecord_cancel_label),
-                            PendingIntent
-                                    .getService(this, REQUEST_CODE, getCancelIntent(this),
-                                            PendingIntent.FLAG_UPDATE_CURRENT))
-                            .build());
-        }
+
+        mRecordingNotificationBuilder.setActions(
+                new Notification.Action.Builder(
+                        Icon.createWithResource(this, R.drawable.ic_android),
+                        getResources().getString(R.string.screenrecord_stop_label),
+                        getStopPendingIntent())
+                        .build(),
+                new Notification.Action.Builder(
+                        Icon.createWithResource(this, R.drawable.ic_android), pauseString,
+                        PendingIntent.getService(this, REQUEST_CODE, pauseIntent,
+                                PendingIntent.FLAG_UPDATE_CURRENT))
+                        .build(),
+                new Notification.Action.Builder(
+                        Icon.createWithResource(this, R.drawable.ic_android),
+                        getResources().getString(R.string.screenrecord_cancel_label),
+                        PendingIntent
+                                .getService(this, REQUEST_CODE, getCancelIntent(this),
+                                        PendingIntent.FLAG_UPDATE_CURRENT))
+                        .build());
         notificationManager.notify(NOTIFICATION_ID, mRecordingNotificationBuilder.build());
     }
 
@@ -595,25 +577,13 @@ public class RecordingService extends Service {
         if (mDotShowing) {
             stopDot();
         }
-        try {
-            switch (mAudioSourceOpt) {
-                case 1:
-                    mAudioRecording = false;
-                    mAudioEncoding = false;
-                    mVideoEncoding = false;
-                    break;
-
-                default:
-                    mMediaRecorder.stop();
-                    mMediaRecorder.release();
-                    mMediaRecorder = null;
-                    mMediaProjection.stop();
-                    mMediaProjection = null;
-                    mInputSurface.release();
-                    mVirtualDisplay.release();
-                    break;
-            }
-        } catch (Exception e) {}
+        mMediaRecorder.stop();
+        mMediaRecorder.release();
+        mMediaRecorder = null;
+        mMediaProjection.stop();
+        mMediaProjection = null;
+        mInputSurface.release();
+        mVirtualDisplay.release();
         stopSelf();
     }
 
