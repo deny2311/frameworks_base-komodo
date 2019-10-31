@@ -79,8 +79,6 @@ public class QSFactoryImpl implements QSFactory {
     private final Provider<GarbageMonitor.MemoryTile> mMemoryTileProvider;
     private final Provider<UiModeNightTile> mUiModeNightTileProvider;
     private final Provider<ScreenRecordTile> mScreeenRecordTileProvider;
-    private final Provider<LiveDisplayTile> mLiveDisplayTileProvider;
-    private final Provider<ReadingModeTile> mReadingModeTileProvider;
 
     private QSTileHost mHost;
 
@@ -104,9 +102,7 @@ public class QSFactoryImpl implements QSFactory {
             Provider<NfcTile> nfcTileProvider,
             Provider<GarbageMonitor.MemoryTile> memoryTileProvider,
             Provider<UiModeNightTile> uiModeNightTileProvider,
-            Provider<ScreenRecordTile> screenRecordTileProvider,
-            Provider<LiveDisplayTile> liveDisplayTileProvider,
-            Provider<ReadingModeTile> readingModeTileProvider) {
+            Provider<ScreenRecordTile> screenRecordTileProvider) {
         mWifiTileProvider = wifiTileProvider;
         mBluetoothTileProvider = bluetoothTileProvider;
         mCellularTileProvider = cellularTileProvider;
@@ -127,8 +123,6 @@ public class QSFactoryImpl implements QSFactory {
         mMemoryTileProvider = memoryTileProvider;
         mUiModeNightTileProvider = uiModeNightTileProvider;
         mScreeenRecordTileProvider = screenRecordTileProvider;
-        mLiveDisplayTileProvider = liveDisplayTileProvider;
-        mReadingModeTileProvider = readingModeTileProvider;
     }
 
     public void setHost(QSTileHost host) {
@@ -184,10 +178,6 @@ public class QSFactoryImpl implements QSFactory {
                 return mUiModeNightTileProvider.get();
             case "screenrecord":
                 return mScreeenRecordTileProvider.get();
-            case "livedisplay":
-                return mLiveDisplayTileProvider.get();
-            case "reading_mode":
-                return mReadingModeTileProvider.get();
         }
 
         // Intent tiles.
