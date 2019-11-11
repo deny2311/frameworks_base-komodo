@@ -34,8 +34,6 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -83,10 +81,10 @@ public class ScreenRecordDialog extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.screen_record_dialog);
 
-        final CheckBox micCheckBox = findViewById(R.id.checkbox_mic);
-        final CheckBox tapsCheckBox = findViewById(R.id.checkbox_taps);
-        final CheckBox dotCheckBox = findViewById(R.id.checkbox_stopdot);
-        final CheckBox qualityCheckBox = findViewById(R.id.checkbox_low_quality);
+        final Switch micCheckBox = findViewById(R.id.checkbox_mic);
+        final Switch tapsCheckBox = findViewById(R.id.checkbox_taps);
+        final Switch dotCheckBox = findViewById(R.id.checkbox_stopdot);
+        final Switch qualityCheckBox = findViewById(R.id.checkbox_low_quality);
 
         final Button recordButton = findViewById(R.id.record_button);
         recordButton.setOnClickListener(v -> {
