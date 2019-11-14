@@ -3669,7 +3669,7 @@ public class PackageManagerService extends IPackageManager.Stub
         // identify cached items. In particular, changing the value of certain
         // feature flags should cause us to invalidate any caches.
         final String cacheName = SystemProperties.digestOf(
-                Build.PROP_KOMODO_FINGERPRINT,
+                "ro.build.date.utc",
                 StorageManager.PROP_ISOLATED_STORAGE,
                 StorageManager.PROP_ISOLATED_STORAGE_SNAPSHOT);
 
