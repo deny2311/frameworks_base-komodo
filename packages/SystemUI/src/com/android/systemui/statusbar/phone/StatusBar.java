@@ -1980,6 +1980,9 @@ public class StatusBar extends SystemUI implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STOCK_STATUSBAR_IN_HIDE),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.Secure.getUriFor(
+                    Settings.Secure.SHOW_BACK_ARROW_GESTURE),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -2000,7 +2003,8 @@ public class StatusBar extends SystemUI implements DemoMode,
         updateKeyguardStatusSettings();
         setQsRowsColumns();
         handleCutout(null);
-       }
+        setHideArrowForBackGesture();
+        }
     }
 
     private void setQsRowsColumns() {
@@ -2019,6 +2023,12 @@ public class StatusBar extends SystemUI implements DemoMode,
             getNavigationBarView().setPartialScreenshot(active);
         }
         mNotificationInterruptionStateProvider.setPartialScreenshot(active);
+    }
+
+    private void setHideArrowForBackGesture() {
+        if (getNavigationBarView() != null) {
+            getNavigationBarView().updateBackArrowForGesture();
+        }
     }
 
     /**
