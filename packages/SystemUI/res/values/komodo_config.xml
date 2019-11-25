@@ -21,4 +21,7 @@
         lte,caffeine
     </string>
 
+    <!-- Show battery icon in the QS Panel instead of in the header -->
+    <bool name="config_batteryInQSPanel">true</bool>
+
 </resources>
