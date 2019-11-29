@@ -97,6 +97,7 @@ public class BatteryMeterView extends LinearLayout implements
     private boolean mIgnoreTunerUpdates;
     private boolean mIsSubscribedForTunerUpdates;
     private boolean mCharging;
+    private boolean mShowBatteryEstimate;
 
     private DualToneHandler mDualToneHandler;
     private int mUser;
@@ -291,6 +292,13 @@ public class BatteryMeterView extends LinearLayout implements
         }
     }
 
+    private void updateQsBatteryEstimate() {
+        mShowBatteryEstimate = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.QS_SHOW_BATTERY_ESTIMATE, 1,
+                UserHandle.USER_CURRENT) == 1;
+        updatePercentView();
+    }
+
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
@@ -357,7 +365,7 @@ public class BatteryMeterView extends LinearLayout implements
 
         if (mBatteryPercentView != null) {
             if (systemSetting && mShowPercentAvailable &&
-                    mShowPercentMode == MODE_ESTIMATE && !mCharging) {
+                    mShowPercentMode == MODE_ESTIMATE && !mCharging && mShowBatteryEstimate)) {
                 mBatteryController.getEstimatedTimeRemainingString((String estimate) -> {
                     if (estimate != null) {
                         mBatteryPercentView.setText(estimate);
@@ -482,6 +490,13 @@ public class BatteryMeterView extends LinearLayout implements
     private final class SettingObserver extends ContentObserver {
         public SettingObserver(Handler handler) {
             super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = getContext().getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_SHOW_BATTERY_ESTIMATE),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
