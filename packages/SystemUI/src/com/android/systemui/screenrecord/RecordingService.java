@@ -49,7 +49,6 @@ import android.net.Uri;
 import android.os.IBinder;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.SystemProperties;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
