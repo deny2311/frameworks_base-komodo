@@ -1912,6 +1912,14 @@ public class StatusBar extends SystemUI implements DemoMode,
         mNotificationPanel.updateKeyguardStatusSettings();
     }
 
+    @Override
+    public void setPartialScreenshot(boolean active) {
+        if (getNavigationBarView() != null) {
+            getNavigationBarView().setPartialScreenshot(active);
+        }
+        mNotificationInterruptionStateProvider.setPartialScreenshot(active);
+    }
+
     /**
      * All changes to the status bar and notifications funnel through here and are batched.
      */
