@@ -5108,13 +5108,58 @@ public final class Settings {
         private static final Validator PULSE_AMBIENT_LIGHT_VALIDATOR = BOOLEAN_VALIDATOR;
 
         /**
-         * What color to use for Ambient edge light
+         * Whether to use wallpaper color for Ambient edge light (left)
          * @hide
          */
-        public static final String PULSE_AMBIENT_LIGHT_COLOR = "pulse_ambient_light_color";
+        public static final String PULSE_AMBIENT_LIGHT_AUTO_COLOR_LEFT = "pulse_ambient_light_auto_color_left";
 
         /** @hide */
-        private static final Validator PULSE_AMBIENT_LIGHT_COLOR_VALIDATOR = ANY_STRING_VALIDATOR;
+        private static final Validator PULSE_AMBIENT_LIGHT_AUTO_COLOR_LEFT_VALIDATOR = BOOLEAN_VALIDATOR;
+
+        /**
+         * What color to use for Ambient edge light (left)
+         * @hide
+         */
+        public static final String PULSE_AMBIENT_LIGHT_COLOR_LEFT = "pulse_ambient_light_color_left";
+
+        /** @hide */
+        private static final Validator PULSE_AMBIENT_LIGHT_COLOR_LEFT_VALIDATOR = ANY_STRING_VALIDATOR;
+
+        /**
+         * What duration to use for Ambient edge light (left)
+         * @hide
+         */
+        public static final String PULSE_AMBIENT_LIGHT_LEFT_DURATION = "pulse_ambient_light_left_duration";
+
+        /** @hide */
+        private static final Validator PULSE_AMBIENT_LIGHT_LEFT_DURATION_VALIDATOR = ANY_INTEGER_VALIDATOR;
+
+        /**
+         * Whether to use wallpaper color for Ambient edge light (right)
+         * @hide
+         */
+        public static final String PULSE_AMBIENT_LIGHT_AUTO_COLOR_RIGHT = "pulse_ambient_light_auto_color_right";
+
+        /** @hide */
+        private static final Validator PULSE_AMBIENT_LIGHT_AUTO_COLOR_RIGHT_VALIDATOR = BOOLEAN_VALIDATOR;
+
+        /**
+         * What color to use for Ambient edge light (right)
+         * @hide
+         */
+        public static final String PULSE_AMBIENT_LIGHT_COLOR_RIGHT = "pulse_ambient_light_color_right";
+
+        /** @hide */
+        private static final Validator PULSE_AMBIENT_LIGHT_COLOR_RIGHT_VALIDATOR = ANY_STRING_VALIDATOR;
+
+        /**
+         * What duration to use for Ambient edge light (right)
+         * @hide
+         */
+        public static final String PULSE_AMBIENT_LIGHT_RIGHT_DURATION = "pulse_ambient_light_right_duration";
+
+        /** @hide */
+        private static final Validator PULSE_AMBIENT_LIGHT_RIGHT_DURATION_VALIDATOR = ANY_INTEGER_VALIDATOR;
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
@@ -5200,7 +5245,12 @@ public final class Settings {
             VOLUME_BUTTON_MUSIC_CONTROL,
             DOZE_ON_CHARGE,
             PULSE_AMBIENT_LIGHT,
-            PULSE_AMBIENT_LIGHT_COLOR,
+            PULSE_AMBIENT_LIGHT_AUTO_COLOR_LEFT,
+            PULSE_AMBIENT_LIGHT_COLOR_LEFT,
+            PULSE_AMBIENT_LIGHT_LEFT_DURATION,
+            PULSE_AMBIENT_LIGHT_AUTO_COLOR_RIGHT,
+            PULSE_AMBIENT_LIGHT_COLOR_RIGHT,
+            PULSE_AMBIENT_LIGHT_RIGHT_DURATION,
         };
 
         /**
@@ -5351,7 +5401,12 @@ public final class Settings {
             PRIVATE_SETTINGS.add(VOLUME_BUTTON_MUSIC_CONTROL);
             PRIVATE_SETTINGS.add(DOZE_ON_CHARGE);
             PRIVATE_SETTINGS.add(PULSE_AMBIENT_LIGHT);
-            PRIVATE_SETTINGS.add(PULSE_AMBIENT_LIGHT_COLOR);
+            PRIVATE_SETTINGS.add(PULSE_AMBIENT_LIGHT_AUTO_COLOR_LEFT);
+            PRIVATE_SETTINGS.add(PULSE_AMBIENT_LIGHT_COLOR_LEFT);
+            PRIVATE_SETTINGS.add(PULSE_AMBIENT_LIGHT_LEFT_DURATION);
+            PRIVATE_SETTINGS.add(PULSE_AMBIENT_LIGHT_AUTO_COLOR_RIGHT);
+            PRIVATE_SETTINGS.add(PULSE_AMBIENT_LIGHT_COLOR_RIGHT);
+            PRIVATE_SETTINGS.add(PULSE_AMBIENT_LIGHT_RIGHT_DURATION);
         }
 
         /**
@@ -5479,7 +5534,12 @@ public final class Settings {
             VALIDATORS.put(VOLUME_BUTTON_MUSIC_CONTROL, VOLUME_BUTTON_MUSIC_CONTROL_VALIDATOR);
             VALIDATORS.put(DOZE_ON_CHARGE, DOZE_ON_CHARGE_VALIDATOR);
             VALIDATORS.put(PULSE_AMBIENT_LIGHT, PULSE_AMBIENT_LIGHT_VALIDATOR);
-            VALIDATORS.put(PULSE_AMBIENT_LIGHT_COLOR, PULSE_AMBIENT_LIGHT_COLOR_VALIDATOR);
+            VALIDATORS.put(PULSE_AMBIENT_LIGHT_AUTO_COLOR_LEFT, PULSE_AMBIENT_LIGHT_AUTO_COLOR_LEFT_VALIDATOR);
+            VALIDATORS.put(PULSE_AMBIENT_LIGHT_COLOR_LEFT, PULSE_AMBIENT_LIGHT_COLOR_LEFT_VALIDATOR);
+            VALIDATORS.put(PULSE_AMBIENT_LIGHT_LEFT_DURATION, PULSE_AMBIENT_LIGHT_LEFT_DURATION_VALIDATOR);
+            VALIDATORS.put(PULSE_AMBIENT_LIGHT_AUTO_COLOR_RIGHT, PULSE_AMBIENT_LIGHT_AUTO_COLOR_RIGHT_VALIDATOR);
+            VALIDATORS.put(PULSE_AMBIENT_LIGHT_COLOR_RIGHT, PULSE_AMBIENT_LIGHT_COLOR_RIGHT_VALIDATOR);
+            VALIDATORS.put(PULSE_AMBIENT_LIGHT_RIGHT_DURATION, PULSE_AMBIENT_LIGHT_RIGHT_DURATION_VALIDATOR);
         }
 
         /**
