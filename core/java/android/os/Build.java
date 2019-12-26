@@ -1002,10 +1002,23 @@ public class Build {
     public static final String FINGERPRINT = deriveFingerprint();
 
     /**
+     * Komodo fingerprint
+     * @hide
+     */
+    public static final String PROP_KOMODO_FINGERPRINT = "org.komodo.fingerprint";
+
+    /**
+     * Komodo fingerprint
+     * @hide
+     */
+    public static final String KOMODO_FINGERPRINT = SystemProperties.get(PROP_KOMODO_FINGERPRINT,
+            deriveFingerprint());
+
+    /**
      * Custom fingerprint
      * @hide
      */
-    public static final String PROP_CUSTOM_FINGERPRINT = "org.pixelexperience.fingerprint";
+    public static final String PROP_CUSTOM_FINGERPRINT = "org.komodo.fingerprint";
 
     /**
      * Custom fingerprint
