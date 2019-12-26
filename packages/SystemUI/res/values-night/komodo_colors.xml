@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     Copyright (C) 2020 Komodo-Os-ROM
-
+     Copyright (C) 2019 The MSM-Xtended Project
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
      You may obtain a copy of the License at
-
           http://www.apache.org/licenses/LICENSE-2.0
-
      Unless required by applicable law or agreed to in writing, software
      distributed under the License is distributed on an "AS IS" BASIS,
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,19 +12,8 @@
      limitations under the License.
 -->
 <resources>
-    <!-- QS header data usage -->
-    <dimen name="qs_datausage_icon_size">16sp</dimen>
 
-    <!-- Screenrecord UI -->
-    <dimen name="screenrecord_dot_size">48dp</dimen>
-    <!-- Dismiss all button -->
-
-    <!-- Dismiss all button -->
-    <dimen name="dismiss_all_button_elevation">10dp</dimen>
-    <dimen name="dismiss_all_button_height">55dp</dimen>
-    <dimen name="dismiss_all_button_margin_bottom">35dp</dimen>
-    <dimen name="dismiss_all_button_margin_top">30dp</dimen>
-    <dimen name="dismiss_all_button_width">55dp</dimen>
-    <dimen name="dismiss_all_fab_src_size">24dp</dimen>
+    <color name="recents_dismiss_all_background_color">#141414</color>
+    <color name="recents_dismiss_all_icon_color">@android:color/white</color>
 
 </resources>
