@@ -5220,6 +5220,12 @@ public final class Settings {
          */
         public static final String SCREENSHOT_TYPE = "screenshot_type";
 
+        /** @hide */
+        public static final String GESTURE_PILL_TOGGLE = "gesture_pill_toggle";
+
+        /** @hide */
+        private static final Validator GESTURE_PILL_TOGGLE_VALIDATOR = BOOLEAN_VALIDATOR;
+
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
@@ -5328,7 +5334,8 @@ public final class Settings {
             VOLUME_KEY_CURSOR_CONTROL,
             HEADS_UP_STOPLIST_VALUES,
             HEADS_UP_BLACKLIST_VALUES,
-            // Komodo panels end
+            GESTURE_PILL_TOGGLE
+            // Komodo Panel End
         };
 
         /**
@@ -5498,7 +5505,8 @@ public final class Settings {
             PRIVATE_SETTINGS.add(VOLUME_KEY_CURSOR_CONTROL);
             PRIVATE_SETTINGS.add(HEADS_UP_STOPLIST_VALUES);
             PRIVATE_SETTINGS.add(HEADS_UP_BLACKLIST_VALUES);
-            // Komodo panels end
+            PRIVATE_SETTINGS.add(GESTURE_PILL_TOGGLE);
+            // Komodo panel end
         }
 
         /**
@@ -5647,7 +5655,8 @@ public final class Settings {
             VALIDATORS.put(VOLUME_KEY_CURSOR_CONTROL, VOLUME_KEY_CURSOR_CONTROL_VALIDATOR);
             VALIDATORS.put(HEADS_UP_STOPLIST_VALUES, HEADS_UP_STOPLIST_VALUES_VALIDATOR);
             VALIDATORS.put(HEADS_UP_BLACKLIST_VALUES, HEADS_UP_BLACKLIST_VALUES_VALIDATOR);
-            // Komodo panels end
+            VALIDATORS.put(GESTURE_PILL_TOGGLE, GESTURE_PILL_TOGGLE_VALIDATOR);
+            // Komodo panel end
         }
 
         /**
