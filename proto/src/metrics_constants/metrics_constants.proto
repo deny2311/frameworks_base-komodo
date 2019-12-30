@@ -7419,7 +7419,7 @@ message MetricsEvent {
     // END OF AOSP CONSTANTS
 
     // CustomSettings constant
-    CUSTOM_SETTINGS = 1999;
+    KOMODO_SETTINGS = 1999;
 
   }
 }
