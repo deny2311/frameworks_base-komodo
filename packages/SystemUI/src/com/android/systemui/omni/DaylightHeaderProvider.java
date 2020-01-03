@@ -50,7 +50,7 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import com.android.internal.util.evolution.EvolutionUtils;
+import com.android.internal.util.komodo.KomodoUtils;
 
 import com.android.systemui.R;
 
@@ -374,7 +374,7 @@ public class DaylightHeaderProvider implements
 
     @Override
     public Drawable getCurrent(final Calendar now) {
-        if (!EvolutionUtils.isAvailableApp(mPackageName, mContext)) {
+        if (!KomodoUtils.isAvailableApp(mPackageName, mContext)) {
             Log.w(TAG, "Header pack no longer available - loading default " + mPackageName);
             loadDefaultHeaderPackage();
         }

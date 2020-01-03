@@ -857,7 +857,6 @@ public class MobileSignalController extends SignalController<
             carrierNetworkChangeMode = state.carrierNetworkChangeMode;
             userSetup = state.userSetup;
             roaming = state.roaming;
-            defaultDataOff = state.defaultDataOff;
             imsRegistered = state.imsRegistered;
             voiceCapable = state.voiceCapable;
             videoCapable = state.videoCapable;

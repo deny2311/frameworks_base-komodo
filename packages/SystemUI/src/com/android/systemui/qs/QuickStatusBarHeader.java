@@ -29,6 +29,7 @@ import android.content.IntentFilter;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.database.ContentObserver;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.media.AudioManager;
@@ -40,6 +41,7 @@ import android.text.format.DateUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Pair;
+import android.os.UserHandle;
 import android.view.ContextThemeWrapper;
 import android.view.DisplayCutout;
 import android.view.View;
@@ -129,12 +131,7 @@ public class QuickStatusBarHeader extends RelativeLayout implements
     private Clock mClockView;
     private DateView mDateView;
     private BatteryMeterView mBatteryRemainingIcon;
-    private OngoingPrivacyChip mPrivacyChip;
-    private Space mSpace;
-    private BatteryMeterView mBatteryMeterView;
     private boolean mPermissionsHubEnabled;
-
-    private PrivacyItemController mPrivacyItemController;
 
     private class SettingsObserver extends ContentObserver {
         SettingsObserver(Handler handler) {

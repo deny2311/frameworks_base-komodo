@@ -25,7 +25,11 @@ import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.graphics.Color;
+import android.graphics.PorterDuff.Mode;
 import android.util.AttributeSet;
+import android.os.Handler;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -121,7 +125,6 @@ public class QSContainerImpl extends FrameLayout implements
 
         updateResources();
         updateStatusbarVisibility();
-        updateSettings();
         mSizePoint.set(0, 0); // Will be retrieved on next measure pass.
     }
 

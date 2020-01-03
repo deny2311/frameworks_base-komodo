@@ -44,10 +44,6 @@ public class KomodoUtils {
         return ctx.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
     }
 
-    public static void toggleCameraFlash() {
-        FireActions.toggleCameraFlash();
-    }
-
     private static final class FireActions {
         private static IStatusBarService mStatusBarService = null;
         private static IStatusBarService getStatusBarService() {
@@ -57,17 +53,6 @@ public class KomodoUtils {
                             ServiceManager.getService("statusbar"));
                 }
                 return mStatusBarService;
-            }
-        }
-
-        public static void toggleCameraFlash() {
-            IStatusBarService service = getStatusBarService();
-            if (service != null) {
-                try {
-                    service.toggleCameraFlash();
-                } catch (RemoteException e) {
-                    // do nothing.
-                }
             }
         }
     }
