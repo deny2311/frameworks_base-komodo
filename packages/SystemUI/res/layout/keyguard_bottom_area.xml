@@ -24,14 +24,14 @@
     android:outlineProvider="none"
     android:elevation="5dp" > <!-- Put it above the status bar header -->
 
+    <include layout="@layout/keyguard_indication_area_overlay" />
+
     <LinearLayout
         android:id="@+id/keyguard_indication_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
         android:orientation="horizontal">
-
-        <include layout="@layout/left_docked_overlay" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -61,9 +61,6 @@
                 android:accessibilityLiveRegion="polite" />
 
         </LinearLayout>
-
-        <include layout="@layout/right_docked_overlay" />
-
     </LinearLayout>
 
     <FrameLayout
