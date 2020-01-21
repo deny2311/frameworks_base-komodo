@@ -2,25 +2,29 @@ package com.android.systemui.statusbar.info;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.provider.Settings;
+import android.graphics.Typeface;
+import android.util.AttributeSet;
+import android.os.AsyncTask;
 import android.telephony.SubscriptionManager;
 import android.text.BidiFormatter;
 import android.text.format.Formatter;
 import android.text.format.Formatter.BytesResult;
-import android.util.AttributeSet;
 import android.widget.TextView;
+import android.provider.Settings;
+import android.view.View;
 
-import com.android.internal.util.komodo.KomodoUtils;
-import com.android.settingslib.net.DataUsageController;
 import com.android.systemui.Dependency;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.policy.NetworkController;
+import com.android.systemui.statusbar.policy.NetworkController.SignalCallback;
+import com.android.settingslib.net.DataUsageController;
 
 public class DataUsageView extends TextView {
 
     private Context mContext;
     private NetworkController mNetworkController;
     private static boolean shouldUpdateData;
+    private static boolean shouldUpdateDataTextView;
     private String formatedinfo;
 
     public DataUsageView(Context context, AttributeSet attrs) {
@@ -33,12 +37,23 @@ public class DataUsageView extends TextView {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        if ((isDataUsageEnabled() == 0) && this.getText().toString() != "") {
+        if (!isDataUsageEnabled() && this.getText().toString() != "") {
             setText("");
-        } else if (isDataUsageEnabled() != 0 && shouldUpdateData) {
-            shouldUpdateData = false;
-            updateUsageData();
-            setText(formatedinfo);
+        }
+        if (isDataUsageEnabled()) {
+            if(shouldUpdateData) {
+                shouldUpdateData = false;
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateUsageData();
+                    }
+                });
+            }
+            if (shouldUpdateDataTextView) {
+                shouldUpdateDataTextView = false;
+                setText(formatedinfo);
+            }
         }
     }
 
@@ -46,29 +61,25 @@ public class DataUsageView extends TextView {
         DataUsageController mobileDataController = new DataUsageController(mContext);
         mobileDataController.setSubscriptionId(
             SubscriptionManager.getDefaultDataSubscriptionId());
-        final DataUsageController.DataUsageInfo info = isDataUsageEnabled() == 1 ?
-                (KomodoUtils.isWiFiConnected(mContext) ?
-                        mobileDataController.getDailyWifiDataUsageInfo()
-                        : mobileDataController.getDailyDataUsageInfo())
-                : (KomodoUtils.isWiFiConnected(mContext) ?
-                        mobileDataController.getWifiDataUsageInfo()
-                        : mobileDataController.getDataUsageInfo());
+        final DataUsageController.DataUsageInfo info = mobileDataController.getDataUsageInfo();
 
-        formatedinfo = formatDataUsage(info.usageLevel);
+        formatedinfo = formatDataUsage(info.usageLevel) + " " + mContext.getResources().getString(R.string.usage_data);
+        shouldUpdateDataTextView = true;
     }
 
-    public int isDataUsageEnabled() {
+    private boolean isDataUsageEnabled() {
         return Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.QS_DATAUSAGE, 0);
+                Settings.System.QS_DATAUSAGE, 0) != 0;
     }
 
     public static void updateUsage() {
         shouldUpdateData = true;
     }
 
-    private String formatDataUsage(long byteValue) {
+    private CharSequence formatDataUsage(long byteValue) {
         final BytesResult res = Formatter.formatBytes(mContext.getResources(), byteValue,
                 Formatter.FLAG_IEC_UNITS);
-        return BidiFormatter.getInstance().unicodeWrap(res.value + res.units);
+        return BidiFormatter.getInstance().unicodeWrap(mContext.getString(
+                com.android.internal.R.string.fileSizeSuffix, res.value, res.units));
     }
 }

@@ -15,28 +15,6 @@
      limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-
-    <!-- Screenrecord UI -->
-    <string name="screenrecord_dialog_title">Start recording?</string>
-    <string name="screenrecord_dialog_summary">While recording, Android system can capture any sensitive information that\'s visible on your screen or played on your device. This includes passwords, payment info, photos, messages, and audio.</string>
-    <string name="screenrecord_dialog_start">Start</string>
-    <string name="screenrecord_dialog_cancel">Cancel</string>
-    <string name="screenrecord_audio_title">Audio source</string>
-    <string name="screenrecord_audio_summary">Allows to pick the audio input or disable it.</string>
-    <string name="screenrecord_audio_recording_internal">Internal</string>
-    <string name="screenrecord_audio_recording_microphone">Microphone</string>
-    <string name="screenrecord_audio_recording_off">Disabled</string>
-    <string name="screenrecord_taps_title">Show taps on screen</string>
-    <string name="screenrecord_taps_summary">Show visual feedback while recording</string>
-    <string name="screenrecord_stopdot_title">Show stop dot</string>
-    <string name="screenrecord_stopdot_summary">Show a red dot to stop recording with a single tap. Longpress it to move it to the opposite side.</string>
-    <string name="screenrecord_video_bitrate_title">Video Bitrate</string>
-    <string name="screenrecord_video_bitrate_summary">Set the video bitrate for better video quality, at the cost of a bigger file.</string>
-
-    <!-- Reader mode QS tile -->
-    <string name="quick_settings_reading_mode">Reading mode</string>
-    <string name="accessibility_quick_settings_reading_mode_on">Reading mode on.</string>
-    <string name="accessibility_quick_settings_reading_mode_off">Reading mode off.</string>
-    <string name="accessibility_quick_settings_reading_mode_changed_on">Reading mode turned on.</string>
-    <string name="accessibility_quick_settings_reading_mode_changed_off">Reading mode turned off.</string>
+    <!-- QS Header Data Usage -->
+    <string name="usage_data">used</string>
 </resources>
