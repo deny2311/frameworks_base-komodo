@@ -33,7 +33,6 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -81,10 +80,10 @@ public class ScreenRecordDialog extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.screen_record_dialog);
 
-        final Switch micSwitch = findViewById(R.id.checkbox_mic);
-        final Switch tapsSwitch = findViewById(R.id.checkbox_taps);
-        final Switch dotSwitch = findViewById(R.id.checkbox_stopdot);
-        final Switch qualitySwitch = findViewById(R.id.checkbox_low_quality);
+        final Switch micSwitch = findViewById(R.id.switch_mic);
+        final Switch tapsSwitch = findViewById(R.id.switch_taps);
+        final Switch dotSwitch = findViewById(R.id.switch_stopdot);
+        final Switch qualitySwitch = findViewById(R.id.switch_low_quality);
         
         initialCheckSwitch(micSwitch, SCREENRECORD_ENABLE_MIC);
         initialCheckSwitch(tapsSwitch, SCREENRECORD_SHOW_TAPS);
@@ -112,6 +111,10 @@ public class ScreenRecordDialog extends Activity {
             } else {
                 requestScreenCapture();
             }
+        });
+        final Button cancelButton = findViewById(R.id.cancel_button);
+        cancelButton.setOnClickListener(v -> {
+            finish();
         });
     }
 
