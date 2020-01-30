@@ -171,13 +171,18 @@ public class BtHelper {
     /*packages*/ @NonNull static boolean isTwsPlusSwitch(@NonNull BluetoothDevice device,
                                                                  String address) {
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
-        if (device == null || adapter.getRemoteDevice(address) == null ||
+        BluetoothDevice connDevice = adapter.getRemoteDevice(address);
+        if (device == null || connDevice == null ||
             device.getTwsPlusPeerAddress() == null) {
             return false;
         }
         if (device.isTwsPlusDevice() &&
-            adapter.getRemoteDevice(address).isTwsPlusDevice() &&
+            connDevice.isTwsPlusDevice() &&
             device.getTwsPlusPeerAddress().equals(address)) {
+            if(mA2dp.getConnectionState(connDevice) != BluetoothProfile.STATE_CONNECTED) {
+                Log.w(TAG,"Active earbud is already disconnected");
+                return false;
+            }
             Log.i(TAG,"isTwsPlusSwitch true");
             return true;
          }
