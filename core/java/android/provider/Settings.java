@@ -4469,6 +4469,10 @@ public final class Settings {
         /** @hide */
         private static final Validator SHOW_BATTERY_PERCENT_VALIDATOR = BOOLEAN_VALIDATOR;
 
+        /********************
+        * Komodo Panels start
+        *********************/
+
         /**
          * The time in ms to keep the button backlight on after pressing a button.
          * A value of 0 will keep the buttons on for as long as the screen is on.
@@ -4640,6 +4644,10 @@ public final class Settings {
          */
         public static final String SMART_CHARGING_LEVEL = "smart_charging_level";
 
+        /********************
+        * Komodo Panels end
+        *********************/
+
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
@@ -4707,6 +4715,7 @@ public final class Settings {
             NOTIFICATION_LIGHT_PULSE,
             BUTTON_EXTRA_KEY_MAPPING,
             DEVICE_PROXI_CHECK_ENABLED,
+            // Komodo panels start
             NETWORK_TRAFFIC_STATE,
             NETWORK_TRAFFIC_AUTOHIDE_THRESHOLD,
             NETWORK_TRAFFIC_HIDEARROW,
@@ -4716,6 +4725,7 @@ public final class Settings {
             OMNI_STATUS_BAR_CUSTOM_HEADER_PROVIDER,
             OMNI_STATUS_BAR_CUSTOM_HEADER_IMAGE,
             OMNI_STATUS_BAR_FILE_HEADER_IMAGE,
+            // Komodo panels end
         };
 
         /**
@@ -4835,6 +4845,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(EGG_MODE);
             PRIVATE_SETTINGS.add(SHOW_BATTERY_PERCENT);
             PRIVATE_SETTINGS.add(DISPLAY_COLOR_MODE);
+            // Komodo panels start
             PRIVATE_SETTINGS.add(BUTTON_BACKLIGHT_TIMEOUT);
             PRIVATE_SETTINGS.add(BUTTON_BACKLIGHT_ONLY_WHEN_PRESSED);
             PRIVATE_SETTINGS.add(BUTTON_BRIGHTNESS);
@@ -4850,6 +4861,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(OMNI_STATUS_BAR_CUSTOM_HEADER_PROVIDER);
             PRIVATE_SETTINGS.add(OMNI_STATUS_BAR_CUSTOM_HEADER_IMAGE);
             PRIVATE_SETTINGS.add(OMNI_STATUS_BAR_FILE_HEADER_IMAGE);
+            // Komodo panels end
         }
 
         /**
@@ -4943,6 +4955,7 @@ public final class Settings {
             VALIDATORS.put(WIFI_STATIC_DNS2, WIFI_STATIC_DNS2_VALIDATOR);
             VALIDATORS.put(SHOW_BATTERY_PERCENT, SHOW_BATTERY_PERCENT_VALIDATOR);
             VALIDATORS.put(NOTIFICATION_LIGHT_PULSE, BOOLEAN_VALIDATOR);
+            // Komodo panels start
             VALIDATORS.put(BUTTON_BACKLIGHT_TIMEOUT, BUTTON_BACKLIGHT_TIMEOUT_VALIDATOR);
             VALIDATORS.put(BUTTON_BRIGHTNESS, BUTTON_BRIGHTNESS_VALIDATOR);
             VALIDATORS.put(PROXIMITY_ON_WAKE, PROXIMITY_ON_WAKE_VALIDATOR);
@@ -4964,6 +4977,7 @@ public final class Settings {
                     OMNI_STATUS_BAR_CUSTOM_HEADER_IMAGE_VALIDATOR);
             VALIDATORS.put(OMNI_STATUS_BAR_FILE_HEADER_IMAGE,
                     OMNI_STATUS_BAR_FILE_HEADER_IMAGE_VALIDATOR);
+            // Komodo panels end
         }
 
         /**
