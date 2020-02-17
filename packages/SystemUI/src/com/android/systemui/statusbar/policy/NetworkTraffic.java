@@ -33,7 +33,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 
-import com.android.internal.util.exui.Utils;
+import com.android.internal.util.komodo.KomodoUtils;
 import com.android.systemui.Dependency;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.StatusIconDisplayable;
@@ -338,7 +338,6 @@ public class NetworkTraffic extends TextView implements StatusIconDisplayable {
             } else {
                 setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
             }
-	}
         } else {
             setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
         }
@@ -401,7 +400,7 @@ public class NetworkTraffic extends TextView implements StatusIconDisplayable {
     }
 
     private void updateVisibility() {
-        if (!Utils.hasNotch(mContext) && mIsEnabled &&
+        if (!KomodoUtils.hasNotch(mContext) && mIsEnabled &&
                 mTrafficVisible && mSystemIconVisible) {
             setVisibility(View.VISIBLE);
         } else {

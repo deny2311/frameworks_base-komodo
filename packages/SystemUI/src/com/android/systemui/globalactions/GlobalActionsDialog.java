@@ -139,7 +139,6 @@ public class GlobalActionsDialog implements DialogInterface.OnDismissListener,
     private static final String GLOBAL_ACTION_KEY_EMERGENCY = "emergency";
     private static final String GLOBAL_ACTION_KEY_RESTART_RECOVERY = "recovery";
     private static final String GLOBAL_ACTION_KEY_SCREENSHOT = "screenshot";
-    private static final String GLOBAL_ACTION_KEY_RESTART_RECOVERY = "recovery";
 
     private static final int SHOW_TOGGLES_BUTTON = 1;
     private static final int RESTART_RECOVERY_BUTTON = 2;

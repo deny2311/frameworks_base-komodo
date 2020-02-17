@@ -16,4 +16,9 @@
     <!-- Whether to show VoLTE icon in the status bar -->
     <bool name="config_display_volte">true</bool>
 
+    <!-- The default tiles to display in QuickSettings -->
+    <string name="quick_settings_tiles_extra" translatable="false">
+        lte,caffeine
+    </string>
+
 </resources>
