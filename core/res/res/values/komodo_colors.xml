@@ -20,6 +20,6 @@
     <color name="komodo_accent_gradient_end_color">#00000000</color>
 
     <!-- Toast Colours -->
-    <color name="toast_bg">@color/white</color>
+    <color name="toast_bg">@color/primary_device_default_settings_light</color>
     <color name="toast_text">@color/black</color>
 </resources>
