@@ -110,7 +110,7 @@ public class HeadsUpTile extends QSTileImpl<BooleanState> {
 
     @Override
     public int getMetricsCategory() {
-        return MetricsEvent.ANCIENT_SETTINGS;
+        return MetricsEvent.KOMODO_SETTINGS;
     }
 
     @Override
