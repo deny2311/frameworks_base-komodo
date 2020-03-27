@@ -1771,7 +1771,7 @@ public class StatusBar extends SystemUI implements DemoMode,
                 final IOverlayManager mOverlayManager = IOverlayManager.Stub.asInterface(
                                 ServiceManager.getService(Context.OVERLAY_SERVICE));
                 try {
-                    mOverlayManager.setEnabled("com.extendedui.overlay.brightnessslider",
+                    mOverlayManager.setEnabled("com.komodo.overlay.brightnessslider",
                                 mUnexpandedQSBrightnessSlider, mLockscreenUserManager.getCurrentUserId());
                 } catch (RemoteException ignored) {
                 }
