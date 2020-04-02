@@ -139,7 +139,7 @@ public class DividedLinesClockController implements ClockPlugin {
         TextClock previewDate = previewView.findViewById(R.id.date);
         View previewTLine = previewView.findViewById(R.id.topLine);
         View previewBLine = previewView.findViewById(R.id.bottomLine);
-        previewTime.setFormat12Hour("h:mm");
+        previewView.setFormat12Hour("h:mm");
 
         // Initialize state of plugin before generating preview.
         previewTime.setTextColor(Color.WHITE);
