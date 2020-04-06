@@ -100,9 +100,12 @@ public class RecordingService extends Service {
     private static final String ACTION_SHARE = "com.android.systemui.screenrecord.SHARE";
     private static final String ACTION_DELETE = "com.android.systemui.screenrecord.DELETE";
 
-    private static final int TOTAL_NUM_TRACKS = 1;
-    private static final int AUDIO_BIT_RATE = 16;
+    private static final int AUDIO_BIT_RATE = 128000;
+    private static final int SAMPLES_PER_FRAME = 1024;
     private static final int AUDIO_SAMPLE_RATE = 44100;
+    private static int TOTAL_NUM_TRACKS = 1;
+    private static int AUDIO_CHANNEL_TYPE = AudioFormat.CHANNEL_IN_MONO;
+    private static int VIDEO_FRAME_RATE;
     private static int VIDEO_BIT_RATE;
 
     private MediaProjectionManager mMediaProjectionManager;
@@ -130,12 +133,12 @@ public class RecordingService extends Service {
     private Notification.Builder mRecordingNotificationBuilder;
 
     private boolean mIsLowRamEnabled;
-    private boolean mUseAudio;
     private boolean mShowTaps;
     private boolean mShowDot;
     private boolean mIsDotAtRight;
     private boolean mDotShowing;
     private int mVideoBitrateOpt;
+    private int mAudioSourceOpt;
     private FrameLayout mFrameLayout;
     private LayoutInflater mInflater;
     private WindowManager mWindowManager;
@@ -153,12 +156,12 @@ public class RecordingService extends Service {
      * @param showTaps   True to make touches visible while recording
      */
     public static Intent getStartIntent(Context context, int resultCode, Intent data,
-            boolean useAudio, boolean showTaps, boolean showDot, int vidBitrateOpt) {
+            int audioSourceOpt, boolean showTaps, boolean showDot, int vidBitrateOpt) {
         return new Intent(context, RecordingService.class)
                 .setAction(ACTION_START)
                 .putExtra(EXTRA_RESULT_CODE, resultCode)
                 .putExtra(EXTRA_DATA, data)
-                .putExtra(EXTRA_USE_AUDIO, useAudio)
+                .putExtra(EXTRA_AUDIO_SOURCE, audioSourceOpt)
                 .putExtra(EXTRA_SHOW_TAPS, showTaps)
                 .putExtra(EXTRA_SHOW_DOT, showDot)
                 .putExtra(EXTRA_VIDEO_BITRATE, vidBitrateOpt);
@@ -182,28 +185,6 @@ public class RecordingService extends Service {
                 mShowTaps = intent.getBooleanExtra(EXTRA_SHOW_TAPS, false);
                 mShowDot = intent.getBooleanExtra(EXTRA_SHOW_DOT, false);
                 mVideoBitrateOpt = intent.getIntExtra(EXTRA_VIDEO_BITRATE, 2);
-                mIsLowRamEnabled = SystemProperties.get("ro.config.low_ram").equals("true");
-
-                switch (mVideoBitrateOpt) {
-                    case 1:
-                        VIDEO_BIT_RATE = mIsLowRamEnabled ? 8388608 : 15728640;
-                        break;
-                    case 2:
-                        VIDEO_BIT_RATE = mIsLowRamEnabled ? 6291456 : 10485760;
-                        break;
-                    case 3:
-                        VIDEO_BIT_RATE = mIsLowRamEnabled ? 4194304 : 5242880;
-                        break;
-                    case 4:
-                        VIDEO_BIT_RATE = 1048576;
-                        break;
-                    case 0:
-                        VIDEO_BIT_RATE = mIsLowRamEnabled ? 10485760 : 20971520;
-                        break;
-                    default:
-                        VIDEO_BIT_RATE = 6000000;
-                        break;
-                }
 
                 Intent data = intent.getParcelableExtra(EXTRA_DATA);
                 if (data != null) {
@@ -321,33 +302,34 @@ public class RecordingService extends Service {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            setTapsVisible(mShowTaps);
-            if (mShowDot) {
-                showDot();
-            }
-
-            // Set up media recorder
-            mMediaRecorder = new MediaRecorder();
-            if (mUseAudio) {
-                mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-            }
-
-            // Check if the device allows to use h265 for lighter recordings
-            boolean useH265 = getResources().getBoolean(R.bool.config_useNewScreenRecEncoder);
 
             // Set initial resources
             DisplayMetrics metrics = new DisplayMetrics();
             mWindowManager.getDefaultDisplay().getRealMetrics(metrics);
             int screenWidth = metrics.widthPixels;
             int screenHeight = metrics.heightPixels;
-            mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.HEVC);
-            mMediaRecorder.setVideoSize(screenWidth, screenHeight);
-            if (mVideoBitrateOpt > 2) {
-                mMediaRecorder.setVideoFrameRate(mIsLowRamEnabled ? 30 : 60);
-            } else {
-                mMediaRecorder.setVideoFrameRate(mIsLowRamEnabled ? 25 : 48);
+            mIsLowRamEnabled = SystemProperties.get("ro.config.low_ram").equals("true");
+
+            switch (mVideoBitrateOpt) {
+                case 1:
+                    VIDEO_BIT_RATE = mIsLowRamEnabled ? 8388608 : 15728640;
+                    break;
+                case 2:
+                    VIDEO_BIT_RATE = mIsLowRamEnabled ? 6291456 : 10485760;
+                    break;
+                case 3:
+                    VIDEO_BIT_RATE = mIsLowRamEnabled ? 4194304 : 5242880;
+                    break;
+                case 4:
+                    VIDEO_BIT_RATE = 1048576;
+                    break;
+                case 0:
+                    VIDEO_BIT_RATE = mIsLowRamEnabled ? 10485760 : 20971520;
+                    break;
+                default:
+                    VIDEO_BIT_RATE = 6000000;
+                    break;
             }
-            mMediaRecorder.setVideoEncodingBitRate(VIDEO_BIT_RATE);
 
             if (mVideoBitrateOpt > 2) {
                 VIDEO_FRAME_RATE = mIsLowRamEnabled ? 30 : 60;
@@ -369,7 +351,6 @@ public class RecordingService extends Service {
             }
 
             // Reving up those recorders
-            boolean useOldEncoder = mIsLowRamEnabled || !useH265;
             switch (mAudioSourceOpt) {
                 case 1:
                     mVideoBufferInfo = new MediaCodec.BufferInfo();
@@ -378,7 +359,7 @@ public class RecordingService extends Service {
                         AUDIO_CHANNEL_TYPE,
                         AudioFormat.ENCODING_PCM_16BIT);
                     // Preparing video encoder
-                    MediaFormat videoFormat = MediaFormat.createVideoFormat(useOldEncoder ? "video/avc" : "video/hevc", screenWidth, screenHeight);
+                    MediaFormat videoFormat = MediaFormat.createVideoFormat(mIsLowRamEnabled ? "video/avc" : "video/hevc", screenWidth, screenHeight);
                     videoFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT,
                         MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
                     videoFormat.setInteger(MediaFormat.KEY_BIT_RATE, VIDEO_BIT_RATE);
@@ -387,7 +368,7 @@ public class RecordingService extends Service {
                     videoFormat.setInteger(MediaFormat.KEY_REPEAT_PREVIOUS_FRAME_AFTER, 1000000 / VIDEO_FRAME_RATE);
                     videoFormat.setInteger(MediaFormat.KEY_CHANNEL_COUNT, 1);
                     videoFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
-                    mVideoEncoder = MediaCodec.createEncoderByType(useOldEncoder ? "video/avc" : "video/hevc");
+                    mVideoEncoder = MediaCodec.createEncoderByType(mIsLowRamEnabled ? "video/avc" : "video/hevc");
                     mVideoEncoder.configure(videoFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
                     // Preparing audio encoder
                     MediaFormat mAudioFormat = MediaFormat.createAudioFormat("audio/mp4a-latm", AUDIO_SAMPLE_RATE, TOTAL_NUM_TRACKS);
@@ -424,7 +405,7 @@ public class RecordingService extends Service {
                     if (mAudioSourceOpt == 2) mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
                     mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
                     mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-                    mMediaRecorder.setVideoEncoder(useOldEncoder ? MediaRecorder.VideoEncoder.H264 : MediaRecorder.VideoEncoder.HEVC);
+                    mMediaRecorder.setVideoEncoder(mIsLowRamEnabled ? MediaRecorder.VideoEncoder.H264 : MediaRecorder.VideoEncoder.HEVC);
                     mMediaRecorder.setVideoSize(screenWidth, screenHeight);
                     mMediaRecorder.setVideoFrameRate(VIDEO_FRAME_RATE);
                     mMediaRecorder.setVideoEncodingBitRate(VIDEO_BIT_RATE);
@@ -505,25 +486,40 @@ public class RecordingService extends Service {
                 .getString(isPaused ? R.string.screenrecord_resume_label
                         : R.string.screenrecord_pause_label);
         Intent pauseIntent = isPaused ? getResumeIntent(this) : getPauseIntent(this);
-
-        mRecordingNotificationBuilder.setActions(
-                new Notification.Action.Builder(
-                        Icon.createWithResource(this, R.drawable.ic_android),
-                        getResources().getString(R.string.screenrecord_stop_label),
-                        getStopPendingIntent())
-                        .build(),
-                new Notification.Action.Builder(
-                        Icon.createWithResource(this, R.drawable.ic_android), pauseString,
-                        PendingIntent.getService(this, REQUEST_CODE, pauseIntent,
-                                PendingIntent.FLAG_UPDATE_CURRENT))
-                        .build(),
-                new Notification.Action.Builder(
-                        Icon.createWithResource(this, R.drawable.ic_android),
-                        getResources().getString(R.string.screenrecord_cancel_label),
-                        PendingIntent
-                                .getService(this, REQUEST_CODE, getCancelIntent(this),
-                                        PendingIntent.FLAG_UPDATE_CURRENT))
-                        .build());
+        if (mAudioSourceOpt != 1) {
+            mRecordingNotificationBuilder.setActions(
+                    new Notification.Action.Builder(
+                            Icon.createWithResource(this, R.drawable.ic_android),
+                            getResources().getString(R.string.screenrecord_stop_label),
+                            getStopPendingIntent())
+                            .build(),
+                    new Notification.Action.Builder(
+                            Icon.createWithResource(this, R.drawable.ic_android), pauseString,
+                            PendingIntent.getService(this, REQUEST_CODE, pauseIntent,
+                                    PendingIntent.FLAG_UPDATE_CURRENT))
+                            .build(),
+                    new Notification.Action.Builder(
+                            Icon.createWithResource(this, R.drawable.ic_android),
+                            getResources().getString(R.string.screenrecord_cancel_label),
+                            PendingIntent
+                                    .getService(this, REQUEST_CODE, getCancelIntent(this),
+                                            PendingIntent.FLAG_UPDATE_CURRENT))
+                            .build());
+        } else {
+            mRecordingNotificationBuilder.setActions(
+                    new Notification.Action.Builder(
+                            Icon.createWithResource(this, R.drawable.ic_android),
+                            getResources().getString(R.string.screenrecord_stop_label),
+                            getStopPendingIntent())
+                            .build(),
+                    new Notification.Action.Builder(
+                            Icon.createWithResource(this, R.drawable.ic_android),
+                            getResources().getString(R.string.screenrecord_cancel_label),
+                            PendingIntent
+                                    .getService(this, REQUEST_CODE, getCancelIntent(this),
+                                            PendingIntent.FLAG_UPDATE_CURRENT))
+                            .build());
+        }
         notificationManager.notify(NOTIFICATION_ID, mRecordingNotificationBuilder.build());
     }
 
@@ -590,13 +586,23 @@ public class RecordingService extends Service {
             stopDot();
         }
         try {
-            mMediaRecorder.stop();
-            mMediaRecorder.release();
-            mMediaRecorder = null;
-            mMediaProjection.stop();
-            mMediaProjection = null;
-            mInputSurface.release();
-            mVirtualDisplay.release();
+            switch (mAudioSourceOpt) {
+                case 1:
+                    mAudioRecording = false;
+                    mAudioEncoding = false;
+                    mVideoEncoding = false;
+                    break;
+
+                default:
+                    mMediaRecorder.stop();
+                    mMediaRecorder.release();
+                    mMediaRecorder = null;
+                    mMediaProjection.stop();
+                    mMediaProjection = null;
+                    mInputSurface.release();
+                    mVirtualDisplay.release();
+                    break;
+            }
         } catch (Exception e) {}
         stopSelf();
     }
