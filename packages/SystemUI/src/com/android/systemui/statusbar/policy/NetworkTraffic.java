@@ -1,8 +1,20 @@
-package com.android.systemui.statusbar.policy;
+/*
+ * Copyright (C) 2019 ion-OS
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import static com.android.systemui.statusbar.StatusBarIconView.STATE_DOT;
-import static com.android.systemui.statusbar.StatusBarIconView.STATE_HIDDEN;
-import static com.android.systemui.statusbar.StatusBarIconView.STATE_ICON;
+package com.android.systemui.statusbar.policy;
 
 import java.text.DecimalFormat;
 
@@ -15,7 +27,6 @@ import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.graphics.drawable.Drawable;
 import android.graphics.PorterDuff.Mode;
-import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.view.Gravity;
 import android.net.ConnectivityManager;
@@ -27,6 +38,10 @@ import android.os.UserHandle;
 import android.os.Message;
 import android.os.SystemClock;
 import android.provider.Settings;
+import android.text.Spanned;
+import android.text.SpannableString;
+import android.text.style.RelativeSizeSpan;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -34,23 +49,23 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.android.internal.util.komodo.KomodoUtils;
-import com.android.systemui.Dependency;
 import com.android.systemui.R;
-import com.android.systemui.statusbar.StatusIconDisplayable;
-import com.android.systemui.plugins.DarkIconDispatcher;
 import com.android.systemui.plugins.DarkIconDispatcher.DarkReceiver;
+import com.android.settingslib.Utils;
 
 /*
-*
-* Seeing how an Integer object in java requires at least 16 Bytes, it seemed awfully wasteful
-* to only use it for a single boolean. 32-bits is plenty of room for what we need it to do.
-*
-*/
-public class NetworkTraffic extends TextView implements StatusIconDisplayable {
+ *
+ * Seeing how an Integer object in java requires at least 16 Bytes, it seemed awfully wasteful
+ * to only use it for a single boolean. 32-bits is plenty of room for what we need it to do.
+ *
+ */
+public class NetworkTraffic extends TextView {
 
-    public static final String SLOT = "networktraffic";
-
-    private static final int INTERVAL = 1500; //ms
+    private static final int BOTH = 0;
+    private static final int UP = 1;
+    private static final int DOWN = 2;
+    private static final int COMBINED = 3;
+    private static final int DYNAMIC = 4;
     private static final int KB = 1024;
     private static final int MB = KB * KB;
     private static final int GB = MB * KB;
@@ -62,31 +77,33 @@ public class NetworkTraffic extends TextView implements StatusIconDisplayable {
         decimalFormat.setMaximumFractionDigits(1);
     }
 
-    private boolean mIsEnabled;
-    private boolean mAttached;
+    protected boolean mIsEnabled;
+    protected boolean mAttached;
+    private boolean mHideArrow;
     private long totalRxBytes;
     private long totalTxBytes;
     private long lastUpdateTime;
     private int txtSize;
-    private boolean mHideArrow;
     private int txtImgPadding;
+    private int mTrafficType;
+    private int mTrafficLayout;
     private int mAutoHideThreshold;
-    private int mTintColor;
-    private int mVisibleState = -1;
-    private boolean mTrafficVisible = false;
-    private boolean mSystemIconVisible = true;
-    private boolean mColorIsStatic = false;
-    private boolean indicatorUp = false;
-    private boolean indicatorDown = false;
+    protected int mTintColor;
+    protected boolean mTrafficVisible = false;
+    private int mRefreshInterval = 2;
 
     private boolean mScreenOn = true;
+    private boolean iBytes;
+    private boolean oBytes;
+
+    protected static final String blank = "";
 
     private Handler mTrafficHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             long timeDelta = SystemClock.elapsedRealtime() - lastUpdateTime;
 
-            if (timeDelta < INTERVAL * .95) {
+            if (timeDelta < mRefreshInterval * 1000 * 0.95f) {
                 if (msg.what != 1) {
                     // we just updated the view, nothing further to do
                     return;
@@ -104,63 +121,156 @@ public class NetworkTraffic extends TextView implements StatusIconDisplayable {
             long rxData = newTotalRxBytes - totalRxBytes;
             long txData = newTotalTxBytes - totalTxBytes;
 
+            iBytes = (rxData <= (mAutoHideThreshold * 1024));
+            oBytes = (txData <= (mAutoHideThreshold * 1024));
+
             if (shouldHide(rxData, txData, timeDelta)) {
-                setText("");
+                setText(blank);
                 mTrafficVisible = false;
-            } else if (shouldShowUpload(rxData, txData, timeDelta)) {
-                // Show information for uplink if it's called for
-                String output = formatOutput(timeDelta, txData, symbol);
-
-                // Update view if there's anything new to show
-                if (!output.contentEquals(getText())) {
-                    setTextSize(TypedValue.COMPLEX_UNIT_PX, (float)txtSize);
-                    setTypeface(Typeface.create("sans-serif-condensed", Typeface.NORMAL));
-                    setText(output);
-                    indicatorUp = true;
-                }
-                mTrafficVisible = true;
             } else {
-                // Add information for downlink if it's called for
-                String output = formatOutput(timeDelta, rxData, symbol);
-
+                CharSequence output;
+                if (mTrafficType == UP){
+                    output = formatOutput(timeDelta, txData, symbol);
+                } else if (mTrafficType == DOWN){
+                    output = formatOutput(timeDelta, rxData, symbol);
+                } else if (mTrafficType == BOTH) {
+                    output = formatOutput(timeDelta, txData, symbol) + "\n" + formatOutput(timeDelta, rxData, symbol);
+                } else if (mTrafficType == DYNAMIC) {
+                    if (txData > rxData) {
+                        output = formatOutput(timeDelta, txData, symbol);
+                        if (!oBytes) {
+                            oBytes = false;
+                            iBytes = true;
+                        } else {
+                            oBytes = true;
+                            iBytes = true;
+                        }
+                    } else {
+                        output = formatOutput(timeDelta, rxData, symbol);
+                        if (!iBytes) {
+                            iBytes = false;
+                            oBytes = true;
+                        } else {
+                            iBytes = true;
+                            oBytes = true;
+                        }
+                    }
+                } else {
+                    output = formatOutput(timeDelta, rxData + txData, symbol);
+                    if (txData > rxData) {
+                        if (!oBytes) {
+                            oBytes = false;
+                            iBytes = true;
+                        } else {
+                            oBytes = true;
+                            iBytes = true;
+                        }
+                    } else {
+                        if (!iBytes) {
+                            iBytes = false;
+                            oBytes = true;
+                        } else {
+                            iBytes = true;
+                            oBytes = true;
+                        }
+                    }
+                }
                 // Update view if there's anything new to show
-                if (! output.contentEquals(getText())) {
-                    setTextSize(TypedValue.COMPLEX_UNIT_PX, (float)txtSize);
+                if (output != getText()) {
                     setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
-		            setTypeface(Typeface.create("sans-serif-condensed", Typeface.NORMAL));
+                    if (mTrafficLayout == 1) {
+                        setMaxLines(2);
+                        setLineSpacing(0.75f, 0.75f);
+                    }
                     setText(output);
-                    indicatorDown = true;
                 }
                 mTrafficVisible = true;
             }
-            updateVisibility();
+
             updateTrafficDrawable();
+            updateVisibility();
+            updateTextSize();
 
             // Post delayed message to refresh in ~1000ms
             totalRxBytes = newTotalRxBytes;
             totalTxBytes = newTotalTxBytes;
             clearHandlerCallbacks();
-            mTrafficHandler.postDelayed(mRunnable, INTERVAL);
+            mTrafficHandler.postDelayed(mRunnable, mRefreshInterval * 1000);
         }
 
-        private String formatOutput(long timeDelta, long data, String symbol) {
+        private CharSequence formatOutput(long timeDelta, long data, String symbol) {
             long speed = (long)(data / (timeDelta / 1000F));
-            if (speed < KB) {
-                return decimalFormat.format(speed / (float)KB) + 'K' + symbol;
-            } else if (speed < MB) {
-                return decimalFormat.format(speed / (float)KB) + 'K' + symbol;
-            } else if (speed < GB) {
-                return decimalFormat.format(speed / (float)MB) + 'M' + symbol;
+            if (mTrafficLayout == 0 || mTrafficType == BOTH) {
+                if (speed < KB) {
+                    return decimalFormat.format(speed) + symbol;
+                } else if (speed < MB) {
+                    return decimalFormat.format(speed / (float)KB) + "Ki" + symbol;
+                } else if (speed < GB) {
+                    return decimalFormat.format(speed / (float)MB) + "Mi" + symbol;
+                }
+                return decimalFormat.format(speed / (float)GB) + "Gi" + symbol;
+            } else {
+                return formatDecimal(speed);
             }
-            return decimalFormat.format(speed / (float)GB) + 'G' + symbol;
+        }
+
+        private CharSequence formatDecimal(long speed) {
+            DecimalFormat mDecimalFormat;
+            String mUnit;
+            String formatSpeed;
+            SpannableString spanUnitString;
+            SpannableString spanSpeedString;
+
+            if (speed >= GB) {
+                mUnit = "Gi";
+                mDecimalFormat = new DecimalFormat("0.00");
+                formatSpeed =  mDecimalFormat.format(speed / (float)GB);
+            } else if (speed >= 100 * MB) {
+                mDecimalFormat = new DecimalFormat("000");
+                mUnit = "Mi";
+                formatSpeed =  mDecimalFormat.format(speed / (float)MB);
+            } else if (speed >= 10 * MB) {
+                mDecimalFormat = new DecimalFormat("00.0");
+                mUnit = "Mi";
+                formatSpeed =  mDecimalFormat.format(speed / (float)MB);
+            } else if (speed >= MB) {
+                mDecimalFormat = new DecimalFormat("0.00");
+                mUnit = "Mi";
+                formatSpeed =  mDecimalFormat.format(speed / (float)MB);
+            } else if (speed >= 100 * KB) {
+                mDecimalFormat = new DecimalFormat("000");
+                mUnit = "Ki";
+                formatSpeed =  mDecimalFormat.format(speed / (float)KB);
+            } else if (speed >= 10 * KB) {
+                mDecimalFormat = new DecimalFormat("00.0");
+                mUnit = "Ki";
+                formatSpeed =  mDecimalFormat.format(speed / (float)KB);
+            } else {
+                mDecimalFormat = new DecimalFormat("0.00");
+                mUnit = "Ki";
+                formatSpeed = mDecimalFormat.format(speed / (float)KB);
+            }
+
+            spanSpeedString = new SpannableString(formatSpeed);
+            spanSpeedString.setSpan(new RelativeSizeSpan(0.75f), 0, (formatSpeed).length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+
+            spanUnitString = new SpannableString(mUnit + symbol);
+            spanUnitString.setSpan(new RelativeSizeSpan(0.70f), 0, (mUnit + symbol).length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+            return TextUtils.concat(spanSpeedString, "\n", spanUnitString);
         }
 
         private boolean shouldHide(long rxData, long txData, long timeDelta) {
+            long speedTxKB = (long)(txData / (timeDelta / 1000f)) / KB;
             long speedRxKB = (long)(rxData / (timeDelta / 1000f)) / KB;
-	    long speedTxKB = (long)(txData / (timeDelta / 1000f)) / KB;
-            return !getConnectAvailable() ||
+            if (mTrafficType == UP) {
+                return !getConnectAvailable() || speedTxKB < mAutoHideThreshold;
+            } else if (mTrafficType == DOWN) {
+                return !getConnectAvailable() || speedRxKB < mAutoHideThreshold;
+            } else {
+                return !getConnectAvailable() ||
                     (speedRxKB < mAutoHideThreshold &&
                     speedTxKB < mAutoHideThreshold);
+            }
         }
 
 	private boolean shouldShowUpload(long rxData, long txData, long timeDelta) {
@@ -186,13 +296,22 @@ public class NetworkTraffic extends TextView implements StatusIconDisplayable {
         void observe() {
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(Settings.System
-                    .getUriFor(Settings.System.NETWORK_TRAFFIC_STATE), false,
+                    .getUriFor(getSystemSettingKey()), false,
+                    this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.NETWORK_TRAFFIC_TYPE), false,
+                    this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.NETWORK_TRAFFIC_LAYOUT), false,
                     this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System
                     .getUriFor(Settings.System.NETWORK_TRAFFIC_AUTOHIDE_THRESHOLD), false,
                     this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System
                     .getUriFor(Settings.System.NETWORK_TRAFFIC_HIDEARROW), false,
+                    this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.NETWORK_TRAFFIC_REFRESH_INTERVAL), false,
                     this, UserHandle.USER_ALL);
         }
 
@@ -226,9 +345,9 @@ public class NetworkTraffic extends TextView implements StatusIconDisplayable {
     public NetworkTraffic(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         final Resources resources = getResources();
-        txtSize = resources.getDimensionPixelSize(R.dimen.net_traffic_multi_text_size);
         txtImgPadding = resources.getDimensionPixelSize(R.dimen.net_traffic_txt_img_padding);
         mTintColor = resources.getColor(android.R.color.white);
+        setTextColor(mTintColor);
         Handler mHandler = new Handler();
         SettingsObserver settingsObserver = new SettingsObserver(mHandler);
         settingsObserver.observe();
@@ -247,7 +366,6 @@ public class NetworkTraffic extends TextView implements StatusIconDisplayable {
             filter.addAction(Intent.ACTION_SCREEN_ON);
             mContext.registerReceiver(mIntentReceiver, filter, null, getHandler());
         }
-        Dependency.get(DarkIconDispatcher.class).addDarkReceiver(this);
         updateSettings();
     }
 
@@ -258,7 +376,6 @@ public class NetworkTraffic extends TextView implements StatusIconDisplayable {
             mContext.unregisterReceiver(mIntentReceiver);
             mAttached = false;
         }
-        Dependency.get(DarkIconDispatcher.class).removeDarkReceiver(this);
     }
 
     private final BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
@@ -288,6 +405,7 @@ public class NetworkTraffic extends TextView implements StatusIconDisplayable {
 
     private void updateSettings() {
         updateVisibility();
+        updateTextSize();
         if (mIsEnabled) {
             if (mAttached) {
                 totalRxBytes = TrafficStats.getTotalRxBytes();
@@ -304,14 +422,27 @@ public class NetworkTraffic extends TextView implements StatusIconDisplayable {
     private void setMode() {
         ContentResolver resolver = mContext.getContentResolver();
         mIsEnabled = Settings.System.getIntForUser(resolver,
-                Settings.System.NETWORK_TRAFFIC_STATE, 1,
+                getSystemSettingKey(), 0,
                 UserHandle.USER_CURRENT) == 1;
+        mTrafficType = Settings.System.getIntForUser(resolver,
+                Settings.System.NETWORK_TRAFFIC_TYPE, 0,
+                UserHandle.USER_CURRENT);
+        mTrafficLayout = Settings.System.getIntForUser(resolver,
+                Settings.System.NETWORK_TRAFFIC_LAYOUT, 0,
+                UserHandle.USER_CURRENT);
         mAutoHideThreshold = Settings.System.getIntForUser(resolver,
                 Settings.System.NETWORK_TRAFFIC_AUTOHIDE_THRESHOLD, 1,
                 UserHandle.USER_CURRENT);
         mHideArrow = Settings.System.getIntForUser(resolver,
-                Settings.System.NETWORK_TRAFFIC_HIDEARROW, 0,
+                Settings.System.NETWORK_TRAFFIC_HIDEARROW, 1,
                 UserHandle.USER_CURRENT) == 1;
+        mRefreshInterval = Settings.System.getIntForUser(resolver,
+                Settings.System.NETWORK_TRAFFIC_REFRESH_INTERVAL, 2,
+                UserHandle.USER_CURRENT);
+    }
+
+    protected String getSystemSettingKey() {
+        return Settings.System.NETWORK_TRAFFIC_EXPANDED_STATUS_BAR_STATE;
     }
 
     private void clearHandlerCallbacks() {
@@ -320,103 +451,99 @@ public class NetworkTraffic extends TextView implements StatusIconDisplayable {
         mTrafficHandler.removeMessages(1);
     }
 
-    private void updateTrafficDrawable() {
-        int indicatorDrawable;
-        if (mIsEnabled && !mHideArrow) {
-            if (indicatorUp) {
-                indicatorDrawable = R.drawable.stat_sys_network_traffic_up_arrow;
-                Drawable d = getContext().getDrawable(indicatorDrawable);
-                d.setColorFilter(mTintColor, Mode.MULTIPLY);
-                setCompoundDrawablePadding(txtImgPadding);
-                setCompoundDrawablesWithIntrinsicBounds(null, null, d, null);
-            } else if (indicatorDown) {
-                indicatorDrawable = R.drawable.stat_sys_network_traffic_down_arrow;
-                Drawable d = getContext().getDrawable(indicatorDrawable);
-                d.setColorFilter(mTintColor, Mode.MULTIPLY);
-                setCompoundDrawablePadding(txtImgPadding);
-                setCompoundDrawablesWithIntrinsicBounds(null, null, d, null);
+    protected void updateTrafficDrawable() {
+        int intTrafficDrawable;
+        if (mIsEnabled && mHideArrow) {
+            if (mTrafficType == UP) {
+                if (oBytes) {
+                    intTrafficDrawable = R.drawable.stat_sys_network_traffic;
+                } else {
+                    intTrafficDrawable = R.drawable.stat_sys_network_traffic_up;
+                }
+            } else if (mTrafficType == DOWN) {
+                if (iBytes) {
+                    intTrafficDrawable = R.drawable.stat_sys_network_traffic;
+                } else {
+                    intTrafficDrawable = R.drawable.stat_sys_network_traffic_down;
+                }
+            } else if (mTrafficType == DYNAMIC || mTrafficType == COMBINED) {
+                if (iBytes && !oBytes) {
+                    intTrafficDrawable = R.drawable.stat_sys_network_traffic_up;
+                } else if (!iBytes && oBytes) {
+                    intTrafficDrawable = R.drawable.stat_sys_network_traffic_down;
+                } else {
+                    intTrafficDrawable = R.drawable.stat_sys_network_traffic;
+                }
             } else {
-                setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                if (!iBytes && !oBytes) {
+                    intTrafficDrawable = R.drawable.stat_sys_network_traffic_updown;
+                } else if (!oBytes) {
+                    intTrafficDrawable = R.drawable.stat_sys_network_traffic_up;
+                } else if (!iBytes) {
+                    intTrafficDrawable = R.drawable.stat_sys_network_traffic_down;
+                } else {
+                    intTrafficDrawable = R.drawable.stat_sys_network_traffic;
+                }
             }
+        } else {
+            intTrafficDrawable = 0;
+        }
+        if (intTrafficDrawable != 0 && mHideArrow) {
+            Drawable d = getContext().getDrawable(intTrafficDrawable);
+            d.setColorFilter(mTintColor, Mode.MULTIPLY);
+            setCompoundDrawablePadding(txtImgPadding);
+            setCompoundDrawablesWithIntrinsicBounds(null, null, d, null);
         } else {
             setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
         }
-        indicatorUp = false;
-        indicatorDown = false;
+
+    }
+
+    protected void updateTextSize() {
+        int txtSize;
+        if (mTrafficLayout == 0 || mTrafficType == BOTH) {
+            if (mTrafficType == BOTH) {
+                txtSize = getResources().getDimensionPixelSize(R.dimen.net_traffic_multi_text_size);
+            } else {
+                txtSize = getResources().getDimensionPixelSize(R.dimen.net_traffic_single_text_size);
+            }
+            setLineSpacing(1f, 1f);
+        } else {
+            txtSize = getResources().getDimensionPixelSize(R.dimen.net_traffic_single_text_size_x);
+            setMaxLines(2);
+            setLineSpacing(0.75f, 0.75f);
+        }
+        setTextSize(TypedValue.COMPLEX_UNIT_PX, (float)txtSize);
     }
 
     public void onDensityOrFontScaleChanged() {
         final Resources resources = getResources();
-        txtSize = resources.getDimensionPixelSize(R.dimen.net_traffic_multi_text_size);
         txtImgPadding = resources.getDimensionPixelSize(R.dimen.net_traffic_txt_img_padding);
-        setTextSize(TypedValue.COMPLEX_UNIT_PX, (float)txtSize);
         setCompoundDrawablePadding(txtImgPadding);
-        setTypeface(Typeface.create("sans-serif-condensed", Typeface.NORMAL));
+        updateTextSize();
     }
 
-    @Override
-    public void onDarkChanged(Rect area, float darkIntensity, int tint) {
-        if (mColorIsStatic) {
-            return;
-        }
-        mTintColor = DarkIconDispatcher.getTint(area, this, tint);
-        setTextColor(mTintColor);
-        updateTrafficDrawable();
-    }
 
-    @Override
-    public String getSlot() {
-        return SLOT;
-    }
-
-    @Override
-    public boolean isIconVisible() {
-        return mIsEnabled;
-    }
-
-    @Override
-    public int getVisibleState() {
-        return mVisibleState;
-    }
-
-    @Override
-    public void setVisibleState(int state, boolean animate) {
-        if (state == mVisibleState) {
-            return;
-        }
-        mVisibleState = state;
-
-        switch (state) {
-            case STATE_ICON:
-                mSystemIconVisible = true;
-                break;
-            case STATE_DOT:
-            case STATE_HIDDEN:
-            default:
-                mSystemIconVisible = false;
-                break;
-        }
-        updateVisibility();
-    }
-
-    private void updateVisibility() {
+    protected void updateVisibility() {
         if (!KomodoUtils.hasNotch(mContext) && mIsEnabled &&
-                mTrafficVisible && mSystemIconVisible) {
+                mTrafficVisible) {
             setVisibility(View.VISIBLE);
         } else {
+            setText(blank);
             setVisibility(View.GONE);
         }
     }
 
-    @Override
-    public void setStaticDrawableColor(int color) {
-        mColorIsStatic = true;
-        mTintColor = color;
-        setTextColor(mTintColor);
-        updateTrafficDrawable();
-    }
-
-    @Override
-    public void setDecorColor(int color) {
+    public void useWallpaperTextColor(boolean shouldUseWallpaperTextColor) {
+        if (shouldUseWallpaperTextColor) {
+	        final Resources resources = getResources();
+            mTintColor = resources.getColor(android.R.color.white);
+            //mTintColor = Utils.getColorAttr(mContext, R.attr.wallpaperTextColor);
+	        updateTrafficDrawable();
+        } else {
+	        final Resources resources = getResources();
+	        mTintColor = resources.getColor(android.R.color.white);
+	        updateTrafficDrawable();
+	    }
     }
 }
