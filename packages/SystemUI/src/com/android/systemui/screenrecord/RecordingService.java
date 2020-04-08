@@ -489,17 +489,17 @@ public class RecordingService extends Service {
         if (mAudioSourceOpt != 1) {
             mRecordingNotificationBuilder.setActions(
                     new Notification.Action.Builder(
-                            Icon.createWithResource(this, R.drawable.ic_android),
+                            Icon.createWithResource(this, R.drawable.ic_screenrecord_recording),
                             getResources().getString(R.string.screenrecord_stop_label),
                             getStopPendingIntent())
                             .build(),
                     new Notification.Action.Builder(
-                            Icon.createWithResource(this, R.drawable.ic_android), pauseString,
+                            Icon.createWithResource(this, R.drawable.ic_screenrecord_recording), pauseString,
                             PendingIntent.getService(this, REQUEST_CODE, pauseIntent,
                                     PendingIntent.FLAG_UPDATE_CURRENT))
                             .build(),
                     new Notification.Action.Builder(
-                            Icon.createWithResource(this, R.drawable.ic_android),
+                            Icon.createWithResource(this, R.drawable.ic_screenrecord_recording),
                             getResources().getString(R.string.screenrecord_cancel_label),
                             PendingIntent
                                     .getService(this, REQUEST_CODE, getCancelIntent(this),
@@ -508,12 +508,12 @@ public class RecordingService extends Service {
         } else {
             mRecordingNotificationBuilder.setActions(
                     new Notification.Action.Builder(
-                            Icon.createWithResource(this, R.drawable.ic_android),
+                            Icon.createWithResource(this, R.drawable.ic_screenrecord_recording),
                             getResources().getString(R.string.screenrecord_stop_label),
                             getStopPendingIntent())
                             .build(),
                     new Notification.Action.Builder(
-                            Icon.createWithResource(this, R.drawable.ic_android),
+                            Icon.createWithResource(this, R.drawable.ic_screenrecord_recording),
                             getResources().getString(R.string.screenrecord_cancel_label),
                             PendingIntent
                                     .getService(this, REQUEST_CODE, getCancelIntent(this),
