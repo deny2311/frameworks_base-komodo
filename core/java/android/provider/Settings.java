@@ -4768,6 +4768,14 @@ public final class Settings {
          */
         public static final String FP_UNLOCK_KEYSTORE = "fp_unlock_keystore";
 
+        /**
+         * Controls whether to show R style notification headers
+         * @hide
+         */
+        public static final String NOTIFICATION_HEADERS = "notification_headers";
+
+        private static final Validator NOTIFICATION_HEADERS_VALIDATOR = BOOLEAN_VALIDATOR;
+
          /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
@@ -4839,6 +4847,7 @@ public final class Settings {
             QS_DATAUSAGE,
             HEADS_UP_NOTIFICATION_SNOOZE,
             HEADS_UP_TIMEOUT,
+            NOTIFICATION_HEADERS,
         };
 
         /**
@@ -5085,6 +5094,7 @@ public final class Settings {
             VALIDATORS.put(LIVE_DISPLAY_HINTED, LIVE_DISPLAY_HINTED_VALIDATOR);
             VALIDATORS.put(HEADS_UP_NOTIFICATION_SNOOZE,HEADS_UP_NOTIFICATION_SNOOZE_VALIDATOR);
             VALIDATORS.put(HEADS_UP_TIMEOUT,HEADS_UP_TIMEOUT_VALIDATOR);
+            VALIDATORS.put(NOTIFICATION_HEADERS, NOTIFICATION_HEADERS_VALIDATOR);
         }
 
         /**
