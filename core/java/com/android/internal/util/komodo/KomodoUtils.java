@@ -298,4 +298,12 @@ public class KomodoUtils {
         }
     }
 
+    // Check if gesture navbar is enabled
+    public static boolean isGestureNavbar() {
+        return KomodoUtils.isThemeEnabled("com.android.internal.systemui.navbar.gestural_narrow_back")
+                || KomodoUtils.isThemeEnabled("com.android.internal.systemui.navbar.gestural")
+                || KomodoUtils.isThemeEnabled("com.android.internal.systemui.navbar.gestural_wide_back")
+                || KomodoUtils.isThemeEnabled("com.android.internal.systemui.navbar.gestural_extra_wide_back");
+    }
+
 }
