@@ -4847,20 +4847,11 @@ public final class Settings {
          */
         public static final String DOUBLE_TAP_SLEEP_GESTURE = "double_tap_sleep_gesture";
 
-        /** @hide */
-        private static final Validator DOUBLE_TAP_SLEEP_GESTURE_VALIDATOR =
-                BOOLEAN_VALIDATOR;
-
         /**
          * Double tap on lockscreen to sleep
          * @hide
          */
-        public static final String DOUBLE_TAP_SLEEP_LOCKSCREEN =
-                "double_tap_sleep_lockscreen";
-
-        /** @hide */
-        private static final Validator DOUBLE_TAP_SLEEP_LOCKSCREEN_VALIDATOR =
-                BOOLEAN_VALIDATOR;
+        public static final String DOUBLE_TAP_SLEEP_LOCKSCREEN = "double_tap_sleep_lockscreen";
 
         /**
          * Whether to show the battery bar
@@ -5327,8 +5318,6 @@ public final class Settings {
             OMNI_STATUS_BAR_FILE_HEADER_IMAGE,
             PULSE_AMBIENT_LIGHT,
             PULSE_AMBIENT_LIGHT_COLOR,
-            DOUBLE_TAP_SLEEP_GESTURE,
-            DOUBLE_TAP_SLEEP_LOCKSCREEN,
             STATUS_BAR_CLOCK,
             STATUSBAR_CLOCK_STYLE,
             STATUS_BAR_CLOCK_SECONDS,
@@ -5646,8 +5635,6 @@ public final class Settings {
                     OMNI_STATUS_BAR_FILE_HEADER_IMAGE_VALIDATOR);
             VALIDATORS.put(PULSE_AMBIENT_LIGHT, PULSE_AMBIENT_LIGHT_VALIDATOR);
             VALIDATORS.put(PULSE_AMBIENT_LIGHT_COLOR, PULSE_AMBIENT_LIGHT_COLOR_VALIDATOR);
-            VALIDATORS.put(DOUBLE_TAP_SLEEP_GESTURE, DOUBLE_TAP_SLEEP_GESTURE_VALIDATOR);
-            VALIDATORS.put(DOUBLE_TAP_SLEEP_LOCKSCREEN, DOUBLE_TAP_SLEEP_LOCKSCREEN_VALIDATOR);
             VALIDATORS.put(STATUS_BAR_CLOCK, STATUS_BAR_CLOCK_VALIDATOR);
             VALIDATORS.put(STATUSBAR_CLOCK_STYLE, STATUSBAR_CLOCK_STYLE_VALIDATOR);
             VALIDATORS.put(STATUS_BAR_CLOCK_SECONDS, STATUS_BAR_CLOCK_SECONDS_VALIDATOR);
