@@ -65,7 +65,6 @@ import android.app.admin.DevicePolicyManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentCallbacks2;
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -3992,9 +3991,6 @@ public class StatusBar extends SystemUI implements DemoMode,
         void observe() {
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.DOUBLE_TAP_SLEEP_GESTURE),
-                    false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_BLUR_ALPHA),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -4021,17 +4017,10 @@ public class StatusBar extends SystemUI implements DemoMode,
         }
 
         public void update() {
-            setStatusDoubleTapToSleep();
             updateBlurVisibility();
             setGamingMode();
             setHeadsUpStoplist();
             setHeadsUpBlacklist();
-        }
-    }
-
-    private void setStatusDoubleTapToSleep() {
-        if (mStatusBarWindow != null) {
-            mStatusBarWindow.updateSettings();
         }
     }
 
