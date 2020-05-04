@@ -620,7 +620,6 @@ public class StatusBar extends SystemUI implements DemoMode,
     private final SysuiStatusBarStateController mStatusBarStateController =
             (SysuiStatusBarStateController) Dependency.get(StatusBarStateController.class);
 
-    private boolean mUnexpandedQSBrightnessSlider;
     private boolean mDisplayCutoutHidden;
 
     private final KeyguardUpdateMonitorCallback mUpdateCallback =
@@ -1765,14 +1764,6 @@ public class StatusBar extends SystemUI implements DemoMode,
         updateTheme();
     }
 
-    public void updateBrightnessSliderOverlay() {
-        boolean UnexpandedQSBrightnessSlider = Settings.System.getIntForUser(mContext.getContentResolver(),
-                        Settings.System.BRIGHTNESS_SLIDER_QS_UNEXPANDED, 0, UserHandle.USER_CURRENT) == 1;
-        if (mUnexpandedQSBrightnessSlider != UnexpandedQSBrightnessSlider){
-            mUnexpandedQSBrightnessSlider = UnexpandedQSBrightnessSlider;
-       }
-    }
-
     private void updateCutoutOverlay() {
         boolean displayCutoutHidden = Settings.System.getIntForUser(mContext.getContentResolver(),
                         Settings.System.DISPLAY_CUTOUT_HIDDEN, 0, UserHandle.USER_CURRENT) == 1;
@@ -1782,8 +1773,6 @@ public class StatusBar extends SystemUI implements DemoMode,
                 final IOverlayManager mOverlayManager = IOverlayManager.Stub.asInterface(
                                 ServiceManager.getService(Context.OVERLAY_SERVICE));
                 try {
-                    mOverlayManager.setEnabled("com.komodo.overlay.brightnessslider",
-                                mUnexpandedQSBrightnessSlider, mLockscreenUserManager.getCurrentUserId());
                     mOverlayManager.setEnabled("org.pixelexperience.overlay.hidecutout",
                                 mDisplayCutoutHidden, mLockscreenUserManager.getCurrentUserId());
                 } catch (RemoteException ignored) {
@@ -4006,9 +3995,6 @@ public class StatusBar extends SystemUI implements DemoMode,
                     Settings.System.QS_BLUR_ALPHA),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.BRIGHTNESS_SLIDER_QS_UNEXPANDED),
-                    false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.GAMING_MODE_ACTIVE),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -4025,9 +4011,6 @@ public class StatusBar extends SystemUI implements DemoMode,
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
-            if (uri.equals(Settings.System.getUriFor(Settings.System.BRIGHTNESS_SLIDER_QS_UNEXPANDED))) {
-                updateBrightnessSliderOverlay();
-            }
             update();
         }
 
