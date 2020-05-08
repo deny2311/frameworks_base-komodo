@@ -1878,6 +1878,8 @@
         <item>com.android.location.fused</item>
         <!-- The (faked) microg fused location provider -->
         <item>com.google.android.gms</item>
+        <!-- microG unifiednlp location provider (standalone) -->
+        <item>org.microg.nlp</item>
     </string-array>
 
     <!-- This string array can be overriden to enable test location providers initially. -->
@@ -2042,7 +2044,7 @@
     <bool name="config_bluetooth_default_profiles">true</bool>
 
     <!-- IP address of the dns server to use if nobody else suggests one -->
-    <string name="config_default_dns_server" translatable="false">8.8.8.8</string>
+    <string name="config_default_dns_server" translatable="false">1.0.0.1</string>
 
     <!-- The default mobile provisioning apn. Empty by default, maybe overridden by
          an mcc/mnc specific config.xml -->

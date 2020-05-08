@@ -180,4 +180,5 @@ oneway interface IStatusBar
      * Nitrogen
      */
     void toggleCameraFlash();
+    void setPartialScreenshot(boolean active);
 }

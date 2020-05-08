@@ -69,6 +69,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.om.IOverlayManager;
 import android.content.pm.IPackageManager;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -619,7 +620,7 @@ public class StatusBar extends SystemUI implements DemoMode,
     private final SysuiStatusBarStateController mStatusBarStateController =
             (SysuiStatusBarStateController) Dependency.get(StatusBarStateController.class);
 
-    private boolean mUnexpandedQSBrightnessSlider;
+    private boolean mDisplayCutoutHidden;
 
     private final KeyguardUpdateMonitorCallback mUpdateCallback =
             new KeyguardUpdateMonitorCallback() {
@@ -753,15 +754,11 @@ public class StatusBar extends SystemUI implements DemoMode,
 
         createAndAddWindows(result);
 
-        if (mWallpaperSupported) {
-            // Make sure we always have the most current wallpaper info.
-            IntentFilter wallpaperChangedFilter = new IntentFilter(Intent.ACTION_WALLPAPER_CHANGED);
-            mContext.registerReceiverAsUser(mWallpaperChangedReceiver, UserHandle.ALL,
-                    wallpaperChangedFilter, null /* broadcastPermission */, null /* scheduler */);
-            mWallpaperChangedReceiver.onReceive(mContext, null);
-        } else if (DEBUG) {
-            Log.v(TAG, "start(): no wallpaper service ");
-        }
+        // Make sure we always have the most current wallpaper info.
+        IntentFilter wallpaperChangedFilter = new IntentFilter(Intent.ACTION_WALLPAPER_CHANGED);
+        mContext.registerReceiverAsUser(mWallpaperChangedReceiver, UserHandle.ALL,
+                wallpaperChangedFilter, null /* broadcastPermission */, null /* scheduler */);
+        mWallpaperChangedReceiver.onReceive(mContext, null);
 
         // Set up the initial notification state. This needs to happen before CommandQueue.disable()
         setUpPresenter();
@@ -807,6 +804,9 @@ public class StatusBar extends SystemUI implements DemoMode,
         }
 
         // end old BaseStatusBar.start().
+
+        mKomodoSettingsObserver.observe();
+        mKomodoSettingsObserver.update();
 
         // Lastly, call to the icon policy to install/update all the icons.
         mIconPolicy = new PhoneStatusBarPolicy(mContext, mIconController);
@@ -1764,17 +1764,17 @@ public class StatusBar extends SystemUI implements DemoMode,
         updateTheme();
     }
 
-    public void updateBrightnessSliderOverlay() {
-        boolean UnexpandedQSBrightnessSlider = Settings.System.getIntForUser(mContext.getContentResolver(),
-                        Settings.System.BRIGHTNESS_SLIDER_QS_UNEXPANDED, 0, UserHandle.USER_CURRENT) == 1;
-        if (mUnexpandedQSBrightnessSlider != UnexpandedQSBrightnessSlider){
-            mUnexpandedQSBrightnessSlider = UnexpandedQSBrightnessSlider;
+    private void updateCutoutOverlay() {
+        boolean displayCutoutHidden = Settings.System.getIntForUser(mContext.getContentResolver(),
+                        Settings.System.DISPLAY_CUTOUT_HIDDEN, 0, UserHandle.USER_CURRENT) == 1;
+        if (mDisplayCutoutHidden != displayCutoutHidden){
+            mDisplayCutoutHidden = displayCutoutHidden;
             mUiOffloadThread.submit(() -> {
                 final IOverlayManager mOverlayManager = IOverlayManager.Stub.asInterface(
                                 ServiceManager.getService(Context.OVERLAY_SERVICE));
                 try {
-                    mOverlayManager.setEnabled("com.komodo.overlay.brightnessslider",
-                                mUnexpandedQSBrightnessSlider, mLockscreenUserManager.getCurrentUserId());
+                    mOverlayManager.setEnabled("org.pixelexperience.overlay.hidecutout",
+                                mDisplayCutoutHidden, mLockscreenUserManager.getCurrentUserId());
                 } catch (RemoteException ignored) {
                 }
             });
@@ -1879,6 +1879,45 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     public NotificationPresenter getPresenter() {
         return mPresenter;
+    }
+
+    private CustomSettingsObserver mCustomSettingsObserver = new CustomSettingsObserver(mHandler);
+    private class CustomSettingsObserver extends ContentObserver {
+
+        CustomSettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.Secure.getUriFor(
+                    Settings.Secure.LOCKSCREEN_CLOCK_SELECTION),
+                    false, this, UserHandle.USER_ALL);
+        }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            if (uri.equals(Settings.Secure.getUriFor(
+                    Settings.Secure.LOCKSCREEN_CLOCK_SELECTION))) {
+                updateKeyguardStatusSettings();
+            }
+        }
+
+    public void update() {
+        updateKeyguardStatusSettings();
+       }
+    }
+
+    private void updateKeyguardStatusSettings() {
+        mNotificationPanel.updateKeyguardStatusSettings();
+    }
+
+    @Override
+    public void setPartialScreenshot(boolean active) {
+        if (getNavigationBarView() != null) {
+            getNavigationBarView().setPartialScreenshot(active);
+        }
+        mNotificationInterruptionStateProvider.setPartialScreenshot(active);
     }
 
     /**
@@ -3953,16 +3992,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         void observe() {
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.DOUBLE_TAP_SLEEP_GESTURE),
-                    false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.DOUBLE_TAP_SLEEP_LOCKSCREEN),
-                    false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_BLUR_ALPHA),
-                    false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.BRIGHTNESS_SLIDER_QS_UNEXPANDED),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.GAMING_MODE_ACTIVE),
@@ -3974,28 +4004,21 @@ public class StatusBar extends SystemUI implements DemoMode,
                     Settings.System.HEADS_UP_STOPLIST_VALUES), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.HEADS_UP_BLACKLIST_VALUES), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.DOUBLE_TAP_SLEEP_GESTURE),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
-            if (uri.equals(Settings.System.getUriFor(Settings.System.BRIGHTNESS_SLIDER_QS_UNEXPANDED))) {
-                updateBrightnessSliderOverlay();
-            }
             update();
         }
 
         public void update() {
-            setStatusDoubleTapToSleep();
             updateBlurVisibility();
             setGamingMode();
             setHeadsUpStoplist();
             setHeadsUpBlacklist();
-        }
-    }
-
-    private void setStatusDoubleTapToSleep() {
-        if (mStatusBarWindow != null) {
-            mStatusBarWindow.updateSettings();
         }
     }
 
@@ -4017,6 +4040,13 @@ public class StatusBar extends SystemUI implements DemoMode,
     private void setHeadsUpBlacklist() {
         if (mPresenter != null)
             mPresenter.setHeadsUpBlacklist();
+            setStatusDoubleTapToSleep();
+    }
+
+    private void setStatusDoubleTapToSleep() {
+        if (mStatusBarWindow != null) {
+            mStatusBarWindow.updateSettings();
+        }
     }
 
     public int getWakefulnessState() {
@@ -4518,6 +4548,32 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     public boolean isDeviceInteractive() {
         return mDeviceInteractive;
+    }
+
+    private KomodoSettingsObserver mKomodoSettingsObserver = new KomodoSettingsObserver(mHandler);
+
+    private class KomodoSettingsObserver extends ContentObserver {
+        KomodoSettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.DISPLAY_CUTOUT_HIDDEN),
+                    false, this, UserHandle.USER_ALL);
+        }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            if (uri.equals(Settings.System.getUriFor(Settings.System.DISPLAY_CUTOUT_HIDDEN))) {
+                updateCutoutOverlay();
+            }
+        }
+
+        public void update() {
+            updateCutoutOverlay();
+        }
     }
 
     private final BroadcastReceiver mBannerActionBroadcastReceiver = new BroadcastReceiver() {
