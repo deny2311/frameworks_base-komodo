@@ -1865,7 +1865,6 @@ public class StatusBar extends SystemUI implements
         if (!isExpanded) {
             mRemoteInputManager.onPanelCollapsed();
         }
-        ((StatusBarIconControllerImpl) mIconController).onPanelExpanded(isExpanded);
     }
 
     public ViewGroup getNotificationScrollLayout() {
