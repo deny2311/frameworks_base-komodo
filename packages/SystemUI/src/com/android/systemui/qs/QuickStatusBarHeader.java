@@ -134,6 +134,27 @@ public class QuickStatusBarHeader extends RelativeLayout implements
     private Clock mClockView;
     private DateView mDateView;
     private BatteryMeterView mBatteryRemainingIcon;
+    private DataUsageView mDataUsageView;
+
+    private class SettingsObserver extends ContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = getContext().getContentResolver();
+            resolver.registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.QS_DATAUSAGE), false,
+                    this, UserHandle.USER_ALL);
+            }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            updateSettings();
+        }
+    }
+
+    private SettingsObserver mSettingsObserver = new SettingsObserver(mHandler);
 
     private class SettingsObserver extends ContentObserver {
         SettingsObserver(Handler handler) {
@@ -229,8 +250,6 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         // QS will always show the estimate, and BatteryMeterView handles the case where
         // it's unavailable or charging
         mBatteryRemainingIcon.setPercentShowMode(BatteryMeterView.MODE_ESTIMATE);
-        mDataUsageLayout = findViewById(R.id.daily_data_usage_layout);
-        mDataUsageImage = findViewById(R.id.daily_data_usage_icon);
         mDataUsageView = findViewById(R.id.data_sim_usage);
         mRingerModeTextView.setSelected(true);
         mNextAlarmTextView.setSelected(true);
@@ -355,23 +374,12 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         updateHeaderTextContainerAlphaAnimator();
     }
 
+=======
     private void updateDataUsageView() {
-        if (mDataUsageView.isDataUsageEnabled() != 0) {
-            if (KomodoUtils.isConnected(mContext)) {
-                DataUsageView.updateUsage();
-                mDataUsageLayout.setVisibility(View.VISIBLE);
-                mDataUsageImage.setVisibility(View.VISIBLE);
-                mDataUsageView.setVisibility(View.VISIBLE);
-            } else {
-                mDataUsageView.setVisibility(View.GONE);
-                mDataUsageImage.setVisibility(View.GONE);
-                mDataUsageLayout.setVisibility(View.GONE);
-            }
-        } else {
+        if (mDataUsageView.isDataUsageEnabled())
+            mDataUsageView.setVisibility(View.VISIBLE);
+        else
             mDataUsageView.setVisibility(View.GONE);
-            mDataUsageImage.setVisibility(View.GONE);
-            mDataUsageLayout.setVisibility(View.GONE);
-        }
     }
 
     private void updateStatusIconAlphaAnimator() {
