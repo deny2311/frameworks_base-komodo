@@ -58,6 +58,7 @@ import com.android.systemui.plugins.ActivityStarter;
 import com.android.systemui.plugins.DarkIconDispatcher;
 import com.android.systemui.plugins.DarkIconDispatcher.DarkReceiver;
 import com.android.systemui.qs.QSDetail.Callback;
+import com.android.systemui.statusbar.info.DataUsageView;
 import com.android.systemui.statusbar.phone.PhoneStatusBarView;
 import com.android.systemui.statusbar.phone.StatusBarIconController;
 import com.android.systemui.statusbar.phone.StatusBarIconController.TintedIconManager;
@@ -128,6 +129,27 @@ public class QuickStatusBarHeader extends RelativeLayout implements
     private Clock mClockView;
     private DateView mDateView;
     private BatteryMeterView mBatteryRemainingIcon;
+    private DataUsageView mDataUsageView;
+
+    private class SettingsObserver extends ContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = getContext().getContentResolver();
+            resolver.registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.QS_DATAUSAGE), false,
+                    this, UserHandle.USER_ALL);
+            }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            updateSettings();
+        }
+    }
+
+    private SettingsObserver mSettingsObserver = new SettingsObserver(mHandler);
 
     private final BroadcastReceiver mRingerReceiver = new BroadcastReceiver() {
         @Override
@@ -203,6 +225,7 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         // QS will always show the estimate, and BatteryMeterView handles the case where
         // it's unavailable or charging
         mBatteryRemainingIcon.setPercentShowMode(BatteryMeterView.MODE_ESTIMATE);
+        mDataUsageView = findViewById(R.id.data_sim_usage);
         mRingerModeTextView.setSelected(true);
         mNextAlarmTextView.setSelected(true);
     }
@@ -324,6 +347,14 @@ public class QuickStatusBarHeader extends RelativeLayout implements
 
         updateStatusIconAlphaAnimator();
         updateHeaderTextContainerAlphaAnimator();
+    }
+
+=======
+    private void updateDataUsageView() {
+        if (mDataUsageView.isDataUsageEnabled())
+            mDataUsageView.setVisibility(View.VISIBLE);
+        else
+            mDataUsageView.setVisibility(View.GONE);
     }
 
     private void updateStatusIconAlphaAnimator() {
@@ -536,5 +567,15 @@ public class QuickStatusBarHeader extends RelativeLayout implements
             lp.leftMargin = sideMargins;
             lp.rightMargin = sideMargins;
         }
+    }
+
+    private void updateSettings() {
+        updateDataUsageView();
+    }
+
+    // Update color schemes in landscape to use wallpaperTextColor
+    private void updateStatusbarProperties() {
+        boolean shouldUseWallpaperTextColor = mLandscape && !mHeaderImageEnabled;
+        mClockView.useWallpaperTextColor(shouldUseWallpaperTextColor);
     }
 }
