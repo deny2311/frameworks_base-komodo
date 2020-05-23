@@ -220,4 +220,13 @@ public class KomodoUtils {
         NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
         return wifi.isConnected() || mobile.isConnected();
     }
+
+    // Returns today's passed time in Millisecond
+    public static long getTodayMillis() {
+        final long passedMillis;
+        Time time = new Time();
+        time.set(System.currentTimeMillis());
+        passedMillis = ((time.hour * 60 * 60) + (time.minute * 60) + time.second) * 1000;
+        return passedMillis;
+    }
 }
