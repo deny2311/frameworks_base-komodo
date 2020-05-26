@@ -17,7 +17,4 @@
 <resources>
     <!-- QS header data usage -->
     <dimen name="qs_datausage_icon_size">16sp</dimen>
-
-    <!-- Screenrecord UI -->
-    <dimen name="screenrecord_dot_size">48dp</dimen>
 </resources>
