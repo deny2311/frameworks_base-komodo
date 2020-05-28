@@ -377,9 +377,16 @@ public class QuickStatusBarHeader extends RelativeLayout implements
 
     private void updateDataUsageView() {
         if (mDataUsageView.isDataUsageEnabled() != 0) {
-            mDataUsageLayout.setVisibility(View.VISIBLE);
-            mDataUsageImage.setVisibility(View.VISIBLE);
-            mDataUsageView.setVisibility(View.VISIBLE);
+            if (KomodoUtils.isConnected(mContext)) {
+                DataUsageView.updateUsage();
+                mDataUsageLayout.setVisibility(View.VISIBLE);
+                mDataUsageImage.setVisibility(View.VISIBLE);
+                mDataUsageView.setVisibility(View.VISIBLE);
+            } else {
+                mDataUsageView.setVisibility(View.GONE);
+                mDataUsageImage.setVisibility(View.GONE);
+                mDataUsageLayout.setVisibility(View.GONE);
+            }
         } else {
             mDataUsageView.setVisibility(View.GONE);
             mDataUsageImage.setVisibility(View.GONE);
