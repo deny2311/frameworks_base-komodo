@@ -66,6 +66,20 @@ public class KomodoUtils {
     public static boolean isPackageInstalled(Context context, String pkg) {
         return isPackageInstalled(context, pkg, true);
     }
+
+    //PackageAvailable method
+    public static boolean isPackageAvailable(Context context, String packageName) {
+        final PackageManager pm = context.getPackageManager();
+        try {
+            pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);
+            int enabled = pm.getApplicationEnabledSetting(packageName);
+            return enabled != PackageManager.COMPONENT_ENABLED_STATE_DISABLED &&
+                enabled != PackageManager.COMPONENT_ENABLED_STATE_DISABLED_USER;
+        } catch (NameNotFoundException e) {
+            return false;
+        }
+    }
+
     public static boolean deviceSupportsFlashLight(Context context) {
         CameraManager cameraManager = (CameraManager) context.getSystemService(
                 Context.CAMERA_SERVICE);
