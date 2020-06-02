@@ -15,6 +15,7 @@ n/*
 package com.android.systemui.qs;
 
 import static android.app.StatusBarManager.DISABLE2_QUICK_SETTINGS;
+import static android.provider.Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL;
 
 import static com.android.systemui.util.InjectionInflationController.VIEW_CONTEXT;
 
@@ -150,6 +151,9 @@ public class QuickStatusBarHeader extends RelativeLayout implements
     private BrightnessController mBrightnessController;
     private boolean mIsQuickQsBrightnessEnabled;
     private boolean mIsQsAutoBrightnessEnabled;
+    private boolean mBrightnessButton;
+    private ImageView mMinBrightness;
+    private ImageView mMaxBrightness;
 
         void observe() {
             ContentResolver resolver = getContext().getContentResolver();
@@ -221,8 +225,14 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         mIconManager = new TintedIconManager(iconContainer);
 
         mQuickQsBrightness = findViewById(R.id.quick_qs_brightness_bar);
+        mMinBrightness = mQuickQsBrightness.findViewById(R.id.brightness_left);
+        mMaxBrightness = mQuickQsBrightness.findViewById(R.id.brightness_right);
+        mMinBrightness.setOnClickListener(this::onClick);
+        mMaxBrightness.setOnClickListener(this::onClick);
+        ImageView brightnessIcon = (ImageView) mQuickQsBrightness.findViewById(R.id.brightness_icon);
+        brightnessIcon.setVisibility(View.VISIBLE);
         mBrightnessController = new BrightnessController(getContext(),
-                mQuickQsBrightness.findViewById(R.id.brightness_icon),
+                brightnessIcon,
                 mQuickQsBrightness.findViewById(R.id.brightness_slider));
 
         // Views corresponding to the header info section (e.g. ringer and next alarm).
@@ -272,7 +282,9 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         mNextAlarmTextView.setSelected(true);
         //QQS
         Dependency.get(TunerService.class).addTunable(this,
-                QS_SHOW_AUTO_BRIGHTNESS, QS_SHOW_BRIGHTNESS_SLIDER);
+                QS_SHOW_BRIGHTNESS_SLIDER,
+                QS_SHOW_AUTO_BRIGHTNESS,
+                QSPanel.QS_SHOW_BRIGHTNESS_BUTTONS);
     }
 
     private void updateStatusText() {
@@ -388,11 +400,14 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         if (mIsQuickQsBrightnessEnabled) {
             if (mIsQsAutoBrightnessEnabled && resources.getBoolean(
                     com.android.internal.R.bool.config_automatic_brightness_available)) {
-                mQuickQsBrightness.findViewById(R.id.brightness_icon).setVisibility(View.VISIBLE);
+               ImageView brightnessIcon = (ImageView) mQuickQsBrightness.findViewById(R.id.brightness_icon);
+               brightnessIcon.setVisibility(View.VISIBLE);
             } else {
-                mQuickQsBrightness.findViewById(R.id.brightness_icon).setVisibility(View.GONE);
+               ImageView brightnessIcon = (ImageView) mQuickQsBrightness.findViewById(R.id.brightness_icon);
+               brightnessIcon.setVisibility(View.GONE);
             }
-            mQuickQsBrightness.setVisibility(View.VISIBLE);
+            mMinBrightness.setVisibility(mBrightnessButton ? VISIBLE : GONE);
+            mMaxBrightness.setVisibility(mBrightnessButton ? VISIBLE : GONE);
         } else {
             mQuickQsBrightness.setVisibility(View.GONE);
         }
@@ -584,6 +599,26 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         } else if (v == mRingerContainer && mRingerContainer.isVisibleToUser()) {
             mActivityStarter.postStartActivityDismissingKeyguard(new Intent(
                     Settings.ACTION_SOUND_SETTINGS), 0);
+        } else if (v == mMinBrightness) {
+            final ContentResolver resolver = getContext().getContentResolver();
+            int currentValue = Settings.System.getIntForUser(resolver,
+                    Settings.System.SCREEN_BRIGHTNESS, 0, UserHandle.USER_CURRENT);
+            int brightness = currentValue - 2;
+            if (currentValue != 0) {
+                int math = Math.max(0, brightness);
+                Settings.System.putIntForUser(resolver,
+                        Settings.System.SCREEN_BRIGHTNESS, math, UserHandle.USER_CURRENT);
+            }
+        } else if (v == mMaxBrightness) {
+            final ContentResolver resolver = getContext().getContentResolver();
+            int currentValue = Settings.System.getIntForUser(resolver,
+                    Settings.System.SCREEN_BRIGHTNESS, 0, UserHandle.USER_CURRENT);
+            int brightness = currentValue + 2;
+            if (currentValue != 255) {
+                int math = Math.min(255, brightness);
+                Settings.System.putIntForUser(resolver,
+                        Settings.System.SCREEN_BRIGHTNESS, math, UserHandle.USER_CURRENT);
+            }
         }
     }
 
@@ -683,6 +718,9 @@ public class QuickStatusBarHeader extends RelativeLayout implements
             updateResources();
         } else if (QS_SHOW_AUTO_BRIGHTNESS.equals(key)) {
             mIsQsAutoBrightnessEnabled = TunerService.parseIntegerSwitch(newValue, true);
+            updateResources();
+        } else if (QSPanel.QS_SHOW_BRIGHTNESS_BUTTONS.equals(key)) {
+            mBrightnessButton = TunerService.parseIntegerSwitch(newValue, true);
             updateResources();
         }
     }
