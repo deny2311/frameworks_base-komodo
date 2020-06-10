@@ -247,8 +247,8 @@ public class AppOpsControllerImpl implements AppOpsController,
             final int numActiveItems = mActiveItems.size();
             for (int i = 0; i < numActiveItems; i++) {
                 AppOpItem item = mActiveItems.get(i);
-                if ((userId == UserHandle.USER_ALL || UserHandle.getUserId(item.getUid()) == userId)
-                        && isUserVisible(item)) {
+                if ((userId == UserHandle.USER_ALL
+			|| UserHandle.getUserId(item.getUid()) == userId)) {
                     list.add(item);
                 }
             }
@@ -257,8 +257,8 @@ public class AppOpsControllerImpl implements AppOpsController,
             final int numNotedItems = mNotedItems.size();
             for (int i = 0; i < numNotedItems; i++) {
                 AppOpItem item = mNotedItems.get(i);
-                if ((userId == UserHandle.USER_ALL || UserHandle.getUserId(item.getUid()) == userId)
-                        && isUserVisible(item)) {
+                if ((userId == UserHandle.USER_ALL
+			|| UserHandle.getUserId(item.getUid()) == userId)) {
                     list.add(item);
                 }
             }
