@@ -5520,6 +5520,16 @@ public final class Settings {
         private static final Validator BACK_GESTURE_HAPTIC_VALIDATOR = BOOLEAN_VALIDATOR;
 
         /**
+         * @hide
+         */
+        public static final String QS_HEADER_STYLE = "qs_header_style";
+
+        /**
+         * @hide
+         */
+        public static final String QS_HEADER_STYLE_COLOR = "qs_header_style_color";
+
+        /**
          * Width of the navigation handle.
          * @hide
          */
@@ -5837,6 +5847,8 @@ public final class Settings {
             PRIVATE_SETTINGS.add(BACK_GESTURE_HEIGHT);
             PRIVATE_SETTINGS.add(BACK_GESTURE_HAPTIC);
             PRIVATE_SETTINGS.add(NAVIGATION_HANDLE_WIDTH);
+            PRIVATE_SETTINGS.add(QS_HEADER_STYLE);
+            PRIVATE_SETTINGS.add(QS_HEADER_STYLE_COLOR);
             // Komodo Panel Ends
         }
 

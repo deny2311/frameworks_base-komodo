@@ -19,5 +19,10 @@
     <color name="recents_dismiss_all_background_color">@android:color/white</color>
     <color name="recents_dismiss_all_background_color_ripple">#a8a8a8</color>
     <color name="recents_dismiss_all_icon_color">#8a000000</color>
+
+    <color name="qs_header_accent_color">@*android:color/accent_device_default</color>
+    <color name="qs_header_grey_color">#ff212121</color>
+    <color name="qs_header_light_grey_color">#ff757575</color>
+    <color name="qs_header_transparent_color">#00000000</color>
 </resources>
 
