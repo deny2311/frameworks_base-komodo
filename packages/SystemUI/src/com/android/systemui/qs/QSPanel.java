@@ -155,6 +155,8 @@ public class QSPanel extends LinearLayout implements Tunable, Callback, Brightne
         mQsTileRevealController = new QSTileRevealController(mContext, this,
                 (PagedTileLayout) mTileLayout);
 
+        addDivider();
+
         mFooter = new QSSecurityFooter(this, context);
         addView(mFooter.getView());
 
@@ -169,6 +171,27 @@ public class QSPanel extends LinearLayout implements Tunable, Callback, Brightne
 
         mIsAutomaticBrightnessAvailable = getResources().getBoolean(
                 com.android.internal.R.bool.config_automatic_brightness_available);
+    }
+
+    private void addQSPanel() {
+        if (mBrightnessSlider == 1) {
+            addView(mBrightnessView);
+            addView((View) mTileLayout);
+        } else {
+            addView((View) mTileLayout);
+            addView(mBrightnessView);
+        }
+
+        addView(mFooter.getView());
+        updateResources();
+    }
+
+    private void restartQSPanel() {
+        if (mFooter.getView() != null) removeView(mFooter.getView());
+        if ((View) mTileLayout != null) removeView((View) mTileLayout);
+        if (mBrightnessView != null) removeView(mBrightnessView);
+
+        addQSPanel();
     }
 
     @Override
