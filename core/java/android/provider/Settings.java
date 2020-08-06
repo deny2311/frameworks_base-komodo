@@ -5476,16 +5476,6 @@ public final class Settings {
         };
 
         /**
-         * Display cutout
-         * @hide
-         */
-        public static final String DISPLAY_CUTOUT_HIDDEN = "display_cutout_hidden";
-
-        /** @hide */
-        private static final Validator DISPLAY_CUTOUT_HIDDEN_VALIDATOR = new
-                SettingsValidators.InclusiveIntegerRangeValidator(0, 1);
-
-        /**
          * These are all public system settings
          *
          * @hide
@@ -5640,7 +5630,6 @@ public final class Settings {
             PRIVATE_SETTINGS.add(FOOTER_TEXT_SHOW);
             PRIVATE_SETTINGS.add(FOOTER_TEXT_STRING);
             PRIVATE_SETTINGS.add(FINGERPRINT_SUCCESS_VIB);
-            PRIVATE_SETTINGS.add(DISPLAY_CUTOUT_HIDDEN);
             PRIVATE_SETTINGS.add(HEADS_UP_TIMEOUT);
             PRIVATE_SETTINGS.add(HEADS_UP_NOTIFICATION_SNOOZE);
             PRIVATE_SETTINGS.add(QS_DATAUSAGE);
@@ -5795,7 +5784,6 @@ public final class Settings {
             VALIDATORS.put(FOOTER_TEXT_SHOW, FOOTER_TEXT_SHOW_VALIDATOR);
             VALIDATORS.put(FOOTER_TEXT_STRING, FOOTER_TEXT_STRING_VALIDATOR);
             VALIDATORS.put(FINGERPRINT_SUCCESS_VIB, FINGERPRINT_SUCCESS_VIB_VALIDATOR);
-            VALIDATORS.put(DISPLAY_CUTOUT_HIDDEN, DISPLAY_CUTOUT_HIDDEN_VALIDATOR);
             VALIDATORS.put(HEADS_UP_TIMEOUT,HEADS_UP_TIMEOUT_VALIDATOR);
             VALIDATORS.put(HEADS_UP_NOTIFICATION_SNOOZE,HEADS_UP_NOTIFICATION_SNOOZE_VALIDATOR);
             VALIDATORS.put(QS_DATAUSAGE, QS_DATAUSAGE_VALIDATOR);
