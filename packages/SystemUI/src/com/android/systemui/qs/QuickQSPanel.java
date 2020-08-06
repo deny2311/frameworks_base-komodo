@@ -85,6 +85,10 @@ public class QuickQSPanel extends QSPanel {
     }
 
     @Override
+    protected void addDivider() {
+    }
+
+    @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
     }
