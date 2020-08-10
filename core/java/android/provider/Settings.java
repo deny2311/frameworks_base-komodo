@@ -4747,12 +4747,6 @@ public final class Settings {
                 ANY_INTEGER_VALIDATOR;
 
         /**
-         * Bottom brightness slider
-         * @hide
-         */
-        public static final String QS_BOTTOM_BRIGHTNESS = "qs_bottom_brightness";
-
-        /**
          * Whether to use the custom status bar header or not
          * @hide
          */
