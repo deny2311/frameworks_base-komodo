@@ -155,10 +155,10 @@ public class QSPanel extends LinearLayout implements Tunable, Callback, Brightne
                 R.layout.qs_paged_tile_layout, this, false);
         mTileLayout.setListening(mListening);
         addView((View) mTileLayout);
-        updateSettings();
 
         mQsTileRevealController = new QSTileRevealController(mContext, this,
                 (PagedTileLayout) mTileLayout);
+        updateSettings();
 
         mMinBrightness = mBrightnessView.findViewById(R.id.brightness_left);
         mMinBrightness.setOnClickListener(new View.OnClickListener() {
@@ -826,8 +826,6 @@ public class QSPanel extends LinearLayout implements Tunable, Callback, Brightne
 
         boolean updateResources();
         void updateSettings();
-        int getNumColumns();
-        boolean isShowTitles();
 
         void setListening(boolean listening);
 
@@ -886,26 +884,6 @@ public class QSPanel extends LinearLayout implements Tunable, Callback, Brightne
         }
     }
 
-    private void configureTile(QSTile t, QSTileView v) {
-        if (mTileLayout != null) {
-            v.setHideLabel(!mTileLayout.isShowTitles());
-            if (t.isDualTarget()) {
-                if (!mTileLayout.isShowTitles()) {
-                    v.setOnLongClickListener(view -> {
-                        t.secondaryClick();
-                        mHost.openPanels();
-                        return true;
-                    });
-                } else {
-                    v.setOnLongClickListener(view -> {
-                        t.longClick();
-                        return true;
-                    });
-                }
-            }
-        }
-    }
-
     private void tileClickListener(QSTile t, QSTileView v) {
         if (mTileLayout != null) {
             v.setHideLabel(!mTileLayout.isShowTitles());
@@ -919,10 +897,6 @@ public class QSPanel extends LinearLayout implements Tunable, Callback, Brightne
     public void updateSettings() {
         if (mTileLayout != null) {
             mTileLayout.updateSettings();
-
-            for (TileRecord r : mRecords) {
-                configureTile(r.tile, r.tileView);
-            }
         }
     }
 
