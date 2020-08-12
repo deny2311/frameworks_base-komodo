@@ -4747,21 +4747,6 @@ public final class Settings {
          * @hide
          */
         public static final String FINGERPRINT_ERROR_VIB = "fingerprint_error_vib";
-
-        /**
-         * whether to enable or disable vibration on fingerprint auth success
-         *
-         * @hide
-         */
-        public static final String FINGERPRINT_SUCCESS_VIB = "fingerprint_success_vib";
-
-        /**
-         * whether to enable or disable vibration on fingerprint auth error
-         *
-         * @hide
-         */
-        public static final String FINGERPRINT_ERROR_VIB = "fingerprint_error_vib";
-
         /**
          * Unlock keystore with fingerprint after reboot
          * @hide
