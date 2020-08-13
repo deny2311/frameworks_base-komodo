@@ -64,6 +64,7 @@ public class TileLayout extends ViewGroup implements QSTileLayout {
 
     protected void addTileView(TileRecord tile) {
         addView(tile.tileView);
+        tile.tileView.textVisibility();
     }
 
     @Override
@@ -95,7 +96,6 @@ public class TileLayout extends ViewGroup implements QSTileLayout {
                     UserHandle.USER_CURRENT);
         }
 
-        mCellHeight = mContext.getResources().getDimensionPixelSize(R.dimen.qs_tile_height);
         mCellMarginHorizontal = res.getDimensionPixelSize(R.dimen.qs_tile_margin_horizontal);
         mCellMarginVertical= res.getDimensionPixelSize(R.dimen.qs_tile_margin_vertical);
         mCellMarginTop = res.getDimensionPixelSize(R.dimen.qs_tile_margin_top);
@@ -104,8 +104,25 @@ public class TileLayout extends ViewGroup implements QSTileLayout {
         if (mColumns != columns) {
             mColumns = columns;
             requestLayout();
+        if (Settings.System.getIntForUser(resolver,
+                Settings.System.QS_TILE_TITLE_VISIBILITY, 1,
+                UserHandle.USER_CURRENT) == 1) {
+            mCellHeight = mContext.getResources().getDimensionPixelSize(R.dimen.qs_tile_height);
+        } else {
+            mCellHeight = mContext.getResources().getDimensionPixelSize(R.dimen.qs_tile_height_wo_label);
+        }
+        for (TileRecord record : mRecords) {
+            record.tileView.textVisibility();
+        }
+
+        // always update mRows value even if we only changed columns settings, because
+        // in the meantime mRows could have been changed in onMeasure
+        if (mColumns != columns || mRows != rows) {
+            mColumns = columns;
+            mRows = rows;
             return true;
         }
+        requestLayout();
         return false;
     }
 
