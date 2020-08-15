@@ -485,7 +485,6 @@ public class NetworkTraffic extends TextView {
                     intTrafficDrawable = R.drawable.stat_sys_network_traffic;
                 }
             }
-	}
         } else {
             intTrafficDrawable = 0;
         }

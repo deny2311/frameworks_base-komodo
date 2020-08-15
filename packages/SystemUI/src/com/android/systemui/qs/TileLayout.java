@@ -101,9 +101,6 @@ public class TileLayout extends ViewGroup implements QSTileLayout {
         mCellMarginTop = res.getDimensionPixelSize(R.dimen.qs_tile_margin_top);
         mSidePadding = res.getDimensionPixelOffset(R.dimen.qs_tile_layout_margin_side);
         mMaxAllowedRows = Math.max(1, getResources().getInteger(R.integer.quick_settings_max_rows));
-        if (mColumns != columns) {
-            mColumns = columns;
-            requestLayout();
         if (Settings.System.getIntForUser(resolver,
                 Settings.System.QS_TILE_TITLE_VISIBILITY, 1,
                 UserHandle.USER_CURRENT) == 1) {
@@ -114,7 +111,6 @@ public class TileLayout extends ViewGroup implements QSTileLayout {
         for (TileRecord record : mRecords) {
             record.tileView.textVisibility();
         }
-
         // always update mRows value even if we only changed columns settings, because
         // in the meantime mRows could have been changed in onMeasure
         if (mColumns != columns || mRows != rows) {
@@ -124,7 +120,7 @@ public class TileLayout extends ViewGroup implements QSTileLayout {
         }
         requestLayout();
         return false;
-    }
+        }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
