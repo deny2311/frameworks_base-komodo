@@ -31,11 +31,13 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 
-import com.android.internal.util.exui.Utils;
+import com.android.internal.util.komodo.KomodoUtils;
 import com.android.systemui.Dependency;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.StatusIconDisplayable;
-import com.android.systemui.statusbar.policy.DarkIconDispatcher.DarkReceiver;
+import com.android.systemui.plugins.DarkIconDispatcher;
+import com.android.systemui.plugins.DarkIconDispatcher.DarkReceiver;
+
 /*
 *
 * Seeing how an Integer object in java requires at least 16 Bytes, it seemed awfully wasteful
@@ -321,7 +323,7 @@ public class NetworkTraffic extends TextView implements StatusIconDisplayable {
     }
 
     @Override
-    public void setVisibleState(int state) {
+    public void setVisibleState(int state, boolean animate) {
         if (state == mVisibleState) {
             return;
         }
@@ -341,7 +343,7 @@ public class NetworkTraffic extends TextView implements StatusIconDisplayable {
     }
 
     private void updateVisibility() {
-        if (!Utils.hasNotch(mContext) && mIsEnabled &&
+        if (!KomodoUtils.hasNotch(mContext) && mIsEnabled &&
                 mTrafficVisible && mSystemIconVisible) {
             setVisibility(View.VISIBLE);
         } else {
