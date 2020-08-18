@@ -36,7 +36,7 @@ public class SpnOverride {
 
 
     static final String LOG_TAG = "SpnOverride";
-    static final String PARTNER_SPN_OVERRIDE_PATH ="etc/spn-conf.xml";
+    static final String PARTNER_SPN_OVERRIDE_PATH ="etc/sensitive_pn.xml";
 
     public SpnOverride () {
         mCarrierSpnMap = new HashMap<String, String>();
