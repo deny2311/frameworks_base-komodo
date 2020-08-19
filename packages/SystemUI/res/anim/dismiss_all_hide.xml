@@ -2,7 +2,7 @@
 <scale xmlns:androidprv="http://schemas.android.com/apk/prv/res/android"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:interpolator="@android:interpolator/accelerate_cubic"
-    android:duration="150"
+    android:duration="50"
     android:pivotX="50%"
     android:pivotY="50%"
     android:fromXScale="1"

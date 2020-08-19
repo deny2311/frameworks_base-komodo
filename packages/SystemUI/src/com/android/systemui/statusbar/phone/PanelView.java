@@ -51,6 +51,8 @@ import com.android.systemui.statusbar.SysuiStatusBarStateController;
 import com.android.systemui.statusbar.VibratorHelper;
 import com.android.systemui.statusbar.policy.KeyguardMonitor;
 import android.util.BoostFramework;
+import com.android.systemui.statusbar.notification.stack.NotificationStackScrollLayout;
+import com.android.systemui.statusbar.phone.StatusBar;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -152,9 +154,6 @@ public abstract class PanelView extends FrameLayout {
     protected final KeyguardMonitor mKeyguardMonitor = Dependency.get(KeyguardMonitor.class);
     protected final SysuiStatusBarStateController mStatusBarStateController =
             (SysuiStatusBarStateController) Dependency.get(StatusBarStateController.class);
-
-    // omni additions start
-    protected boolean mDoubleTapToSleepEnabled;
 
     protected void onExpandingFinished() {
         mBar.onExpandingFinished();
@@ -340,7 +339,7 @@ public abstract class PanelView extends FrameLayout {
                     onTrackingStarted();
                 }
                 if (isFullyCollapsed() && !mHeadsUpManager.hasPinnedHeadsUp()
-                        && !mStatusBar.isBouncerShowing() && !mDoubleTapToSleepEnabled) {
+                        && !mStatusBar.isBouncerShowing()) {
                     startOpening(event);
                 }
                 break;
@@ -508,7 +507,7 @@ public abstract class PanelView extends FrameLayout {
         } else if (mPanelClosedOnDown && !mHeadsUpManager.hasPinnedHeadsUp() && !mTracking
                 && !mStatusBar.isBouncerShowing() && !mKeyguardMonitor.isKeyguardFadingAway()) {
             long timePassed = SystemClock.uptimeMillis() - mDownTime;
-            if (timePassed < ViewConfiguration.getLongPressTimeout() && !mDoubleTapToSleepEnabled) {
+            if (timePassed < ViewConfiguration.getLongPressTimeout()) {
                 // Lets show the user that he can actually expand the panel
                 runPeekAnimation(PEEK_ANIMATION_DURATION, getPeekHeight(), true /* collapseWhenFinished */);
             } else {
@@ -1268,6 +1267,9 @@ public abstract class PanelView extends FrameLayout {
 
     public void setLaunchingNotification(boolean launchingNotification) {
         mLaunchingNotification = launchingNotification;
+        if (launchingNotification) {
+            StatusBar.setDismissAllVisible(false);
+        }
     }
 
     public void collapseWithDuration(int animationDuration) {

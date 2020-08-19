@@ -59,8 +59,8 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Surface;
 import android.view.View;
+import android.view.Surface;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -303,6 +303,9 @@ public class RecordingService extends Service {
                 e.printStackTrace();
             }
 
+            // Check if the device allows to use h265 for lighter recordings
+            boolean useH265 = getResources().getBoolean(R.bool.config_useNewScreenRecEncoder);
+
             // Set initial resources
             DisplayMetrics metrics = new DisplayMetrics();
             mWindowManager.getDefaultDisplay().getRealMetrics(metrics);
@@ -351,6 +354,7 @@ public class RecordingService extends Service {
             }
 
             // Reving up those recorders
+            boolean useOldEncoder = mIsLowRamEnabled || !useH265;
             switch (mAudioSourceOpt) {
                 case 1:
                     mVideoBufferInfo = new MediaCodec.BufferInfo();
@@ -359,7 +363,7 @@ public class RecordingService extends Service {
                         AUDIO_CHANNEL_TYPE,
                         AudioFormat.ENCODING_PCM_16BIT);
                     // Preparing video encoder
-                    MediaFormat videoFormat = MediaFormat.createVideoFormat(mIsLowRamEnabled ? "video/avc" : "video/hevc", screenWidth, screenHeight);
+                    MediaFormat videoFormat = MediaFormat.createVideoFormat(useOldEncoder ? "video/avc" : "video/hevc", screenWidth, screenHeight);
                     videoFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT,
                         MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
                     videoFormat.setInteger(MediaFormat.KEY_BIT_RATE, VIDEO_BIT_RATE);
@@ -368,7 +372,7 @@ public class RecordingService extends Service {
                     videoFormat.setInteger(MediaFormat.KEY_REPEAT_PREVIOUS_FRAME_AFTER, 1000000 / VIDEO_FRAME_RATE);
                     videoFormat.setInteger(MediaFormat.KEY_CHANNEL_COUNT, 1);
                     videoFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
-                    mVideoEncoder = MediaCodec.createEncoderByType(mIsLowRamEnabled ? "video/avc" : "video/hevc");
+                    mVideoEncoder = MediaCodec.createEncoderByType(useOldEncoder ? "video/avc" : "video/hevc");
                     mVideoEncoder.configure(videoFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
                     // Preparing audio encoder
                     MediaFormat mAudioFormat = MediaFormat.createAudioFormat("audio/mp4a-latm", AUDIO_SAMPLE_RATE, TOTAL_NUM_TRACKS);
@@ -405,7 +409,7 @@ public class RecordingService extends Service {
                     if (mAudioSourceOpt == 2) mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
                     mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
                     mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-                    mMediaRecorder.setVideoEncoder(mIsLowRamEnabled ? MediaRecorder.VideoEncoder.H264 : MediaRecorder.VideoEncoder.HEVC);
+                    mMediaRecorder.setVideoEncoder(useOldEncoder ? MediaRecorder.VideoEncoder.H264 : MediaRecorder.VideoEncoder.HEVC);
                     mMediaRecorder.setVideoSize(screenWidth, screenHeight);
                     mMediaRecorder.setVideoFrameRate(VIDEO_FRAME_RATE);
                     mMediaRecorder.setVideoEncodingBitRate(VIDEO_BIT_RATE);
@@ -472,7 +476,7 @@ public class RecordingService extends Service {
         notificationManager.createNotificationChannel(channel);
 
         mRecordingNotificationBuilder = new Notification.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_android)
+                .setSmallIcon(R.drawable.ic_screenrecord)
                 .setContentTitle(getResources().getString(R.string.screenrecord_name))
                 .setUsesChronometer(true)
                 .setOngoing(true);
@@ -486,6 +490,7 @@ public class RecordingService extends Service {
                 .getString(isPaused ? R.string.screenrecord_resume_label
                         : R.string.screenrecord_pause_label);
         Intent pauseIntent = isPaused ? getResumeIntent(this) : getPauseIntent(this);
+
         if (mAudioSourceOpt != 1) {
             mRecordingNotificationBuilder.setActions(
                     new Notification.Action.Builder(
@@ -529,7 +534,7 @@ public class RecordingService extends Service {
                 .setDataAndType(uri, "video/mp4");
 
         Notification.Action shareAction = new Notification.Action.Builder(
-                Icon.createWithResource(this, R.drawable.ic_android),
+                Icon.createWithResource(this, R.drawable.ic_screenrecord),
                 getResources().getString(R.string.screenrecord_share_label),
                 PendingIntent.getService(
                         this,
@@ -539,7 +544,7 @@ public class RecordingService extends Service {
                 .build();
 
         Notification.Action deleteAction = new Notification.Action.Builder(
-                Icon.createWithResource(this, R.drawable.ic_android),
+                Icon.createWithResource(this, R.drawable.ic_screenrecord),
                 getResources().getString(R.string.screenrecord_delete_label),
                 PendingIntent.getService(
                         this,
@@ -549,7 +554,7 @@ public class RecordingService extends Service {
                 .build();
 
         Notification.Builder builder = new Notification.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_android)
+                .setSmallIcon(R.drawable.ic_screenrecord)
                 .setContentTitle(getResources().getString(R.string.screenrecord_name))
                 .setContentText(getResources().getString(R.string.screenrecord_save_message))
                 .setContentIntent(PendingIntent.getActivity(
@@ -608,7 +613,7 @@ public class RecordingService extends Service {
     }
 
     private void saveRecording(NotificationManager notificationManager) {
-        String fileName = new SimpleDateFormat("'ScreenRecord-'yyyyMMdd-HHmmss'.mp4'")
+        String fileName = new SimpleDateFormat("'screenrecord-'yyyyMMdd-HHmmss'.mp4'")
                 .format(new Date());
 
         ContentValues values = new ContentValues();

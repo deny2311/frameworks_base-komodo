@@ -40,11 +40,17 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.android.systemui.R;
+import com.android.systemui.shared.system.ActivityManagerWrapper;
 
+import static com.android.systemui.statusbar.phone.StatusBar.SYSTEM_DIALOG_REASON_SCREENSHOT;
 import static android.provider.Settings.System.SCREENRECORD_VIDEO_BITRATE;
 import static android.provider.Settings.System.SCREENRECORD_AUDIO_SOURCE;
 import static android.provider.Settings.System.SCREENRECORD_SHOW_TAPS;
 import static android.provider.Settings.System.SCREENRECORD_STOP_DOT;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Activity to select screen recording options
@@ -138,6 +144,12 @@ public class ScreenRecordDialog extends Activity {
                 ScreenRecordDialog.this.finish();
             }
         });
+
+        try {
+            ActivityManagerWrapper.getInstance().closeSystemWindows(
+                    SYSTEM_DIALOG_REASON_SCREENSHOT).get(
+                    3000/*timeout*/, TimeUnit.MILLISECONDS);
+        } catch (TimeoutException | InterruptedException | ExecutionException e) {}
     }
 
     private void initialCheckSwitch(Switch sw, String setting) {

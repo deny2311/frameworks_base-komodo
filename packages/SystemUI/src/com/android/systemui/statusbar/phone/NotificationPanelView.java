@@ -41,6 +41,7 @@ import android.graphics.Rect;
 import android.graphics.Region;
 import android.hardware.biometrics.BiometricSourceType;
 import android.os.PowerManager;
+import android.provider.Settings.Secure;
 import android.os.SystemClock;
 import android.os.UserHandle;
 import android.provider.Settings;
@@ -55,11 +56,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowInsets;
 import android.view.accessibility.AccessibilityManager;
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
-import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.logging.MetricsLogger;
@@ -237,11 +234,7 @@ public class NotificationPanelView extends PanelView implements
     protected FrameLayout mQsFrame;
     @VisibleForTesting
     protected KeyguardStatusView mKeyguardStatusView;
-    private ImageView mDismissAllButton;
-    private Animation mDismissShowAnim;
-    private Animation mDismissHideAnim;
-    private boolean mDismissAllShowing;
-    private boolean mNotificatonClicked;
+    private View mQsNavbarScrim;
     protected NotificationsQuickSettingsContainer mNotificationContainerParent;
     protected NotificationStackScrollLayout mNotificationStackScroller;
     private boolean mAnimateNextPositionUpdate;
@@ -423,9 +416,6 @@ public class NotificationPanelView extends PanelView implements
     private int mDisplayId;
 
     private int mStatusBarHeaderHeight;
-    private GestureDetector mDoubleTapGesture;
-    private GestureDetector mLockscreenDoubleTapToSleep;
-    private boolean mIsLockscreenDoubleTapEnabled;
 
     /**
      * Cache the resource id of the theme to avoid unnecessary work in onThemeChanged.
@@ -497,21 +487,6 @@ public class NotificationPanelView extends PanelView implements
         });
         mBottomAreaShadeAlphaAnimator.setDuration(160);
         mBottomAreaShadeAlphaAnimator.setInterpolator(Interpolators.ALPHA_OUT);
-        mDoubleTapGesture = new GestureDetector(mContext, new GestureDetector.SimpleOnGestureListener() {
-            @Override
-            public boolean onDoubleTap(MotionEvent e) {
-                KomodoUtils.switchScreenOff(context);
-                return true;
-            }
-        });
-        mLockscreenDoubleTapToSleep = new GestureDetector(context,
-                new GestureDetector.SimpleOnGestureListener() {
-            @Override
-            public boolean onDoubleTap(MotionEvent e) {
-                KomodoUtils.switchScreenOff(context);
-                return true;
-            }
-        });
     }
 
     /**
@@ -543,7 +518,7 @@ public class NotificationPanelView extends PanelView implements
         mNotificationStackScroller.setOnEmptySpaceClickListener(this);
         addTrackingHeadsUpListener(mNotificationStackScroller::setTrackingHeadsUp);
         mKeyguardBottomArea = findViewById(R.id.keyguard_bottom_area);
-        mDismissAllButton = findViewById(R.id.clear_notifications);
+        mQsNavbarScrim = findViewById(R.id.qs_navbar_scrim);
         mLastOrientation = getResources().getConfiguration().orientation;
         mPulseLightsView = (NotificationLightsView) findViewById(R.id.lights_container);
 
@@ -567,35 +542,6 @@ public class NotificationPanelView extends PanelView implements
                 }
             }
         });
-
-        mDismissHideAnim = AnimationUtils.loadAnimation(mContext,
-                R.anim.dismiss_all_hide);
-        mDismissShowAnim = AnimationUtils.loadAnimation(mContext,
-                R.anim.dismiss_all_show);
-
-        mDismissAllButton.setVisibility(View.INVISIBLE);
-        mDismissHideAnim.setAnimationListener(new AnimationListener() {
-            public void onAnimationStart(Animation animation) {}
-
-            public void onAnimationEnd(Animation animation) {
-                mDismissAllButton.setVisibility(View.INVISIBLE);
-                mDismissAllButton.setAlpha(0f);
-                mDismissAllShowing = false;
-            }
-
-            public void onAnimationRepeat(Animation animation) {}
-        });
-        mDismissShowAnim.setAnimationListener(new AnimationListener() {
-            public void onAnimationStart(Animation animation) {
-                mDismissAllButton.setVisibility(View.VISIBLE);
-                mDismissAllButton.setAlpha(1f);
-                mDismissAllShowing = true;
-            }
-
-            public void onAnimationEnd(Animation animation) {}
-
-            public void onAnimationRepeat(Animation animation) {}
-        });
     }
 
     @Override
@@ -609,10 +555,6 @@ public class NotificationPanelView extends PanelView implements
         // Theme might have changed between inflating this view and attaching it to the window, so
         // force a call to onThemeChanged
         onThemeChanged();
-        mDismissAllButton.setOnClickListener(v -> {
-            clearNotificationEffects();
-            mNotificationStackScroller.clearNotifications(ROWS_ALL, true /* closeShade */);
-        });
     }
 
     @Override
@@ -649,9 +591,9 @@ public class NotificationPanelView extends PanelView implements
         mShelfHeight = getResources().getDimensionPixelSize(R.dimen.notification_shelf_height);
         mDarkIconSize = getResources().getDimensionPixelSize(
                 R.dimen.status_bar_icon_drawing_size_dark);
-        mStatusBarHeaderHeight = getResources().getDimensionPixelSize(
+        int statusbarHeight = getResources().getDimensionPixelSize(
                 com.android.internal.R.dimen.status_bar_height);
-        mHeadsUpInset = mStatusBarHeaderHeight + getResources().getDimensionPixelSize(
+        mHeadsUpInset = statusbarHeight + getResources().getDimensionPixelSize(
                 R.dimen.heads_up_status_bar_padding);
     }
 
@@ -697,19 +639,13 @@ public class NotificationPanelView extends PanelView implements
             return;
         }
         mThemeResId = themeResId;
-        updateDismissAllButton();
+
         reInflateViews();
     }
 
     @Override
     public void onOverlayChanged() {
         reInflateViews();
-        updateDismissAllButton();
-    }
-
-    @Override
-    public void onUiModeChanged() {
-        updateDismissAllButton();
     }
 
     private void reInflateViews() {
@@ -1280,7 +1216,7 @@ public class NotificationPanelView extends PanelView implements
         return !mQsTouchAboveFalsingThreshold;
     }
 
-    private float getQsExpansionFraction() {
+    public float getQsExpansionFraction() {
         return Math.min(1f, (mQsExpansionHeight - mQsMinExpansionHeight)
                 / (mQsMaxExpansionHeight - mQsMinExpansionHeight));
     }
@@ -1315,11 +1251,6 @@ public class NotificationPanelView extends PanelView implements
         if (mStatusBar.isBouncerShowingScrimmed()) {
             return false;
         }
-        if (!mQsExpanded
-                && mDoubleTapToSleepEnabled
-                && event.getY() < mStatusBarHeaderHeight) {
-            mDoubleTapGesture.onTouchEvent(event);
-        }
         // Make sure the next touch won't the blocked after the current ends.
         if (event.getAction() == MotionEvent.ACTION_UP
                 || event.getAction() == MotionEvent.ACTION_CANCEL) {
@@ -1336,10 +1267,6 @@ public class NotificationPanelView extends PanelView implements
                 && mPulseExpansionHandler.onTouchEvent(event)) {
             // We're expanding all the other ones shouldn't get this anymore
             return true;
-        }
-        if (mIsLockscreenDoubleTapEnabled && !mPulsing && !mDozing
-                && mBarState == StatusBarState.KEYGUARD) {
-            mLockscreenDoubleTapToSleep.onTouchEvent(event);
         }
         if (mListenForHeadsUp && !mHeadsUpTouchHelper.isTrackingHeadsUp()
                 && mHeadsUpTouchHelper.onInterceptTouchEvent(event)) {
@@ -1876,6 +1803,10 @@ public class NotificationPanelView extends PanelView implements
                 mBarState != StatusBarState.KEYGUARD && (!mQsExpanded
                         || mQsExpansionFromOverscroll));
         updateEmptyShadeView();
+        mQsNavbarScrim.setVisibility(mBarState == StatusBarState.SHADE && mQsExpanded
+                && !mStackScrollerOverscrolling && mQsScrimEnabled
+                ? View.VISIBLE
+                : View.INVISIBLE);
         if (mKeyguardUserSwitcher != null && mQsExpanded && !mStackScrollerOverscrolling) {
             mKeyguardUserSwitcher.hideIfNotSimple(true /* animate */);
         }
@@ -1901,7 +1832,10 @@ public class NotificationPanelView extends PanelView implements
             updateKeyguardBottomAreaAlpha();
             updateBigClockAlpha();
         }
-        handleDismissAllVisibility();
+        if (mBarState == StatusBarState.SHADE && mQsExpanded
+                && !mStackScrollerOverscrolling && mQsScrimEnabled) {
+            mQsNavbarScrim.setAlpha(getQsExpansionFraction());
+        }
 
         if (mAccessibilityManager.isEnabled()) {
             setAccessibilityPaneTitle(determineAccessibilityPaneTitle());
@@ -2219,7 +2153,6 @@ public class NotificationPanelView extends PanelView implements
         updateNotificationTranslucency();
         updatePanelExpanded();
         updateGestureExclusionRect();
-        handleDismissAllVisibility();
         if (DEBUG) {
             invalidate();
         }
@@ -2294,7 +2227,10 @@ public class NotificationPanelView extends PanelView implements
             alpha *= mClockPositionResult.clockAlpha;
         }
         mNotificationStackScroller.setAlpha(alpha);
+        mStatusBar.updateQSDataUsageInfo();
         mStatusBar.updateBlurVisibility();
+        mStatusBar.updateQSDataUsageInfo();
+        mStatusBar.setDismissAllVisible(true);
     }
 
     private float getFadeoutAlpha() {
@@ -2516,6 +2452,7 @@ public class NotificationPanelView extends PanelView implements
 
     @Override
     protected void onTrackingStarted() {
+        Secure.putInt(mContext.getContentResolver(), "sysui_rounded_size_top", -1);
         mFalsingManager.onTrackingStarted(mStatusBar.isKeyguardCurrentlySecure());
         super.onTrackingStarted();
         if (mQsFullyExpanded) {
@@ -2531,6 +2468,8 @@ public class NotificationPanelView extends PanelView implements
 
     @Override
     protected void onTrackingStopped(boolean expand) {
+        if (!expand)
+            Secure.putInt(mContext.getContentResolver(), "sysui_rounded_size_top", -2);
         mFalsingManager.onTrackingStopped();
         super.onTrackingStopped(expand);
         if (expand) {
@@ -3587,73 +3526,5 @@ public class NotificationPanelView extends PanelView implements
 
     public void setOnReinflationListener(Runnable onReinflationListener) {
         mOnReinflationListener = onReinflationListener;
-    }
-
-    public void onNotificationClick() {
-        mNotificatonClicked = true;
-        hideDismissAnimate();
-    }
-
-    private void updateDismissAllButton() {
-        mDismissAllButton.setBackgroundDrawable(null);
-        mDismissAllButton.setImageDrawable(null);
-        mDismissAllButton.setImageResource(R.drawable.dismiss_all_icon);
-        mDismissAllButton.setBackgroundResource(R.drawable.floating_action_button);
-    }
-
-    private void handleDismissAllVisibility() {
-        if (!mPanelExpanded && mDismissAllShowing) {
-            mDismissHideAnim.cancel();
-            mDismissHideAnim.reset();
-            return;
-        }
-        if (mNotificatonClicked) {
-            if (!mPanelExpanded) {
-                mNotificatonClicked = false;
-            } else {
-                return;
-            }
-        }
-
-        final float panelFrac = getExpandedFraction();
-        final float qsFrac = getQsExpansionFraction();
-        if (mBarState == StatusBarState.SHADE && panelFrac > 0.9f && qsFrac < 0.3f
-                && hasActiveClearableNotifications()) {
-            showDismissAnimate();
-        } else {
-            hideDismissAnimate();
-        }
-    }
-
-    private void hideDismissAnimate() {
-        if (mDismissAllShowing) {
-            if (mDismissHideAnim.hasStarted() && !mDismissHideAnim.hasEnded()) {
-                return;
-            }
-            if (mDismissShowAnim != null) {
-                mDismissShowAnim.cancel();
-            }
-            mDismissAllButton.startAnimation(mDismissHideAnim);
-        }
-    }
-
-    private void showDismissAnimate() {
-        if (!mDismissAllShowing) {
-            if (mDismissShowAnim.hasStarted() && !mDismissShowAnim.hasEnded()) {
-                return;
-            }
-            if (mDismissHideAnim != null) {
-                mDismissHideAnim.cancel();
-            }
-            mDismissAllButton.startAnimation(mDismissShowAnim);
-        }
-    }
-
-    public void setLockscreenDoubleTapToSleep(boolean isDoubleTapEnabled) {
-        mIsLockscreenDoubleTapEnabled = isDoubleTapEnabled;
-    }
-
-    public void updateDoubleTapToSleep(boolean doubleTapToSleepEnabled) {
-        mDoubleTapToSleepEnabled = doubleTapToSleepEnabled;
     }
 }
