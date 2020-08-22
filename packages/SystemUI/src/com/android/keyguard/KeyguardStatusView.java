@@ -353,59 +353,67 @@ public class KeyguardStatusView extends GridLayout implements
             case 13:
                 return Typeface.create("sans-serif-medium", Typeface.ITALIC);
             case 14:
-                return Typeface.create("abelreg", Typeface.NORMAL);
+                return Typeface.create("accuratist", Typeface.NORMAL);
             case 15:
-                return Typeface.create("adamcg-pro", Typeface.NORMAL);
+                return Typeface.create("aclonica", Typeface.NORMAL);
             case 16:
-                return Typeface.create("adventpro", Typeface.NORMAL);
+                return Typeface.create("amarante", Typeface.NORMAL);
             case 17:
-                return Typeface.create("alien-league", Typeface.NORMAL);
+                return Typeface.create("bariol", Typeface.NORMAL);
             case 18:
-                return Typeface.create("archivonar", Typeface.NORMAL);
+                return Typeface.create("cagliostro", Typeface.NORMAL);
             case 19:
-                return Typeface.create("autourone", Typeface.NORMAL);
+                return Typeface.create("cocon", Typeface.NORMAL);
             case 20:
-                return Typeface.create("badscript", Typeface.NORMAL);
+                return Typeface.create("comfortaa", Typeface.NORMAL);
             case 21:
-                return Typeface.create("bignoodle-regular", Typeface.NORMAL);
+                return Typeface.create("comicsans", Typeface.NORMAL);
             case 22:
-                return Typeface.create("biko", Typeface.NORMAL);
+                return Typeface.create("coolstory", Typeface.NORMAL);
             case 23:
-                return Typeface.create("cherryswash", Typeface.NORMAL);
+                return Typeface.create("exotwo", Typeface.NORMAL);
             case 24:
-                return Typeface.create("ginora-sans", Typeface.NORMAL);
+                return Typeface.create("fifa2018", Typeface.NORMAL);
             case 25:
-                return Typeface.create("googlesans-sys", Typeface.NORMAL);
+                return Typeface.create("googlesans", Typeface.NORMAL);
             case 26:
-                return Typeface.create("ibmplex-mono", Typeface.NORMAL);
+                return Typeface.create("grandhotel", Typeface.NORMAL);
             case 27:
-                return Typeface.create("inkferno", Typeface.NORMAL);
+                return Typeface.create("lato", Typeface.NORMAL);
             case 28:
-                return Typeface.create("instruction", Typeface.NORMAL);
+                return Typeface.create("lgsmartgothic", Typeface.NORMAL);
             case 29:
-                return Typeface.create("jack-lane", Typeface.NORMAL);
+                return Typeface.create("linotte", Typeface.NORMAL);
             case 30:
-                return Typeface.create("kellyslab", Typeface.NORMAL);
+                return Typeface.create("nokiapure", Typeface.NORMAL);
             case 31:
-                return Typeface.create("monad", Typeface.NORMAL);
+                return Typeface.create("nunito", Typeface.NORMAL);
             case 32:
-                return Typeface.create("noir", Typeface.NORMAL);
+                return Typeface.create("quando", Typeface.NORMAL);
             case 33:
-                return Typeface.create("outrun-future", Typeface.NORMAL);
+                return Typeface.create("redressed", Typeface.NORMAL);
             case 34:
-                return Typeface.create("pompiere", Typeface.NORMAL);
-            case 35:
                 return Typeface.create("reemkufi", Typeface.NORMAL);
+            case 35:
+                return Typeface.create("robotocondensed", Typeface.NORMAL);
             case 36:
-                return Typeface.create("riviera", Typeface.NORMAL);
+                return Typeface.create("rosemary", Typeface.NORMAL);
             case 37:
-                return Typeface.create("the-outbox", Typeface.NORMAL);
+                return Typeface.create("rubik", Typeface.NORMAL);
             case 38:
-                return Typeface.create("themeable-date", Typeface.NORMAL);
+                return Typeface.create("samsungone", Typeface.NORMAL);
             case 39:
-                return Typeface.create("vibur", Typeface.NORMAL);
+                return Typeface.create("oneplusslate", Typeface.NORMAL);
             case 40:
-                return Typeface.create("voltaire", Typeface.NORMAL);
+                return Typeface.create("sonysketch", Typeface.NORMAL);
+            case 41:
+                return Typeface.create("storopia", Typeface.NORMAL);
+            case 42:
+                return Typeface.create("surfer", Typeface.NORMAL);
+            case 43:
+                return Typeface.create("ubuntu", Typeface.NORMAL);
+            case 44:
+                return Typeface.create("zilla-slab", Typeface.NORMAL);
         }
     }
 
