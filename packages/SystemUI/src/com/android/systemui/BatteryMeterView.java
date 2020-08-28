@@ -30,12 +30,10 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.content.ContentResolver;
 import android.database.ContentObserver;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Handler;
-import android.os.UserHandle;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.ArraySet;
@@ -99,7 +97,6 @@ public class BatteryMeterView extends LinearLayout implements
     private boolean mIgnoreTunerUpdates;
     private boolean mIsSubscribedForTunerUpdates;
     private boolean mCharging;
-    private boolean mShowBatteryEstimate;
 
     private DualToneHandler mDualToneHandler;
     private int mUser;
@@ -294,13 +291,6 @@ public class BatteryMeterView extends LinearLayout implements
         }
     }
 
-    private void updateQsBatteryEstimate() {
-        mShowBatteryEstimate = Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.QS_SHOW_BATTERY_ESTIMATE, 1,
-                UserHandle.USER_CURRENT) == 1;
-        updatePercentView();
-    }
-
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
@@ -367,7 +357,7 @@ public class BatteryMeterView extends LinearLayout implements
 
         if (mBatteryPercentView != null) {
             if (systemSetting && mShowPercentAvailable &&
-                    mShowPercentMode == MODE_ESTIMATE && !mCharging && mShowBatteryEstimate) {
+                    mShowPercentMode == MODE_ESTIMATE && !mCharging) {
                 mBatteryController.getEstimatedTimeRemainingString((String estimate) -> {
                     if (estimate != null) {
                         mBatteryPercentView.setText(estimate);
@@ -391,10 +381,10 @@ public class BatteryMeterView extends LinearLayout implements
     private void setPercentTextAtCurrentLevel() {
         // Use the high voltage symbol ⚡ (u26A1 unicode) but prevent the system
         // to load its emoji colored variant with the uFE0E flag
-        /*String bolt = "\u26A1\uFE0E";
+        String bolt = "\u26A1\uFE0E";
         CharSequence mChargeIndicator = mCharging && (mBatteryStyle == BATTERY_STYLE_HIDDEN)
-                ? (bolt + " ") : "";*/
-        mBatteryPercentView.setText(
+                ? (bolt + " ") : "";
+        mBatteryPercentView.setText(mChargeIndicator +
                 NumberFormat.getPercentInstance().format(mLevel / 100f));
         setContentDescription(
                 getContext().getString(mCharging ? R.string.accessibility_battery_level_charging
@@ -421,10 +411,31 @@ public class BatteryMeterView extends LinearLayout implements
                                 LayoutParams.WRAP_CONTENT,
                                 LayoutParams.MATCH_PARENT));
             }
-            updatePercentText();
+            if (mBatteryStyle == BATTERY_STYLE_HIDDEN) {
+                mBatteryPercentView.setPaddingRelative(0, 0, 0, 0);
+            } else {
+                Resources res = getContext().getResources();
+                mBatteryPercentView.setPaddingRelative(
+                        res.getDimensionPixelSize(R.dimen.battery_level_padding_start), 0, 0, 0);
+            }
+        } else {
+            removeBatteryPercentView();
         }
+        updatePercentText();
     }
 
+    public void updateVisibility() {
+        if (mBatteryStyle == BATTERY_STYLE_HIDDEN) {
+            mBatteryIconView.setVisibility(View.GONE);
+            mBatteryIconView.setImageDrawable(null);
+            //setVisibility(View.GONE);
+        } else {
+            if (showing) {
+                removeView(mBatteryPercentView);
+                mBatteryPercentView = null;
+            }
+        }
+    }
 
     @Override
     public void onDensityOrFontScaleChanged() {
@@ -494,13 +505,6 @@ public class BatteryMeterView extends LinearLayout implements
     private final class SettingObserver extends ContentObserver {
         public SettingObserver(Handler handler) {
             super(handler);
-        }
-
-        void observe() {
-            ContentResolver resolver = getContext().getContentResolver();
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.QS_SHOW_BATTERY_ESTIMATE),
-                    false, this, UserHandle.USER_ALL);
         }
 
         @Override

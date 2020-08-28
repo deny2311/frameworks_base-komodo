@@ -1102,7 +1102,6 @@ public final class PowerManagerService extends SystemService
             mProximityWakeLock = mContext.getSystemService(PowerManager.class)
                     .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "ProximityWakeLock");
         }
-    }
 
     private void updateSettingsLocked() {
         final ContentResolver resolver = mContext.getContentResolver();

@@ -5058,12 +5058,6 @@ public final class Settings {
         private static final Validator QS_BLUR_ALPHA_VALIDATOR = ANY_INTEGER_VALIDATOR;
 
         /**
-         * Whether to show battery estimates in QS
-         * @hide
-         */
-        public static final String QS_SHOW_BATTERY_ESTIMATE = "qs_show_battery_estimate";
-
-        /**
          * Network traffic layout
          * @hide
          */
