@@ -5657,7 +5657,7 @@ public final class Settings {
             STOCK_STATUSBAR_IN_HIDE,
             FORCE_FULLSCREEN_CUTOUT_APPS,
             BACK_GESTURE_HEIGHT,
-            BACK_GESTURE_HAPTIC
+            BACK_GESTURE_HAPTIC,
             NAVIGATION_HANDLE_WIDTH,
             // Komodo Panel Ends
         };
