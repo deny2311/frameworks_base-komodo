@@ -171,6 +171,7 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
     private void setBuildText() {
         TextView v = findViewById(R.id.build);
         String buildType = SystemProperties.get("org.komodo.build_type", "KomodoDragon");
+        String buildName = SystemProperties.get("org.komodo.version.name", "KomodoIsland");
         if (v == null) return;
         boolean showFooterText = Settings.System.getIntForUser(mContext.getContentResolver(),
                         Settings.System.FOOTER_TEXT_SHOW, 0,
@@ -179,7 +180,7 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
                         Settings.System.FOOTER_TEXT_STRING, UserHandle.USER_CURRENT);
 
         if (showFooterText) {
-            String btFooterText = "#" + buildType;
+            String btFooterText = "#" + buildType + "-" + buildName;
             v.setText((footerText != null && !footerText.isEmpty()) ? footerText : btFooterText);
             v.setVisibility(View.VISIBLE);
         } else {
