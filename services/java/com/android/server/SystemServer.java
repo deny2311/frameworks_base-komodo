@@ -119,7 +119,6 @@ import com.android.server.om.OverlayManagerService;
 import com.android.server.os.BugreportManagerService;
 import com.android.server.os.DeviceIdentifiersPolicyService;
 import com.android.server.os.SchedulingPolicyService;
-import com.android.server.pocket.PocketService;
 import com.android.server.pm.BackgroundDexOptService;
 import com.android.server.pm.CrossProfileAppsService;
 import com.android.server.pm.DynamicCodeLoggingService;
@@ -1125,10 +1124,7 @@ public final class SystemServer {
 
         // Before things start rolling, be sure we have decided whether
         // we are in safe mode.
-
-        if(wm != null) {
-            safeMode = wm.detectSafeMode();
-        }
+        final boolean safeMode = wm.detectSafeMode();
         if (safeMode) {
             // If yes, immediately turn on the global setting for airplane mode.
             // Note that this does not send broadcasts at this stage because
@@ -1860,10 +1856,6 @@ public final class SystemServer {
 
             traceBeginAndSlog("StartCrossProfileAppsService");
             mSystemServiceManager.startService(CrossProfileAppsService.class);
-            traceEnd();
-
-            traceBeginAndSlog("StartPocketService");
-            mSystemServiceManager.startService(PocketService.class);
             traceEnd();
 
             // LiveDisplay

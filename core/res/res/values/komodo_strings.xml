@@ -55,9 +55,6 @@
     <string name="action_null">Blank</string>
     <string name="animation_ethans">Ethans</string>
 
-    <!-- Pocket Lock --> 
-    <string name="pocket_lock_message_long_press">Press and hold power button to unlock</string> 
-
     <!-- Gaming mode -->
     <string name="notification_channel_gaming">Gaming mode</string>
     <string name="gaming_mode_notification_title">Gaming mode enabled</string>
