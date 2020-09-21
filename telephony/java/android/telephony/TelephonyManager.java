@@ -10121,7 +10121,13 @@ public class TelephonyManager {
         if (SubscriptionManager.isValidPhoneId(phoneId)) {
             List<String> newList = Arrays.asList(updateTelephonyProperty(
                     TelephonyProperties.baseband_version(), phoneId, version).get(0));
-            TelephonyProperties.baseband_version(newList);
+            try {
+                TelephonyProperties.baseband_version(newList);
+            } catch(java.lang.IllegalArgumentException e) {
+                List<String> list = new ArrayList<>();
+                list.add(newList.get(0));
+                TelephonyProperties.baseband_version(list);
+            }
         }
     }
 
