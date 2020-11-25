@@ -6411,6 +6411,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             case NavbarUtilities.KEY_ACTION_KILL_APP:
                 BiancaUtils.killForegroundApp();
                 break;
+            case NavbarUtilities.KEY_ACTION_PARTIAL_SCREENSHOT:
+                BiancaUtils.takeScreenshot(false);
+                break;
         }
     }
 
