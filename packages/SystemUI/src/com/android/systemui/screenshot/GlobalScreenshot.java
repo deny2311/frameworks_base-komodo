@@ -31,12 +31,15 @@ import android.annotation.Nullable;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.ActivityOptions;
+import android.app.ActivityTaskManager;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -64,6 +67,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.MathUtils;
 import android.util.Slog;
+import android.view.Choreographer;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -88,14 +92,17 @@ import android.widget.Toast;
 import com.android.internal.logging.UiEventLogger;
 import com.android.systemui.R;
 import com.android.systemui.dagger.qualifiers.Main;
+import com.android.systemui.dagger.qualifiers.UiBackground;
 import com.android.systemui.shared.system.ActivityManagerWrapper;
 import com.android.systemui.shared.system.QuickStepContract;
+import com.android.systemui.shared.system.TaskStackChangeListener;
 import com.android.systemui.statusbar.phone.StatusBar;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
@@ -119,6 +126,7 @@ public class GlobalScreenshot implements ViewTreeObserver.OnComputeInternalInset
         public Consumer<Uri> finisher;
         public GlobalScreenshot.ActionsReadyListener mActionsReadyListener;
         public int errorMsgResId;
+        public String appLabel;
 
         void clearImage() {
             image = null;
@@ -177,14 +185,14 @@ public class GlobalScreenshot implements ViewTreeObserver.OnComputeInternalInset
     private static final long SCREENSHOT_TO_CORNER_X_DURATION_MS = 234;
     private static final long SCREENSHOT_TO_CORNER_Y_DURATION_MS = 500;
     private static final long SCREENSHOT_TO_CORNER_SCALE_DURATION_MS = 234;
-    private static final long SCREENSHOT_ACTIONS_EXPANSION_DURATION_MS = 400;
-    private static final long SCREENSHOT_ACTIONS_ALPHA_DURATION_MS = 100;
+    private static final long SCREENSHOT_ACTIONS_EXPANSION_DURATION_MS = 200;
+    private static final long SCREENSHOT_ACTIONS_ALPHA_DURATION_MS = 10;
     private static final long SCREENSHOT_DISMISS_Y_DURATION_MS = 350;
     private static final long SCREENSHOT_DISMISS_ALPHA_DURATION_MS = 183;
     private static final long SCREENSHOT_DISMISS_ALPHA_OFFSET_MS = 50; // delay before starting fade
     private static final float SCREENSHOT_ACTIONS_START_SCALE_X = .7f;
     private static final float ROUNDED_CORNER_RADIUS = .05f;
-    private static final int SCREENSHOT_CORNER_DEFAULT_TIMEOUT_MILLIS = 6000;
+    private static final int SCREENSHOT_CORNER_DEFAULT_TIMEOUT_MILLIS = 2000;
     private static final int MESSAGE_CORNER_TIMEOUT = 2;
 
     private final Interpolator mAccelerateInterpolator = new AccelerateInterpolator();
@@ -245,6 +253,34 @@ public class GlobalScreenshot implements ViewTreeObserver.OnComputeInternalInset
         }
     };
 
+    private ComponentName mTaskComponentName;
+    private PackageManager mPm;
+
+    private final Executor mUiBgExecutor;
+    private final TaskStackChangeListener mTaskListener = new TaskStackChangeListener() {
+        @Override
+        public void onTaskStackChanged() {
+            mUiBgExecutor.execute(() -> {
+                try {
+                    final ActivityManager.StackInfo focusedStack =
+                            ActivityTaskManager.getService().getFocusedStackInfo();
+                    if (focusedStack != null && focusedStack.topActivity != null) {
+                        mTaskComponentName = focusedStack.topActivity;
+                    }
+                } catch (Exception e) {}
+            });
+        }
+    };
+
+    private String getForegroundAppLabel() {
+        try {
+            final ActivityInfo ai = mPm.getActivityInfo(mTaskComponentName, 0);
+            return ai.applicationInfo.loadLabel(mPm).toString();
+        } catch (PackageManager.NameNotFoundException e) {
+             return null;
+        }
+    }
+
     /**
      * @param context everything needs a context :(
      */
@@ -252,7 +288,7 @@ public class GlobalScreenshot implements ViewTreeObserver.OnComputeInternalInset
     public GlobalScreenshot(
             Context context, @Main Resources resources,
             ScreenshotNotificationsController screenshotNotificationsController,
-            UiEventLogger uiEventLogger) {
+            UiEventLogger uiEventLogger, @UiBackground Executor uiBgExecutor) {
         mContext = context;
         mNotificationsController = screenshotNotificationsController;
         mUiEventLogger = uiEventLogger;
@@ -291,6 +327,18 @@ public class GlobalScreenshot implements ViewTreeObserver.OnComputeInternalInset
         // Setup the Camera shutter sound
         mCameraSound = new MediaActionSound();
         mCameraSound.load(MediaActionSound.SHUTTER_CLICK);
+
+        // Store UI background executor
+        mUiBgExecutor = uiBgExecutor;
+
+        // Grab PackageManager
+        mPm = mContext.getPackageManager();
+
+        // Register task stack listener
+        ActivityManagerWrapper.getInstance().registerTaskStackListener(mTaskListener);
+
+        // Initialize current foreground package name
+        mTaskListener.onTaskStackChanged();
     }
 
     @Override // ViewTreeObserver.OnComputeInternalInsetsListener
@@ -495,6 +543,7 @@ public class GlobalScreenshot implements ViewTreeObserver.OnComputeInternalInset
         data.image = mScreenBitmap;
         data.finisher = finisher;
         data.mActionsReadyListener = actionsReadyListener;
+        data.appLabel = getForegroundAppLabel();
 
         if (mSaveInBgTask != null) {
             // just log success/failure for the pre-existing screenshot
@@ -514,13 +563,27 @@ public class GlobalScreenshot implements ViewTreeObserver.OnComputeInternalInset
      * Takes a screenshot of the current display and shows an animation.
      */
     private void takeScreenshot(Consumer<Uri> finisher, Rect crop) {
-        // copy the input Rect, since SurfaceControl.screenshot can mutate it
-        Rect screenRect = new Rect(crop);
-        int rot = mDisplay.getRotation();
-        int width = crop.width();
-        int height = crop.height();
-        takeScreenshot(SurfaceControl.screenshot(crop, width, height, rot), finisher, screenRect,
-                Insets.NONE, true);
+        // Dismiss the old screenshot first to prevent it from showing up in the new screenshot
+        dismissScreenshot("new screenshot requested", true);
+
+        // Force a new frame to be rendered now that the old screenshot has been cleared
+        mScreenshotLayout.getRootView().invalidate();
+        Choreographer.getInstance().postFrameCallback(time1 -> {
+            // Unfortunately, we need to introduce another frame of latency because this
+            // is a pre-draw callback
+            mScreenshotLayout.getRootView().invalidate();
+
+            // Finally, take the screenshot once we're sure that old screenshot view is gone
+            Choreographer.getInstance().postFrameCallback(time2 -> {
+                // copy the input Rect, since SurfaceControl.screenshot can mutate it
+                Rect screenRect = new Rect(crop);
+                int rot = mDisplay.getRotation();
+                int width = crop.width();
+                int height = crop.height();
+                takeScreenshot(SurfaceControl.screenshot(crop, width, height, rot), finisher, screenRect,
+                        Insets.NONE, true);
+            });
+        });
     }
 
     private void takeScreenshot(Bitmap screenshot, Consumer<Uri> finisher, Rect screenRect,
