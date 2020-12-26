@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/* //device/apps/common/assets/res/any/strings.xml
+**
+** Copyright 2006, The Android Open Source Project
+**
+** Licensed under the Apache License, Version 2.0 (the "License");
+** you may not use this file except in compliance with the License.
+** You may obtain a copy of the License at
+**
+**     http://www.apache.org/licenses/LICENSE-2.0
+**
+** Unless required by applicable law or agreed to in writing, software
+** distributed under the License is distributed on an "AS IS" BASIS,
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+** See the License for the specific language governing permissions and
+** limitations under the License.
+*/
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="reboot_to_recovery_title">Pemulihan</string>
+    <string name="reboot_to_recovery_message">Mulai ulang untuk pemulihan</string>
+    <string name="reboot_to_bootloader_title">Boot loader</string>
+    <string name="reboot_to_bootloader_message">Muat Ulang ke Boot loader</string>
+    <string name="reboot_title">Mulai Ulang</string>
+    <string name="reboot_message">Muat Ulang ke Sistem</string>
+    <!-- Button that copies the url to the log of a crashed application -->
+    <string name="aerr_copy">Salin Catatan Crash URL</string>
+    <string name="url_copy_success">Salin URL Berhasil</string>
+    <string name="url_copy_failed">Terjadi kesalahan saat Upload log ke dog in</string>
+    <!-- Battery fully charged notification -->
+    <string name="notify_battery_fully_charged_title">Baterai Terisi penuh</string>
+    <string name="notify_battery_fully_charged_text">Putuskan sambungan perangkat Anda dari pengisi daya untuk meningkatkan umur baterai.</string>
+    <string name="battery_charged_channel_name">Baterai Terisi penuh</string>
+    <!-- Komodo custom system animations -->
+    <string name="animation_fade">Luntur</string>
+    <string name="animation_slide_right">Geser ke kanan</string>
+    <string name="animation_slide_left">Geser Ke Kiri</string>
+    <string name="animation_slide_right_no_fade">Geser ke kanan (Tidak pudar)</string>
+    <string name="animation_slide_left_no_fade">Geser ke Kiri (Tidak Pudar)</string>
+    <string name="animation_slide_up">Geser ke Bawah</string>
+    <string name="animation_slide_down">Geser Ke atas</string>
+    <string name="animation_default">Bawaan</string>
+    <string name="animation_translucent">Tembus cahaya</string>
+    <string name="animation_grow_shrink">Tumbuh di (Atas)</string>
+    <string name="animation_grow_shrink_center">Tumbuh di (Tengah)</string>
+    <string name="animation_grow_shrink_bottom">Tumbuh di (Bawah)</string>
+    <string name="animation_grow_shrink_left">Tumbuh di (Kiri)</string>
+    <string name="animation_grow_shrink_right">Tumbuh di (Kanan)</string>
+    <string name="animation_random">Acak</string>
+    <string name="action_null">Kosong</string>
+    <string name="animation_ethans">Ethans</string>
+    <!-- Pocket Lock -->
+    <string name="pocket_lock_message_long_press">Tekan dan tahan tombol daya untuk membuka kunci</string>
+    <!-- Gaming mode -->
+    <string name="notification_channel_gaming">Mode Permainan</string>
+    <string name="gaming_mode_notification_title">Mode Permainan Aktif</string>
+    <string name="gaming_mode_notification_content">Ketik untuk Matikan mode permainan</string>
+    <string name="gaming_mode_enabled_toast">Mode Permainan dihidupkan</string>
+    <string name="gaming_mode_disabled_toast">Mode Permainan dimatikan</string>
+</resources>
