@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--  Copyright (C) 2014-2016 The Nitrogen Project
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- LTE QS Tile -->
+    <string name="qs_lte_label">LTE</string>
+    <string name="lte_on">LTE вкл.</string>
+    <string name="lte_off">LTE выкл.</string>
+    <!-- Caffeine tile -->
+    <string name="quick_settings_caffeine_label">Спящий режим</string>
+    <string name="accessibility_quick_settings_caffeine_off">Переход в спящий режим разрешен</string>
+    <string name="accessibility_quick_settings_caffeine_on">Переход в спящий режим запрещен</string>
+    <!-- Advanced reboot -->
+    <string name="global_action_restart_advanced">Расширенный</string>
+    <string name="global_action_restart_recovery">Рекавери</string>
+    <string name="global_action_restart_bootloader">Загрузчик</string>
+    <string name="global_action_restart_ui">Системный интерфейс</string>
+    <!-- QS Config -->
+    <string name="qs_menu_item_columns">Столбцы</string>
+    <string name="qs_menu_item_columns_landscape">Колонны (альбомная ориентация)</string>
+    <string name="qs_menu_item_columns_three">3</string>
+    <string name="qs_menu_item_columns_four">4</string>
+    <string name="qs_menu_item_columns_five">5</string>
+    <string name="qs_menu_item_columns_six">6</string>
+    <string name="qs_menu_item_columns_seven">7</string>
+    <string name="qs_menu_item_columns_eight">8</string>
+    <string name="qs_menu_item_columns_nine">9</string>
+    <string name="qs_menu_item_reset">Сброс</string>
+    <string name="qs_menu_item_titles">Показать ярлыки</string>
+    <string name="qs_menu_item_qs_columns">Столбцы (панель быстрого доступа)</string>
+    <string name="qs_menu_item_columns_auto">Автоматически</string>
+    <!-- Heads up QS tile -->
+    <string name="quick_settings_heads_up_label">Всплывающие уведомления</string>
+    <string name="accessibility_quick_settings_heads_up_off">Всплывающие уведомления отключены.</string>
+    <string name="accessibility_quick_settings_heads_up_on">Всплывающие уведомления включены.</string>
+    <string name="accessibility_quick_settings_heads_up_changed_off">Всплывающие уведомления отключены.</string>
+    <string name="accessibility_quick_settings_heads_up_changed_on">Всплывающие уведомления включены.</string>
+    <!-- Sync QS Tile -->
+    <string name="quick_settings_sync_label">Синхронизация</string>
+    <string name="accessibility_quick_settings_sync_off">Синхронизация выключена</string>
+    <string name="accessibility_quick_settings_sync_on">Синхронизация включена</string>
+    <string name="accessibility_quick_settings_sync_changed_off">Синхронизация отключена</string>
+    <string name="accessibility_quick_settings_sync_changed_on">Синхронизация включена</string>
+    <!-- DataSwitch Tile -->
+    <string name="qs_data_switch_label">Сменить карту для передачи данных</string>
+    <string name="qs_data_switch_toast_0">В настоящее время SIM-карта не вставлена</string>
+    <string name="qs_data_switch_toast_1">В настоящее время вставлена ​​только одна SIM-карта</string>
+    <string name="qs_data_switch_changed_1">Переключить карту данных на SIM-карту 1.</string>
+    <string name="qs_data_switch_changed_2">Переключить карту данных на SIM-карту 2.</string>
+    <!-- Compass QS Tile -->
+    <string name="quick_settings_compass_label">Компас</string>
+    <string name="quick_settings_compass_value"><xliff:g id="degrees">%1$.0f</xliff:g>\u00b0 <xliff:g id="direction">%2$s</xliff:g></string>
+    <string name="quick_settings_compass_init">Инициализация\u2026</string>
+    <string name="accessibility_quick_settings_compass_off">Компас выключен</string>
+    <string name="accessibility_quick_settings_compass_on">Компас включен</string>
+    <string name="accessibility_quick_settings_compass_changed_off">Компас выключен</string>
+    <string name="accessibility_quick_settings_compass_changed_on">Компас включен</string>
+    <string name="quick_settings_compass_N">Север</string>
+    <string name="quick_settings_compass_NE">Северо-восток</string>
+    <string name="quick_settings_compass_E">Восток</string>
+    <string name="quick_settings_compass_SE">Юго-восток</string>
+    <string name="quick_settings_compass_S">Юг</string>
+    <string name="quick_settings_compass_SW">Юго-запад</string>
+    <string name="quick_settings_compass_W">Запад</string>
+    <string name="quick_settings_compass_NW">Северо-запад</string>
+    <!-- Reboot/Recovery QS tile -->
+    <string name="quick_settings_reboot_label">Перезагрузка</string>
+    <string name="quick_settings_reboot_recovery_label">Рекавери</string>
+    <!-- Gaming mode -->
+    <string name="gaming_mode_not_enabled">Игровой режим отключен в настройках</string>
+    <string name="quick_settings_gaming_mode_label">Игровой режим</string>
+    <!-- Content description of the Gaming mode tile in quick settings when disabled (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_quick_settings_gaming_mode_disabled">Игровой режим отключен.</string>
+    <!-- Content description of the Gaming mode tile in quick settings when enabled (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_quick_settings_gaming_mode_enabled">Игровой режим включен.</string>
+    <!-- Alerting notification header label -->
+    <string name="notification_section_header_alerting">Предупреждающие уведомления</string>
+    <!-- Running service button -->
+    <string name="accessibility_quick_settings_running_services">Открыть экран запущенных служб.</string>
+    <!-- Heads up snooze toast -->
+    <string name="heads_up_snooze_message_one_minute"><xliff:g id="string">%s</xliff:g> - Отключение всплывающих уведомлений на 1 минуту.</string>
+    <string name="heads_up_snooze_message"><xliff:g id="string">%s</xliff:g> - Отключение всплывающих уведомлений на <xliff:g id="number">%d</xliff:g> минуту(ы).</string>
+    <!-- Screenrecord UI -->
+    <string name="screenrecord_dialog_title">Начать запись?</string>
+    <string name="screenrecord_dialog_summary">Во время записи Android может захватить любую важную информацию, которая видна на вашем экране или воспроизведена на вашем устройстве. Сюда входят пароли, платежные данные, фотографии, сообщения и аудио.</string>
+    <string name="screenrecord_dialog_start">Начать запись</string>
+    <string name="screenrecord_dialog_cancel">Отменить</string>
+    <string name="screenrecord_audio_title">Источник звука</string>
+    <string name="screenrecord_audio_recording_internal">Внутренний</string>
+    <string name="screenrecord_audio_recording_microphone">Микрофон</string>
+    <string name="screenrecord_audio_recording_off">Отключено</string>
+    <string name="screenrecord_taps_title">Показать касания на экране</string>
+    <string name="screenrecord_stopdot_title">Показать кнопку остановки</string>
+    <string name="screenrecord_video_bitrate_title">Битрейт видео</string>
+</resources>
