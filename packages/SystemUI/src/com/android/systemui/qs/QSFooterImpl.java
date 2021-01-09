@@ -139,7 +139,6 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
 
         mActionsContainer = findViewById(R.id.qs_footer_actions_container);
         mEditContainer = findViewById(R.id.qs_footer_actions_edit_container);
-        mBuildText = findViewById(R.id.build);
 
         // RenderThread is doing more harm than good when touching the header (to expand quick
         // settings), so disable it for this view

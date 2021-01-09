@@ -88,6 +88,7 @@ import com.android.systemui.dagger.qualifiers.Main;
 import com.android.systemui.shared.system.QuickStepContract;
 import com.android.systemui.dagger.qualifiers.UiBackground;
 import com.android.systemui.shared.system.TaskStackChangeListener;
+import com.android.systemui.shared.system.ActivityManagerWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
