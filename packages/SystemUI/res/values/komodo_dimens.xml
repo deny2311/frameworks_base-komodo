@@ -67,4 +67,7 @@
 
     <!-- the padding on the start and the end of the statusbar -->
     <dimen name="status_bar_extra_padding">0dp</dimen>
+    
+    <!-- The starting padding for the Top Rows content in the status bar dual. -->
+    <dimen name="status_bar_padding_start_top_row">8dp</dimen>
 </resources>

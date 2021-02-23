@@ -3569,6 +3569,11 @@ public final class Settings {
          * SCREEN_BRIGHTNESS_MODE value for manual mode.
          */
         public static final int SCREEN_BRIGHTNESS_MODE_MANUAL = 0;
+        
+        /**
+         * Weather to enable statusbar dual row
+         */
+        public static final String STATUSBAR_DUAL_ROW = "statusbar_dual_row";
 
         /**
          * SCREEN_BRIGHTNESS_MODE value for automatic mode.

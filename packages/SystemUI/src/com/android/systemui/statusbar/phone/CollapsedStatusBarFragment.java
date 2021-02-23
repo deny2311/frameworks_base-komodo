@@ -51,6 +51,7 @@ import com.android.systemui.statusbar.policy.NetworkController;
 import com.android.systemui.statusbar.policy.NetworkController.SignalCallback;
 
 import android.widget.ImageView;
+import android.widget.TextClock;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -92,6 +93,7 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
 
     private ImageView mKonodoLogo;
     private ImageView mKonodoLogoRight;
+    private TextClock mDateDual;
     private int mLogoStyle;
     private int mShowLogo;
     private int mLogoColor;
@@ -101,26 +103,26 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
     private int mShowCarrierLabel;
 
     private class SettingsObserver extends ContentObserver {
-       SettingsObserver(Handler handler) {
-           super(handler);
-       }
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
 
-       void observe() {
-         mContentResolver.registerContentObserver(Settings.System.getUriFor(
+        void observe() {
+            mContentResolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CLOCK),
                     false, this, UserHandle.USER_ALL);
-         mContentResolver.registerContentObserver(Settings.System.getUriFor(
+            mContentResolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUSBAR_CLOCK_STYLE),
                     false, this, UserHandle.USER_ALL);
-	 mContentResolver.registerContentObserver(Settings.System.getUriFor(
+            mContentResolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_LOGO),
                     false, this, UserHandle.USER_ALL);
-	 mContentResolver.registerContentObserver(Settings.System.getUriFor(
+            mContentResolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_LOGO_STYLE),
-		    false, this, UserHandle.USER_ALL);
-	 mContentResolver.registerContentObserver(Settings.System.getUriFor(
+                    false, this, UserHandle.USER_ALL);
+            mContentResolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_LOGO_COLOR),
-		    false, this, UserHandle.USER_ALL);
+                    false, this, UserHandle.USER_ALL);
             mContentResolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_SHOW_CARRIER),
                     false, this, UserHandle.USER_ALL);
@@ -129,10 +131,10 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
         @Override
         public void onChange(boolean selfChange, Uri uri) {
             if ((uri.equals(Settings.System.getUriFor(Settings.System.STATUS_BAR_LOGO))) ||
-                (uri.equals(Settings.System.getUriFor(Settings.System.STATUS_BAR_LOGO_STYLE))) ||
-                (uri.equals(Settings.System.getUriFor(Settings.System.STATUS_BAR_LOGO_COLOR)))){
-                 updateLogoSettings(true);
-	    }
+                    (uri.equals(Settings.System.getUriFor(Settings.System.STATUS_BAR_LOGO_STYLE))) ||
+                    (uri.equals(Settings.System.getUriFor(Settings.System.STATUS_BAR_LOGO_COLOR)))) {
+                updateLogoSettings(true);
+            }
             updateSettings(true);
         }
     }
@@ -160,8 +162,18 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
-            Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.status_bar, container, false);
+                             Bundle savedInstanceState) {
+
+        if (isDualStatusbarEnabled()) {
+            return inflater.inflate(R.layout.status_bar_dual, container, false);
+        } else {
+            return inflater.inflate(R.layout.status_bar, container, false);
+        }
+    }
+
+    private boolean isDualStatusbarEnabled() {
+        return Settings.System.getInt(getContext().getContentResolver(),
+                Settings.System.STATUSBAR_DUAL_ROW, 0) == 1;
     }
 
     @Override
@@ -179,14 +191,16 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
         mClockView = mStatusBar.findViewById(R.id.clock);
         mCenterClockLayout = (LinearLayout) mStatusBar.findViewById(R.id.center_clock_layout);
         mRightClock = mStatusBar.findViewById(R.id.right_clock);
-	mKonodoLogo = mStatusBar.findViewById(R.id.status_bar_logo);
-	mKonodoLogoRight = mStatusBar.findViewById(R.id.status_bar_logo_right);
+        mKonodoLogo = mStatusBar.findViewById(R.id.status_bar_logo);
+        mKonodoLogoRight = mStatusBar.findViewById(R.id.status_bar_logo_right);
+        mDateDual = (TextClock) mStatusBar.findViewById(R.id.date_dual);
         mCustomCarrierLabel = mStatusBar.findViewById(R.id.statusbar_carrier_text);
         updateSettings(false);
-	updateLogoSettings(false);
+        updateLogoSettings(false);
         showSystemIconArea(false);
         initEmergencyCryptkeeperText();
         animateHide(mClockView, false, false);
+        animateHide(mDateDual, false, false);
         initOperatorName();
         mSettingsObserver.observe();
         updateSettings(false);
@@ -224,7 +238,7 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
     }
 
     public void initNotificationIconArea(NotificationIconAreaController
-            notificationIconAreaController) {
+                                                 notificationIconAreaController) {
         ViewGroup notificationIconArea = mStatusBar.findViewById(R.id.notification_icon_area);
         mNotificationIconAreaInner =
                 notificationIconAreaController.getNotificationInnerAreaView();
@@ -268,8 +282,10 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
             if ((state1 & DISABLE_NOTIFICATION_ICONS) != 0) {
                 hideNotificationIconArea(animate);
                 animateHide(mClockView, animate, false);
+                animateHide(mDateDual, animate, false);
                 hideCarrierName(animate);
             } else {
+                animateShow(mDateDual, animate);
                 showNotificationIconArea(animate);
                 updateClockStyle(animate);
                 showCarrierName(animate);
@@ -287,7 +303,7 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
                 && !mKeyguardMonitor.isKeyguardFadingAway()
                 && shouldHideNotificationIcons()
                 && !(mStatusBarStateController.getState() == StatusBarState.KEYGUARD
-                        && headsUpVisible)) {
+                && headsUpVisible)) {
             state |= DISABLE_NOTIFICATION_ICONS;
             state |= DISABLE_SYSTEM_INFO;
             state |= DISABLE_CLOCK;
@@ -324,6 +340,7 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
     }
 
     public void hideSystemIconArea(boolean animate) {
+        animateHide(mDateDual, animate, true);
         animateHide(mCenterClockLayout, animate, true);
         if (mClockStyle == 2) {
             animateHide(mRightClock, animate, true);
@@ -335,6 +352,7 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
     }
 
     public void showSystemIconArea(boolean animate) {
+        animateShow(mDateDual, animate);
         animateShow(mCenterClockLayout, animate);
         if (mClockStyle == 2) {
             animateShow(mRightClock, animate);
@@ -353,21 +371,24 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
         animateShow(mClockView, animate);
     }
 */
+
     /**
      * If panel is expanded/expanding it usually means QS shade is opening, so
      * don't set the clock GONE otherwise it'll mess up the animation.
-    private int clockHiddenMode() {
-        if (!mStatusBar.isClosed() && !mKeyguardMonitor.isShowing()
-                && !mStatusBarStateController.isDozing()) {
-            return View.INVISIBLE;
-        }
-        return View.GONE;
-    }*/
+     * private int clockHiddenMode() {
+     * if (!mStatusBar.isClosed() && !mKeyguardMonitor.isShowing()
+     * && !mStatusBarStateController.isDozing()) {
+     * return View.INVISIBLE;
+     * }
+     * return View.GONE;
+     * }
+     */
 
     public void hideNotificationIconArea(boolean animate) {
         animateHide(mNotificationIconAreaInner, animate, true);
         animateHide(mCenteredIconArea, animate, true);
-	animateHide(mCenterClockLayout, animate, true);
+        animateHide(mCenterClockLayout, animate, true);
+        animateHide(mDateDual, animate, true);
         if (mShowLogo == 1) {
             animateHide(mKonodoLogo, animate, false);
         }
@@ -377,9 +398,10 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
         animateShow(mNotificationIconAreaInner, animate);
         animateShow(mCenteredIconArea, animate);
         animateShow(mCenterClockLayout, animate);
-         if (mShowLogo == 1) {
-             animateShow(mKonodoLogo, animate);
-         }
+        animateShow(mDateDual, animate);
+        if (mShowLogo == 1) {
+            animateShow(mKonodoLogo, animate);
+        }
     }
 
     public void hideOperatorName(boolean animate) {
@@ -417,7 +439,7 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
      * Shows a view, and synchronizes the animation with Keyguard exit animations, if applicable.
      */
     private void animateShow(View v, boolean animate) {
-        if (v instanceof Clock && !((Clock)v).isClockVisible()) {
+        if (v instanceof Clock && !((Clock) v).isClockVisible()) {
             return;
         }
         v.animate().cancel();
@@ -505,23 +527,23 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
         }
 
         try {
-        mShowClock = Settings.System.getIntForUser(mContentResolver,
-                Settings.System.STATUS_BAR_CLOCK, 1,
-                UserHandle.USER_CURRENT) == 1;
-        mShowCarrierLabel = Settings.System.getIntForUser(
-                mContentResolver, Settings.System.STATUS_BAR_SHOW_CARRIER, 1,
-                UserHandle.USER_CURRENT);
-        if (!mShowClock) {
-            mClockStyle = 1; // internally switch to centered clock layout because
-                             // left & right will show up again after QS pulldown
-        } else {
-            mClockStyle = Settings.System.getIntForUser(mContentResolver,
-                    Settings.System.STATUSBAR_CLOCK_STYLE, 0,
+            mShowClock = Settings.System.getIntForUser(mContentResolver,
+                    Settings.System.STATUS_BAR_CLOCK, 1,
+                    UserHandle.USER_CURRENT) == 1;
+            mShowCarrierLabel = Settings.System.getIntForUser(
+                    mContentResolver, Settings.System.STATUS_BAR_SHOW_CARRIER, 1,
                     UserHandle.USER_CURRENT);
-        }
+            if (!mShowClock) {
+                mClockStyle = 1; // internally switch to centered clock layout because
+                // left & right will show up again after QS pulldown
+            } else {
+                mClockStyle = Settings.System.getIntForUser(mContentResolver,
+                        Settings.System.STATUSBAR_CLOCK_STYLE, 0,
+                        UserHandle.USER_CURRENT);
+            }
         } catch (Exception e) {
         }
-	updateClockStyle(animate);
+        updateClockStyle(animate);
 
     }
 
@@ -544,60 +566,60 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
                 getContext().getContentResolver(), Settings.System.STATUS_BAR_LOGO_STYLE, 0,
                 UserHandle.USER_CURRENT);
 
-        switch(mLogoStyle) {
-                // Konodo
+        switch (mLogoStyle) {
+            // Konodo
             case 1:
                 logo = getContext().getDrawable(R.drawable.ic_komodo_logo);
                 break;
-                // GZR Skull
+            // GZR Skull
             case 2:
                 logo = getContext().getResources().getDrawable(R.drawable.status_bar_gzr_skull_logo);
                 break;
-                // GZR Circle
+            // GZR Circle
             case 3:
                 logo = getContext().getResources().getDrawable(R.drawable.status_bar_gzr_circle_logo);
                 break;
-                // Android
+            // Android
             case 4:
                 logo = getContext().getDrawable(R.drawable.ic_android_logo);
                 break;
-                // Shit
+            // Shit
             case 5:
                 logo = getContext().getDrawable(R.drawable.ic_apple_logo);
                 break;
-                // Shitty Logo
+            // Shitty Logo
             case 6:
                 logo = getContext().getDrawable(R.drawable.ic_ios_logo);
                 break;
-                // BB
+            // BB
             case 7:
                 logo = getContext().getDrawable(R.drawable.ic_blackberry);
                 break;
-                // Cake
+            // Cake
             case 8:
                 logo = getContext().getDrawable(R.drawable.ic_cake);
                 break;
-                // Blogger
+            // Blogger
             case 9:
                 logo = getContext().getDrawable(R.drawable.ic_blogger);
                 break;
-                // biohazard
+            // biohazard
             case 10:
                 logo = getContext().getDrawable(R.drawable.ic_biohazard);
                 break;
-                // linux
+            // linux
             case 11:
                 logo = getContext().getDrawable(R.drawable.ic_linux);
                 break;
-                // yin yang
+            // yin yang
             case 12:
                 logo = getContext().getDrawable(R.drawable.ic_yin_yang);
                 break;
-                // windows
+            // windows
             case 13:
                 logo = getContext().getDrawable(R.drawable.ic_windows);
                 break;
-                // robot
+            // robot
             case 14:
                 logo = getContext().getDrawable(R.drawable.ic_robot);
                 break;
@@ -634,7 +656,7 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
             case 25:
                 logo = getContext().getDrawable(R.drawable.ic_guitar_electric);
                 break;
-                // Default (Konodo Main)
+            // Default (Konodo Main)
             case 0:
             default:
                 logo = getContext().getDrawable(R.drawable.status_bar_logo);
@@ -642,14 +664,14 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
         }
 
         if (mShowLogo == 1) {
-	    mKonodoLogo.setImageDrawable(null);
-	    mKonodoLogo.setImageDrawable(logo);
- 	    mKonodoLogo.setColorFilter(mLogoColor, PorterDuff.Mode.MULTIPLY);
-	} else if (mShowLogo == 2) {
-	    mKonodoLogoRight.setImageDrawable(null);
-	    mKonodoLogoRight.setImageDrawable(logo);
-	    mKonodoLogoRight.setColorFilter(mLogoColor, PorterDuff.Mode.MULTIPLY);
-	}
+            mKonodoLogo.setImageDrawable(null);
+            mKonodoLogo.setImageDrawable(logo);
+            mKonodoLogo.setColorFilter(mLogoColor, PorterDuff.Mode.MULTIPLY);
+        } else if (mShowLogo == 2) {
+            mKonodoLogoRight.setImageDrawable(null);
+            mKonodoLogoRight.setImageDrawable(logo);
+            mKonodoLogoRight.setColorFilter(mLogoColor, PorterDuff.Mode.MULTIPLY);
+        }
 
         if (mNotificationIconAreaInner != null) {
             if (mShowLogo == 1) {
@@ -666,7 +688,7 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
                     animateShow(mKonodoLogoRight, animate);
                 }
             } else if (mShowLogo != 2) {
-                   animateHide(mKonodoLogoRight, animate, false);
+                animateHide(mKonodoLogoRight, animate, false);
             }
         }
     }
@@ -675,8 +697,8 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
         if (mClockStyle == 1 || mClockStyle == 2) {
             animateHide(mClockView, animate, false);
         } else {
-            if (((Clock)mClockView).isClockVisible()) {
-                 animateShow(mClockView, animate);
+            if (((Clock) mClockView).isClockVisible()) {
+                animateShow(mClockView, animate);
             }
         }
         setCarrierLabel(animate);
