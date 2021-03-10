@@ -193,9 +193,8 @@
 
     <TextClock
         android:id="@+id/date_dual"
-        android:layout_width="wrap_content"
+        android:layout_width="0dip"
         android:layout_height="wrap_content"
-        android:layout_weight="1.0"
         android:background="@drawable/date_background"
         android:format12Hour="EEE, MMM dd"
         android:format24Hour="EEE, dd MMM"
