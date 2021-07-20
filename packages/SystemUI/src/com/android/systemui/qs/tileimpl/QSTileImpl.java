@@ -39,6 +39,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.UserHandle;
 import android.os.Vibrator;
+import android.os.VibrationEffect;
 import android.provider.Settings;
 import android.service.quicksettings.Tile;
 import android.text.format.DateUtils;
@@ -248,8 +249,9 @@ public abstract class QSTileImpl<TState extends State> implements QSTile, Lifecy
 
     public void vibrateTile(int duration) {
         if (!isVibrationEnabled()) { return; }
-        if (mVibrator != null) {
-            if (mVibrator.hasVibrator()) { mVibrator.vibrate(duration); }
+        if (mVibrator != null && mVibrator.hasVibrator()) {
+            mVibrator.vibrate(VibrationEffect.createOneShot(duration,
+                    VibrationEffect.DEFAULT_AMPLITUDE));
         }
     }
 
@@ -273,7 +275,7 @@ public abstract class QSTileImpl<TState extends State> implements QSTile, Lifecy
                 getInstanceId());
         mQSLogger.logTileClick(mTileSpec, mStatusBarStateController.getState(), mState.state);
         mHandler.sendEmptyMessage(H.CLICK);
-        vibrateTile(45);
+        vibrateTile(100);
     }
 
     public void secondaryClick() {
@@ -285,6 +287,7 @@ public abstract class QSTileImpl<TState extends State> implements QSTile, Lifecy
         mQSLogger.logTileSecondaryClick(mTileSpec, mStatusBarStateController.getState(),
                 mState.state);
         mHandler.sendEmptyMessage(H.SECONDARY_CLICK);
+        vibrateTile(100);
     }
 
     public void longClick() {
@@ -300,7 +303,7 @@ public abstract class QSTileImpl<TState extends State> implements QSTile, Lifecy
                 mContext,
                 Prefs.Key.QS_LONG_PRESS_TOOLTIP_SHOWN_COUNT,
                 QuickStatusBarHeader.MAX_TOOLTIP_SHOWN_COUNT);
-        vibrateTile(45);
+        vibrateTile(100);
     }
 
     public LogMaker populate(LogMaker logMaker) {
