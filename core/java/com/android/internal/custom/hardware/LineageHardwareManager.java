@@ -134,11 +134,11 @@ public final class LineageHardwareManager {
     }
 
     private IBase getHIDLService(int feature) {
-        try {
+        //try {
             /*switch (feature) {
             }*/
-        } catch (NoSuchElementException | RemoteException e) {
-        }
+        //} catch (NoSuchElementException | RemoteException e) {
+        //}
         return null;
     }
 
