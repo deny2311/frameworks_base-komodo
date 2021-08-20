@@ -159,7 +159,6 @@ interface IStatusBarService
      * Komodo additions
      */
     void toggleCameraFlash();
-    void toggleCameraFlashState(boolean enable);
     void toggleRecentApps();
     void toggleSplitScreen();
     void preloadRecentApps();
