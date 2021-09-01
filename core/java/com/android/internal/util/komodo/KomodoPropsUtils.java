@@ -55,6 +55,15 @@ public class KomodoPropsUtils {
         "com.google.android.apps.nexuslauncher"
     };
 
+    private static final String[] packagesForTB = {
+            "com.lazada.android",
+            "com.shopee.id",
+            "com.gojek.app",
+            "com.tokopedia.tkpd",
+            "com.grabtaxi.passenger",
+            "com.ss.android.ugc.trill"
+    };
+
     static {
         propsToChange = new HashMap<>();
         propsToChange.put("BRAND", "google");
@@ -63,6 +72,18 @@ public class KomodoPropsUtils {
         propsToChange.put("PRODUCT", "redfin");
         propsToChange.put("MODEL", "Pixel 5");
         propsToChange.put("FINGERPRINT", "google/redfin/redfin:11/RQ3A.210705.001/7380771:user/release-keys");
+        propsTB = new HashMap<>();
+        propsTB.put("BRAND", "asus");
+        propsTB.put("MANUFACTURER", "Asus");
+        propsTB.put("DEVICE", "X00TD");
+        propsTB.put("PRODUCT", "X00TD");
+        propsTB.put("MODEL", "Zenfone Max Pro M1");
+        propsTB.put("FINGERPRINT", "asus/WW_X00TD/ASUS_X00T_2:9/QKQ1/17.2017.2012.438-20201203:user/release-keys");
+        propsTB.put("IS_DEBUGGABLE", false);
+        propsTB.put("IS_ENG", false);
+        propsTB.put("IS_USERDEBUG", false);
+        propsTB.put("IS_USER", true);
+        propsTB.put("TYPE", "user");
     }
 
     public static void setProps(String packageName) {
@@ -74,6 +95,16 @@ public class KomodoPropsUtils {
                 Log.d(TAG, "Defining props for: " + packageName);
             }
             for (Map.Entry<String, Object> prop : propsToChange.entrySet()) {
+                String key = prop.getKey();
+                Object value = prop.getValue();
+                setPropValue(key, value);
+            }
+        }
+        if (Arrays.asList(packagesForTB).contains(packageName)) {
+            if (DEBUG) {
+                Log.d(TAG, "Defining props for: " + packageName);
+            }
+            for (Map.Entry<String, Object> prop : propsTB.entrySet()) {
                 String key = prop.getKey();
                 Object value = prop.getValue();
                 setPropValue(key, value);
