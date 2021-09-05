@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/**
+ * Copyright (c) 2009, The Android Open Source Project
+ * Copyright (c) 2015, The CyanogenMod Project
+ * Copyright (c) 2017, The LineageOS Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <!-- Heads Up QS Tile -->
+    <string name="quick_settings_heads_up_label">Всплывающие уведомления</string>
+    <string name="accessibility_quick_settings_heads_up_off">Всплывающие уведомления отключены</string>
+    <string name="accessibility_quick_settings_heads_up_on">Всплывающие уведомления включены</string>
+    <string name="accessibility_quick_settings_heads_up_changed_off">Всплывающие уведомления отключены</string>
+    <string name="accessibility_quick_settings_heads_up_changed_on">Всплывающие уведомления включены</string>
+
+    <!-- Biometric Dialog - Use Face -->
+    <string name="biometric_dialog_button_use_face">Использовать лицо</string>
+
+     <!-- Sync QS Tile -->
+    <string name="quick_settings_sync_label">Синхронизация</string>
+    <string name="accessibility_quick_settings_sync_off">Синхронизация отключена</string>
+    <string name="accessibility_quick_settings_sync_on">Синхронизация включена</string>
+    <string name="accessibility_quick_settings_sync_changed_off">Синхронизация отключена</string>
+    <string name="accessibility_quick_settings_sync_changed_on">Синхронизация включена</string>
+
+    <!-- Always on Display Tile -->
+    <string name="quick_settings_always_on_display_label">AOD</string>
+    <string name="accessibility_quick_settings_always_on_display_off">AOD отключен</string>
+    <string name="accessibility_quick_settings_always_on_display_on">AOD включен</string>
+    <string name="accessibility_quick_settings_always_on_display_changed_off">AOD отключен</string>
+    <string name="accessibility_quick_settings_always_on_display_changed_on">AOD включен</string>
+
+    <!-- Advance location quick setting tile -->
+    <string name="quick_settings_secondary_location_off"></string>
+    <string name="quick_settings_location_secondary_battery_saving">Экономия батареи</string>
+    <string name="accessibility_quick_settings_location_battery_saving">Местоположение: режим экономии заряда батареи</string>
+    <string name="quick_settings_location_secondary_gps_only">Только датчики</string>
+    <string name="accessibility_quick_settings_location_gps_only">Местоположение: только по датчикам</string>
+    <string name="quick_settings_location_secondary_high_accuracy">Высокая точность</string>
+    <string name="accessibility_quick_settings_location_high_accuracy">Местоположение: режим высокой точности</string>
+
+    <!-- Power Menu -->
+    <string name="global_action_restart_advanced">Дополнительно</string>
+    <string name="global_action_restart_recovery">Рекавери</string>
+    <string name="global_action_restart_bootloader">Загрузчик</string>
+    <string name="global_action_restart_ui">Интерфейс</string>
+    <string name="global_action_screenrecord">Запись экрана</string>
+
+    <!-- Caffeine tile -->
+    <string name="quick_settings_caffeine_label">Кофеин</string>
+    <string name="accessibility_quick_settings_caffeine_off">Кофеин отключен</string>
+    <string name="accessibility_quick_settings_caffeine_on">Кофеин включен</string>
+
+    <!-- USB tethering QS tile -->
+    <string name="quick_settings_usb_tether_label">USB-модем</string>
+
+    <!-- DataSwitch Tile -->
+    <string name="qs_data_switch_label">SIM для Интернета</string>
+    <string name="qs_data_switch_toast_0">В настоящее время SIM-карта не вставлена</string>
+    <string name="qs_data_switch_toast_1">В настоящее время вставлена одна SIM-карта</string>
+    <string name="qs_data_switch_changed_1">Для Интернета используется SIM 1</string>
+    <string name="qs_data_switch_changed_2">Для Интернета используется SIM 2</string>
+
+    <!-- Sound QS Tile -->
+    <string name="quick_settings_sound_label">Звук</string>
+    <string name="quick_settings_sound_ring">Звонок</string>
+    <string name="quick_settings_sound_vibrate">Вибрация</string>
+    <string name="quick_settings_sound_dnd">Не беспокоить</string>
+
+    <!-- Statusbar Tuner -->
+    <string name="statusbar_items_title">Иконки в статусбаре</string>
+
+    <!-- Name of the ims status bar icon. -->
+    <string name="status_bar_ims">VoLTE/VoWiFi</string>
+
+    <!-- Status bar icons -->
+    <string name="status_bar_camera">Камера</string>
+    <string name="status_bar_data_disabled">Иконка отключенного интернета</string>
+    <string name="status_bar_data_saver">Экономия трафика</string>
+    <string name="status_bar_location">Местоположение</string>
+    <string name="status_bar_microphone">Микрофон</string>
+    <string name="status_bar_nfc">NFC</string>
+    <string name="status_bar_roaming">Роуминг</string>
+    <string name="status_bar_vpn">VPN</string>
+
+    <!-- Accessibility label for nfc icon (not shown on screen) [CHAR LIMIT=NONE] -->
+    <string name="accessibility_status_bar_nfc">Nfc</string>
+
+    <!-- Partial screenshot -->
+    <string name="global_screenshot_selector_capture_description">Сделайте частичный снимок экрана</string>
+    <string name="global_screenshot_selector_cancel_description">Отменить частичный снимок экрана</string>
+
+</resources>
