@@ -6340,7 +6340,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 toggleRecentApps();
                 break;
             case NavbarUtilities.KEY_ACTION_SEARCH:
-                launchAssistAction(null, -1, event.getEventTime(), AssistUtils.INVOCATION_TYPE_UNKNOWN);
+                launchAssistAction(null, -1, KeyEvent.getEventTime(), AssistUtils.INVOCATION_TYPE_UNKNOWN);
                 break;
             case NavbarUtilities.KEY_ACTION_VOICE_SEARCH:
                 launchAssistLongPressAction(false, false);
@@ -6432,7 +6432,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 toggleRecentApps();
                 break;
             case NavbarUtilities.KEY_ACTION_SEARCH:
-                launchAssistAction(null, -1);
+                launchAssistAction(null, -1, KeyEvent.getEventTime(), AssistUtils.INVOCATION_TYPE_UNKNOWN);
                 break;
             case NavbarUtilities.KEY_ACTION_VOICE_SEARCH:
                 launchAssistLongPressAction(false, false);
