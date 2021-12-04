@@ -1535,11 +1535,6 @@ public class CommandQueue extends IStatusBar.Stub implements
                         mCallbacks.get(i).toggleCameraFlash();
                     }
                     break;
-                case MSG_KILL_FOREGROUND_APP:
-                    for (int i = 0; i < mCallbacks.size(); i++) {
-                        mCallbacks.get(i).killForegroundApp();
-                    }
-                    break;
             }
         }
     }
