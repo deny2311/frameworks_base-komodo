@@ -62,7 +62,7 @@ import android.view.ViewConfiguration;
 import android.view.WindowManager;
 import android.view.WindowMetrics;
 
-import com.android.internal.util.bianca.BiancaUtils;
+import com.android.internal.util.komodo.KomodoUtils;
 import com.android.internal.config.sysui.SystemUiDeviceConfigFlags;
 import com.android.internal.policy.GestureNavigationSettingsObserver;
 import com.android.systemui.Dependency;
@@ -1006,37 +1006,37 @@ public class EdgeBackGestureHandler extends CurrentUserTracker
             default:
                 break;
             case 1: // Flashlight
-                BiancaUtils.toggleCameraFlash();
+                KomodoUtils.toggleCameraFlash();
                 break;
             case 2: // Application
                 launchApp(mContext, mIsOnLeftEdge, isVertical);
                 break;
             case 3: // Volume panel
-                BiancaUtils.toggleVolumePanel(mContext);
+                KomodoUtils.toggleVolumePanel(mContext);
                 break;
             case 4: // Screen off
-                BiancaUtils.switchScreenOff(mContext);
+                KomodoUtils.switchScreenOff(mContext);
                 break;
             case 5: // Screenshot
-                BiancaUtils.takeScreenshot(true);
+                KomodoUtils.takeScreenshot(true);
                 break;
             case 6: // Notification panel
-                BiancaUtils.toggleNotifications();
+                KomodoUtils.toggleNotifications();
                 break;
             case 7: // QS panel
-                BiancaUtils.toggleQsPanel();
+                KomodoUtils.toggleQsPanel();
                 break;
             case 8: // Clear notifications
-                BiancaUtils.clearAllNotifications();
+                KomodoUtils.clearAllNotifications();
                 break;
             case 9: // Ringer modes
-                BiancaUtils.toggleRingerModes(mContext);
+                KomodoUtils.toggleRingerModes(mContext);
                 break;
             case 10: // Kill app
-                BiancaUtils.killForegroundApp();
+                KomodoUtils.killForegroundApp();
                 break;
             case 11: // Partial screenshot
-                BiancaUtils.takeScreenshot(false);
+                KomodoUtils.takeScreenshot(false);
                 break;
         }
     }
