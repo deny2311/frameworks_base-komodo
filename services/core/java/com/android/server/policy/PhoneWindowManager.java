@@ -6356,28 +6356,28 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 NavbarUtilities.toggleSplitScreen();
                 break;
             case NavbarUtilities.KEY_ACTION_FLASHLIGHT:
-                BiancaUtils.toggleCameraFlash();
+                KomodoUtils.toggleCameraFlash();
                 break;
             case NavbarUtilities.KEY_ACTION_CLEAR_NOTIFICATIONS:
-                BiancaUtils.clearAllNotifications();
+                KomodoUtils.clearAllNotifications();
                 break;
             case NavbarUtilities.KEY_ACTION_VOLUME_PANEL:
-                BiancaUtils.toggleVolumePanel(mContext);
+                KomodoUtils.toggleVolumePanel(mContext);
                 break;
             case NavbarUtilities.KEY_ACTION_SCREEN_OFF:
-                BiancaUtils.switchScreenOff(mContext);
+                KomodoUtils.switchScreenOff(mContext);
                 break;
             case NavbarUtilities.KEY_ACTION_NOTIFICATIONS:
-                BiancaUtils.toggleNotifications();
+                KomodoUtils.toggleNotifications();
                 break;
             case NavbarUtilities.KEY_ACTION_POWER_MENU:
                 triggerVirtualKeypress(KeyEvent.KEYCODE_POWER, false, true);
                 break;
             case NavbarUtilities.KEY_ACTION_SCREENSHOT:
-                BiancaUtils.takeScreenshot(true);
+                KomodoUtils.takeScreenshot(true);
                 break;
             case NavbarUtilities.KEY_ACTION_QS_PANEL:
-                BiancaUtils.toggleQsPanel();
+                KomodoUtils.toggleQsPanel();
                 break;
             case NavbarUtilities.KEY_ACTION_CUSTOM_APP:
                 switch (keyCode) {
@@ -6399,13 +6399,13 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 }
                 break;
             case NavbarUtilities.KEY_ACTION_RINGER_MODES:
-                BiancaUtils.toggleRingerModes(mContext);
+                KomodoUtils.toggleRingerModes(mContext);
                 break;
             case NavbarUtilities.KEY_ACTION_KILL_APP:
-                BiancaUtils.killForegroundApp();
+                KomodoUtils.killForegroundApp();
                 break;
             case NavbarUtilities.KEY_ACTION_PARTIAL_SCREENSHOT:
-                BiancaUtils.takeScreenshot(false);
+                KomodoUtils.takeScreenshot(false);
                 break;
         }
     }
@@ -6448,28 +6448,28 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 NavbarUtilities.toggleSplitScreen();
                 break;
             case NavbarUtilities.KEY_ACTION_FLASHLIGHT:
-                BiancaUtils.toggleCameraFlash();
+                KomodoUtils.toggleCameraFlash();
                 break;
             case NavbarUtilities.KEY_ACTION_CLEAR_NOTIFICATIONS:
-                BiancaUtils.clearAllNotifications();
+                KomodoUtils.clearAllNotifications();
                 break;
             case NavbarUtilities.KEY_ACTION_VOLUME_PANEL:
-                BiancaUtils.toggleVolumePanel(mContext);
+                KomodoUtils.toggleVolumePanel(mContext);
                 break;
             case NavbarUtilities.KEY_ACTION_SCREEN_OFF:
-                BiancaUtils.switchScreenOff(mContext);
+                KomodoUtils.switchScreenOff(mContext);
                 break;
             case NavbarUtilities.KEY_ACTION_NOTIFICATIONS:
-                BiancaUtils.toggleNotifications();
+                KomodoUtils.toggleNotifications();
                 break;
             case NavbarUtilities.KEY_ACTION_POWER_MENU:
                 triggerVirtualKeypress(KeyEvent.KEYCODE_POWER, false, true);
                 break;
             case NavbarUtilities.KEY_ACTION_SCREENSHOT:
-                BiancaUtils.takeScreenshot(true);
+                KomodoUtils.takeScreenshot(true);
                 break;
             case NavbarUtilities.KEY_ACTION_QS_PANEL:
-                BiancaUtils.toggleQsPanel();
+                KomodoUtils.toggleQsPanel();
                 break;
             case NavbarUtilities.KEY_ACTION_CUSTOM_APP:
                 switch (keyCode) {
@@ -6491,10 +6491,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 }
                 break;
             case NavbarUtilities.KEY_ACTION_RINGER_MODES:
-                BiancaUtils.toggleRingerModes(mContext);
+                KomodoUtils.toggleRingerModes(mContext);
                 break;
             case NavbarUtilities.KEY_ACTION_KILL_APP:
-                BiancaUtils.killForegroundApp();
+                KomodoUtils.killForegroundApp();
                 break;
         }
     }
