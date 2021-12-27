@@ -242,6 +242,7 @@ import com.android.systemui.statusbar.policy.ConfigurationController.Configurati
 import com.android.systemui.statusbar.policy.DeviceProvisionedController;
 import com.android.systemui.statusbar.policy.DeviceProvisionedController.DeviceProvisionedListener;
 import com.android.systemui.statusbar.policy.ExtensionController;
+import com.android.systemui.statusbar.policy.GameSpaceManager;
 import com.android.systemui.statusbar.policy.KeyguardStateController;
 import com.android.systemui.statusbar.policy.FlashlightController;
 import com.android.systemui.statusbar.policy.NetworkController;
@@ -448,6 +449,7 @@ public class StatusBar extends SystemUI implements DemoMode,
     private final SystemStatusAnimationScheduler mAnimationScheduler;
     private final StatusBarLocationPublisher mStatusBarLocationPublisher;
     private final StatusBarIconController mStatusBarIconController;
+    protected GameSpaceManager mGameSpaceManager;
 
     protected TaskHelper mTaskHelper;
 
@@ -817,6 +819,7 @@ public class StatusBar extends SystemUI implements DemoMode,
             SystemStatusAnimationScheduler animationScheduler,
             StatusBarLocationPublisher locationPublisher,
             StatusBarIconController statusBarIconController,
+            GameSpaceManager gameSpaceManager,
             LockscreenShadeTransitionController lockscreenShadeTransitionController,
             FeatureFlags featureFlags,
             KeyguardUnlockAnimationController keyguardUnlockAnimationController,
@@ -905,6 +908,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         mAnimationScheduler = animationScheduler;
         mStatusBarLocationPublisher = locationPublisher;
         mStatusBarIconController = statusBarIconController;
+        mGameSpaceManager = gameSpaceManager;
         mFeatureFlags = featureFlags;
         mKeyguardUnlockAnimationController = keyguardUnlockAnimationController;
         mUnlockedScreenOffAnimationController = unlockedScreenOffAnimationController;
@@ -972,6 +976,8 @@ public class StatusBar extends SystemUI implements DemoMode,
         mKeyguardManager = (KeyguardManager) mContext.getSystemService(Context.KEYGUARD_SERVICE);
         mWallpaperSupported =
                 mContext.getSystemService(WallpaperManager.class).isWallpaperSupported();
+
+        mGameSpaceManager.observe();
 
         // Connect in to the status bar manager service
         mCommandQueue.addCallback(this);
@@ -5045,6 +5051,10 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     public NotificationGutsManager getGutsManager() {
         return mGutsManager;
+    }
+
+    public GameSpaceManager getGameSpaceManager() {
+        return mGameSpaceManager;
     }
 
     private boolean isTransientShown() {
