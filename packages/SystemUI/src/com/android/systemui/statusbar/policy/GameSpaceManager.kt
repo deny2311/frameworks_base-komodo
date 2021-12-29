@@ -26,7 +26,6 @@ import android.os.Message
 import android.os.RemoteException
 import android.os.UserHandle
 import android.provider.Settings
-import com.android.internal.os.BackgroundThread
 import com.android.systemui.dagger.SysUISingleton
 import com.android.systemui.shared.system.ActivityManagerWrapper
 import com.android.systemui.shared.system.TaskStackChangeListener
@@ -40,15 +39,16 @@ class GameSpaceManager @Inject constructor(
 ) {
     private val handler by lazy { GameSpaceHandler(Looper.getMainLooper()) }
     private val taskManager by lazy { ActivityTaskManager.getService() }
-    private val backgroundThreadHandler by lazy { BackgroundThread.getHandler() }
-    private var activeGame: String? = null
+    private val activityManager by lazy { ActivityManagerWrapper.getInstance() }
 
-    private val mTaskStackChangeListener: TaskStackChangeListener =
-        object : TaskStackChangeListener() {
-            override fun onTaskStackChanged() {
-                handler.sendEmptyMessage(MSG_UPDATE_FOREGROUND_APP)
-            }
+    private var activeGame: String? = null
+    private var isRegistered = false
+
+    private val mTaskStackChangeListener = object : TaskStackChangeListener() {
+        override fun onTaskStackChanged() {
+            handler.sendEmptyMessage(MSG_UPDATE_FOREGROUND_APP)
         }
+    }
 
     private inner class GameSpaceHandler(looper: Looper?) : Handler(looper, null, true) {
         override fun handleMessage(msg: Message) {
@@ -60,16 +60,13 @@ class GameSpaceManager @Inject constructor(
     }
 
     private fun checkForegroundApp() {
-        backgroundThreadHandler.post {
-            try {
-                val info = taskManager.focusedRootTaskInfo
-                info?.topActivity ?: return@post
-
-                val packageName = info.topActivity?.packageName
-                activeGame = checkGameList(packageName)
-                handler.sendEmptyMessage(MSG_DISPATCH_FOREGROUND_APP)
-            } catch (e: RemoteException) {
-            }
+        try {
+            val info = taskManager.focusedRootTaskInfo
+            info?.topActivity ?: return
+            val packageName = info.topActivity?.packageName
+            activeGame = checkGameList(packageName)
+            handler.sendEmptyMessage(MSG_DISPATCH_FOREGROUND_APP)
+        } catch (e: RemoteException) {
         }
     }
 
@@ -77,18 +74,23 @@ class GameSpaceManager @Inject constructor(
         val action = if (activeGame != null) ACTION_GAME_START else ACTION_GAME_STOP
         Intent(action).apply {
             setPackage(GAMESPACE_PACKAGE)
-            component = null
-            putExtra("source", context.packageName)
-            if (activeGame != null) {
-                putExtra("package_name", activeGame)
-            }
-            context.sendBroadcastAsUser(this, UserHandle.CURRENT)
+            component = ComponentName.unflattenFromString(RECEIVER_CLASS)
+            putExtra(EXTRA_CALLER_NAME, context.packageName)
+            if (activeGame != null) putExtra(EXTRA_ACTIVE_GAME, activeGame)
+            addFlags(Intent.FLAG_RECEIVER_REPLACE_PENDING
+                or Intent.FLAG_RECEIVER_FOREGROUND
+                or Intent.FLAG_RECEIVER_INCLUDE_BACKGROUND)
+            context.sendBroadcastAsUser(this, UserHandle.SYSTEM)
         }
     }
 
     fun observe() {
-        ActivityManagerWrapper.getInstance().registerTaskStackListener(mTaskStackChangeListener)
-        checkForegroundApp()
+        if (isRegistered) {
+            activityManager.unregisterTaskStackListener(mTaskStackChangeListener)
+        }
+        activityManager.registerTaskStackListener(mTaskStackChangeListener)
+        isRegistered = true;
+        handler.sendEmptyMessage(MSG_UPDATE_FOREGROUND_APP)
     }
 
     fun isGameActive() = activeGame != null
@@ -112,6 +114,9 @@ class GameSpaceManager @Inject constructor(
         private const val ACTION_GAME_START = "io.chaldeaprjkt.gamespace.action.GAME_START"
         private const val ACTION_GAME_STOP = "io.chaldeaprjkt.gamespace.action.GAME_STOP"
         private const val GAMESPACE_PACKAGE = "io.chaldeaprjkt.gamespace"
+        private const val RECEIVER_CLASS = "io.chaldeaprjkt.gamespace/.gamebar.GameBroadcastReceiver"
+        private const val EXTRA_CALLER_NAME = "source"
+        private const val EXTRA_ACTIVE_GAME = "package_name"
         private const val MSG_UPDATE_FOREGROUND_APP = 0
         private const val MSG_DISPATCH_FOREGROUND_APP = 1
     }

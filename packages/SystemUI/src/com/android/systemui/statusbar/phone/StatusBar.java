@@ -819,7 +819,6 @@ public class StatusBar extends SystemUI implements DemoMode,
             SystemStatusAnimationScheduler animationScheduler,
             StatusBarLocationPublisher locationPublisher,
             StatusBarIconController statusBarIconController,
-            GameSpaceManager gameSpaceManager,
             LockscreenShadeTransitionController lockscreenShadeTransitionController,
             FeatureFlags featureFlags,
             KeyguardUnlockAnimationController keyguardUnlockAnimationController,
@@ -908,7 +907,6 @@ public class StatusBar extends SystemUI implements DemoMode,
         mAnimationScheduler = animationScheduler;
         mStatusBarLocationPublisher = locationPublisher;
         mStatusBarIconController = statusBarIconController;
-        mGameSpaceManager = gameSpaceManager;
         mFeatureFlags = featureFlags;
         mKeyguardUnlockAnimationController = keyguardUnlockAnimationController;
         mUnlockedScreenOffAnimationController = unlockedScreenOffAnimationController;
@@ -930,6 +928,7 @@ public class StatusBar extends SystemUI implements DemoMode,
 
         mActivityIntentHelper = new ActivityIntentHelper(mContext);
         DateTimeView.setReceiverHandler(timeTickHandler);
+        mGameSpaceManager = new GameSpaceManager(mContext);
     }
 
     @Override
@@ -976,8 +975,6 @@ public class StatusBar extends SystemUI implements DemoMode,
         mKeyguardManager = (KeyguardManager) mContext.getSystemService(Context.KEYGUARD_SERVICE);
         mWallpaperSupported =
                 mContext.getSystemService(WallpaperManager.class).isWallpaperSupported();
-
-        mGameSpaceManager.observe();
 
         // Connect in to the status bar manager service
         mCommandQueue.addCallback(this);
@@ -1465,6 +1462,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         filter.addAction(DevicePolicyManager.ACTION_SHOW_DEVICE_MONITORING_DIALOG);
         mBroadcastDispatcher.registerReceiver(mBroadcastReceiver, filter, null, UserHandle.ALL);
+        mGameSpaceManager.observe();
     }
 
     protected QS createDefaultQSFragment() {
