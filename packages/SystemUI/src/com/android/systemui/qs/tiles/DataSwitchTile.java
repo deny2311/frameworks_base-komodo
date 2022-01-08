@@ -197,7 +197,7 @@ public class DataSwitchTile extends QSTileImpl<BooleanState> {
 
     @Override
     public int getMetricsCategory() {
-        return MetricsEvent.KOMODO;
+        return MetricsEvent.KOMODO_QS;
     }
 
     @Override
