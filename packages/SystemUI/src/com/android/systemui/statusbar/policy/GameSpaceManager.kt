@@ -17,12 +17,15 @@
 package com.android.systemui.statusbar.policy
 
 import android.app.ActivityTaskManager
+import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
+import android.os.PowerManager
 import android.os.RemoteException
 import android.os.UserHandle
 import android.provider.Settings
@@ -36,6 +39,7 @@ import javax.inject.Inject
 @SysUISingleton
 class GameSpaceManager @Inject constructor(
     private val context: Context,
+    private val keyguardStateController: KeyguardStateController,
 ) {
     private val handler by lazy { GameSpaceHandler(Looper.getMainLooper()) }
     private val taskManager by lazy { ActivityTaskManager.getService() }
@@ -46,6 +50,24 @@ class GameSpaceManager @Inject constructor(
 
     private val mTaskStackChangeListener = object : TaskStackChangeListener() {
         override fun onTaskStackChanged() {
+            handler.sendEmptyMessage(MSG_UPDATE_FOREGROUND_APP)
+        }
+    }
+
+    private val interactivityReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            when (intent?.action) {
+                Intent.ACTION_SCREEN_OFF -> {
+                    activeGame = null
+                    handler.sendEmptyMessage(MSG_DISPATCH_FOREGROUND_APP)
+                }
+            }
+        }
+    }
+
+    private val keyguardStateCallback = object : KeyguardStateController.Callback {
+        override fun onKeyguardShowingChanged() {
+            if (keyguardStateController.isShowing) return
             handler.sendEmptyMessage(MSG_UPDATE_FOREGROUND_APP)
         }
     }
@@ -71,6 +93,8 @@ class GameSpaceManager @Inject constructor(
     }
 
     private fun dispatchForegroundApp() {
+        val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+        if (!pm.isInteractive && activeGame != null) return
         val action = if (activeGame != null) ACTION_GAME_START else ACTION_GAME_STOP
         Intent(action).apply {
             setPackage(GAMESPACE_PACKAGE)
@@ -91,6 +115,10 @@ class GameSpaceManager @Inject constructor(
         activityManager.registerTaskStackListener(mTaskStackChangeListener)
         isRegistered = true;
         handler.sendEmptyMessage(MSG_UPDATE_FOREGROUND_APP)
+        context.registerReceiver(interactivityReceiver, IntentFilter().apply {
+            addAction(Intent.ACTION_SCREEN_OFF)
+        })
+        keyguardStateController.addCallback(keyguardStateCallback)
     }
 
     fun isGameActive() = activeGame != null

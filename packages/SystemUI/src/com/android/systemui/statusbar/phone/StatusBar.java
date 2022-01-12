@@ -928,7 +928,7 @@ public class StatusBar extends SystemUI implements DemoMode,
 
         mActivityIntentHelper = new ActivityIntentHelper(mContext);
         DateTimeView.setReceiverHandler(timeTickHandler);
-        mGameSpaceManager = new GameSpaceManager(mContext);
+        mGameSpaceManager = new GameSpaceManager(mContext, mKeyguardStateController);
     }
 
     @Override
