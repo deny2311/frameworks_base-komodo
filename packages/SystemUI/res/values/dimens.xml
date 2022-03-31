@@ -298,6 +298,9 @@
     <!-- The width/height of the icon of a navigation button -->
     <dimen name="navigation_icon_size">32dp</dimen>
 
+    <!-- The width of the view containing the menu/ime navigation bar icons -->
+    <dimen name="navigation_extra_key_width">36dp</dimen>
+
     <dimen name="navigation_key_padding">0dp</dimen>
 
     <!-- The padding on the side of the navigation bar. Must be greater than or equal to
