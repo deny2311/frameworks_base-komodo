@@ -444,6 +444,11 @@ public class StatusBar extends SystemUI implements
     }
 
     /** */
+    public void toggleSettingsPanel() {
+        mCommandQueueCallbacks.toggleSettingsPanel();
+    }
+
+    /** */
     public void animateCollapsePanels(int flags, boolean force) {
         mCommandQueueCallbacks.animateCollapsePanels(flags, force);
     }
@@ -2039,15 +2044,6 @@ public class StatusBar extends SystemUI implements
                     "com.android.systemui:full_screen_intent");
             mWakeUpComingFromTouch = false;
             mWakeUpTouchLocation = null;
-        }
-    }
-
-    @Override
-    public void toggleSettingsPanel() {
-        if (mPanelExpanded) {
-            mShadeController.animateCollapsePanels();
-        } else {
-            animateExpandSettingsPanel(null);
         }
     }
 
