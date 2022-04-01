@@ -866,7 +866,6 @@ public class StatusBarManagerService extends IStatusBarService.Stub implements D
         }
     }
 
-    @Override
     public void killForegroundApp() {
         if (mBar != null) {
             try {

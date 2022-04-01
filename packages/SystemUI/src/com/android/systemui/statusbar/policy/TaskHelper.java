@@ -19,11 +19,10 @@ package com.android.systemui.statusbar.policy;
 import android.annotation.Nullable;
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.TaskStackListener;
-import android.app.ActivityTaskManager.RootTaskInfo;
 import android.app.ActivityManagerNative;
 import android.app.IActivityManager;
 import android.app.ActivityTaskManager;
+import android.app.ActivityTaskManager.RootTaskInfo;
 import android.app.IActivityTaskManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -134,7 +133,7 @@ public class TaskHelper implements CommandQueue.Callbacks, KeyguardStateControll
                             ? isLauncherShowing()
                             : false;
                     // The foreground app is the top activity of the focused tasks stack.
-                    final RootTaskInfo info = ActivityTaskManager.getService().getFocusedRootTaskInfo();
+                    final RootTaskInfo info = mActivityTaskManager.getFocusedRootTaskInfo();
                     mTaskComponentName = info != null ? info.topActivity : null;
                     if (mTaskComponentName == null) {
                         return;
